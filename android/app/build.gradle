@@ -27,12 +27,10 @@ android {
     }
 
     def generatedAssetsDir = file("$buildDir/generated/sciencemdAssets")
-    def generatedResDir = file("$buildDir/generated/sciencemdResources")
 
     sourceSets {
         main {
             assets.srcDirs += generatedAssetsDir
-            res.srcDirs += generatedResDir
         }
     }
 
@@ -42,13 +40,7 @@ android {
         rename { 'index.html' }
     }
 
-    tasks.register('copyScienceMdIcon', Copy) {
-        from(rootProject.file('../assets/ScienceMD-icon.png'))
-        into(new File(generatedResDir, 'drawable'))
-        rename { 'sciencemd_icon.png' }
-    }
-
     tasks.named('preBuild').configure {
-        dependsOn('copyScienceMdWebApp', 'copyScienceMdIcon')
+        dependsOn('copyScienceMdWebApp')
     }
 }
