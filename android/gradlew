@@ -1,0 +1,17 @@
+#!/usr/bin/env sh
+set -eu
+
+GRADLE_VERSION="8.7"
+GRADLE_BASE_DIR="${HOME}/.gradle/sciencemd"
+GRADLE_HOME_DIR="${GRADLE_BASE_DIR}/gradle-${GRADLE_VERSION}"
+GRADLE_ZIP="${GRADLE_BASE_DIR}/gradle-${GRADLE_VERSION}-bin.zip"
+
+if [ ! -x "${GRADLE_HOME_DIR}/bin/gradle" ]; then
+    mkdir -p "${GRADLE_BASE_DIR}"
+    curl --fail --location --retry 3 \
+        "https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip" \
+        --output "${GRADLE_ZIP}"
+    unzip -q -o "${GRADLE_ZIP}" -d "${GRADLE_BASE_DIR}"
+fi
+
+exec "${GRADLE_HOME_DIR}/bin/gradle" "$@"
