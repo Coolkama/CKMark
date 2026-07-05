@@ -8,4 +8,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: echo "Android build workflow ready"
+      - name: Build APK
+        working-directory: android
+        run: gradle --no-daemon :app:assembleDebug
