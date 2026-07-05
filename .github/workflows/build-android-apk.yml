@@ -10,6 +10,14 @@ on:
       - 'assets/ScienceMD-icon.png'
       - 'android/**'
       - '.github/workflows/build-android-apk.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'index.html'
+      - 'assets/ScienceMD-icon.png'
+      - 'android/**'
+      - '.github/workflows/build-android-apk.yml'
 
 permissions:
   contents: read
