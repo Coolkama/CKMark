@@ -2,8 +2,8 @@ plugins {
     id 'com.android.application'
 }
 
-def scienceMdVersionCode = (project.findProperty('SCIENCEMD_VERSION_CODE') ?: '8').toInteger()
-def scienceMdVersionName = project.findProperty('SCIENCEMD_VERSION_NAME') ?: '1.3.2'
+def scienceMdVersionCode = (project.findProperty('SCIENCEMD_VERSION_CODE') ?: '9').toInteger()
+def scienceMdVersionName = project.findProperty('SCIENCEMD_VERSION_NAME') ?: '1.3.3'
 def releaseKeystorePath = System.getenv('SCIENCEMD_KEYSTORE_PATH')
 
 android {
@@ -30,56 +30,10 @@ android {
     }
 
     buildTypes {
-        debug {
-            applicationIdSuffix '.debug'
-            versionNameSuffix '-debug'
-        }
-
         release {
             minifyEnabled false
+            signingConfig releaseKeystorePath ? signingConfigs.release : null
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-
-            if (releaseKeystorePath) {
-                signingConfig signingConfigs.release
-            }
         }
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
-
-    def generatedAssetsDir = file("$buildDir/generated/sciencemdAssets")
-    def generatedResDir = file("$buildDir/generated/sciencemdResources")
-    def launcherIconSource = rootProject.file('icon/sciencemd_launcher_icon.webp.b64')
-    def launcherIconOutput = new File(generatedResDir, 'drawable/sciencemd_launcher_icon.webp')
-
-    sourceSets {
-        main {
-            assets.srcDirs += generatedAssetsDir
-            res.srcDirs += generatedResDir
-        }
-    }
-
-    tasks.register('copyScienceMdWebApp', Copy) {
-        from(rootProject.file('../index.html'))
-        into(generatedAssetsDir)
-        rename { 'index.html' }
-    }
-
-    tasks.register('generateScienceMdLauncherIcon') {
-        inputs.file(launcherIconSource)
-        outputs.file(launcherIconOutput)
-
-        doLast {
-            launcherIconOutput.parentFile.mkdirs()
-            def encoded = launcherIconSource.getText('UTF-8').replaceAll('\\s', '')
-            launcherIconOutput.bytes = encoded.decodeBase64()
-        }
-    }
-
-    tasks.named('preBuild').configure {
-        dependsOn('copyScienceMdWebApp', 'generateScienceMdLauncherIcon')
     }
 }
