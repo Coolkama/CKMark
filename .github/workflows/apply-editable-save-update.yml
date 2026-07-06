@@ -5,6 +5,7 @@ on:
   push:
     paths:
       - tools/editable-save-update.zip.b64
+      - .github/workflows/apply-editable-save-update.yml
 
 permissions:
   contents: write
@@ -42,13 +43,6 @@ jobs:
           update('android/app/build.gradle', [
               ("?: '7'", "?: '8'"),
               ("?: '1.3.1'", "?: '1.3.2'"),
-          ])
-
-          update('.github/workflows/release-android-apk.yml', [
-              ("example 1.3.1", "example 1.3.2"),
-              ("default: '1.3.1'", "default: '1.3.2'"),
-              ("default: '7'", "default: '8'"),
-              ("must look like 1.3.1", "must look like 1.3.2"),
           ])
 
           smoke = Path('tools/smoke_test.py')
@@ -92,7 +86,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add android/app/src/main/java/uk/co/coolkama/sciencemd/MainActivity.java \
-            android/app/build.gradle tools/smoke_test.py \
-            .github/workflows/release-android-apk.yml
+            android/app/build.gradle tools/smoke_test.py
           git commit -m "Add editable Save behaviour and prepare 1.3.2"
           git push
