@@ -1,0 +1,32 @@
+name: Repair broken ScienceMD release
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/triggers/repair-broken-release'
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Repair starter JavaScript
+        run: python3 tools/repair_broken_starter.py
+
+      - name: Run strengthened smoke checks
+        run: python3 tools/smoke_test.py
+
+      - name: Commit repaired application
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html android/app/build.gradle
+          git commit -m "Repair starter JavaScript and prepare 1.2.2"
+          git push
