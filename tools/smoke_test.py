@@ -94,6 +94,7 @@ require("appendFileSaveChunk" in activity, "chunked Android save transfer is mis
 require("completeFileSave" in activity, "Android save completion handling is missing")
 require("openOutputStream" in activity, "Android document writing is missing")
 require("HTMLAnchorElement.prototype.click" in activity, "web download interception is missing")
+require("documentLoadInProgress = true" in html, "New Document load lock is missing")
 require("takePersistableUriPermission" in activity, "persistent document permission handling is missing")
 require("FLAG_GRANT_WRITE_URI_PERMISSION" in activity, "document write permission is missing")
 require("currentDocumentWritable" in activity, "direct Save state is missing")
