@@ -94,10 +94,14 @@ require("appendFileSaveChunk" in activity, "chunked Android save transfer is mis
 require("completeFileSave" in activity, "Android save completion handling is missing")
 require("openOutputStream" in activity, "Android document writing is missing")
 require("HTMLAnchorElement.prototype.click" in activity, "web download interception is missing")
+require("takePersistableUriPermission" in activity, "persistent document permission handling is missing")
+require("FLAG_GRANT_WRITE_URI_PERMISSION" in activity, "document write permission is missing")
+require("currentDocumentWritable" in activity, "direct Save state is missing")
+require("forceSaveAs" in activity, "Save As distinction is missing")
 
 require("SCIENCEMD_VERSION_CODE" in gradle, "release version override is missing")
 require("SCIENCEMD_KEYSTORE_PATH" in gradle, "release signing configuration is missing")
-require("?: '7'" in gradle and "?: '1.3.1'" in gradle, "Android 1.3.1 version defaults are missing")
+require("?: '8'" in gradle and "?: '1.3.2'" in gradle, "Android 1.3.2 version defaults are missing")
 require(icon_source.is_file() and icon_source.stat().st_size > 1_000, "launcher icon source is missing")
 
 print("ScienceMD smoke checks passed.")

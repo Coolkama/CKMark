@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.print.PrintAttributes;
 import android.print.PrintDocumentAdapter;
 import android.print.PrintManager;
@@ -36,11 +37,19 @@ public final class MainActivity extends Activity {
     private Uri pendingIncomingDocument;
     private boolean pageReady;
 
+    private Uri currentDocumentUri;
+    private String currentDocumentName;
+    private boolean currentDocumentWritable;
+
     private ByteArrayOutputStream incomingSaveBuffer;
     private String incomingSaveName;
     private String incomingSaveMimeType;
+    private boolean incomingSaveAs;
+
     private byte[] pendingSaveBytes;
     private String pendingSaveName;
+    private String pendingSaveMimeType;
+    private boolean pendingSaveShouldBecomeCurrent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,6 +137,15 @@ public final class MainActivity extends Activity {
             "if(window.__scienceMdAndroidSaveHook){return;}" +
             "window.__scienceMdAndroidSaveHook=true;" +
             "var pendingUrls=new Set();" +
+            "var nextSaveAs=false;" +
+            "document.addEventListener('click',function(event){" +
+            "var target=event.target&&event.target.closest?event.target.closest('button,[role=\"button\"],a'):null;" +
+            "if(!target){return;}" +
+            "var label=((target.getAttribute('aria-label')||'')+' '+(target.getAttribute('title')||'')+' '+(target.textContent||'')).trim().toLowerCase().replace(/\\s+/g,' ');" +
+            "if(label.indexOf('save as')!==-1){nextSaveAs=true;}" +
+            "else if(label==='save'||label.indexOf('save current')!==-1){nextSaveAs=false;}" +
+            "if(label==='new'||label.indexOf('new document')!==-1||label.indexOf('start a fresh')!==-1){AndroidBridge.clearCurrentDocument();}" +
+            "},true);" +
             "var originalRevoke=URL.revokeObjectURL.bind(URL);" +
             "URL.revokeObjectURL=function(url){" +
             "if(pendingUrls.has(url)){return;}" +
@@ -139,11 +157,13 @@ public final class MainActivity extends Activity {
             "var isDownload=this.hasAttribute('download');" +
             "if(isDownload&&(href.indexOf('blob:')===0||href.indexOf('data:')===0)){" +
             "var fileName=this.getAttribute('download')||'ScienceMD.md';" +
+            "var forceSaveAs=nextSaveAs;" +
+            "nextSaveAs=false;" +
             "pendingUrls.add(href);" +
             "fetch(href).then(function(response){return response.blob();}).then(function(blob){" +
             "return blob.arrayBuffer().then(function(buffer){return {blob:blob,buffer:buffer};});" +
             "}).then(function(result){" +
-            "AndroidBridge.beginFileSave(fileName,result.blob.type||'application/octet-stream');" +
+            "AndroidBridge.beginFileSave(fileName,result.blob.type||'application/octet-stream',forceSaveAs);" +
             "var bytes=new Uint8Array(result.buffer);" +
             "var chunkSize=24576;" +
             "for(var offset=0;offset<bytes.length;offset+=chunkSize){" +
@@ -186,8 +206,63 @@ public final class MainActivity extends Activity {
 
         Uri uri = intent.getData();
         if (uri != null) {
+            rememberCurrentDocument(uri, resolveDisplayName(uri), intent.getFlags());
             pendingIncomingDocument = uri;
         }
+    }
+
+    private void rememberCurrentDocument(Uri uri, String fileName, int flags) {
+        if (uri == null) {
+            clearCurrentDocument();
+            return;
+        }
+
+        takePersistableDocumentPermission(uri, flags);
+        currentDocumentUri = uri;
+        currentDocumentName = fileName;
+        currentDocumentWritable =
+            (flags & Intent.FLAG_GRANT_WRITE_URI_PERMISSION) != 0 || canWriteDocument(uri);
+    }
+
+    private void takePersistableDocumentPermission(Uri uri, int flags) {
+        if (!"content".equalsIgnoreCase(uri.getScheme())) {
+            return;
+        }
+        if ((flags & Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION) == 0) {
+            return;
+        }
+
+        int takeFlags = flags & (
+            Intent.FLAG_GRANT_READ_URI_PERMISSION |
+            Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+        );
+        if (takeFlags == 0) {
+            return;
+        }
+
+        try {
+            getContentResolver().takePersistableUriPermission(uri, takeFlags);
+        } catch (SecurityException ignored) {
+            // Some providers advertise persistence but do not allow it for every document.
+        }
+    }
+
+    private boolean canWriteDocument(Uri uri) {
+        if (uri == null) {
+            return false;
+        }
+
+        try (ParcelFileDescriptor descriptor = getContentResolver().openFileDescriptor(uri, "rw")) {
+            return descriptor != null;
+        } catch (Exception ignored) {
+            return false;
+        }
+    }
+
+    private void clearCurrentDocument() {
+        currentDocumentUri = null;
+        currentDocumentName = null;
+        currentDocumentWritable = false;
     }
 
     private void openPendingIncomingDocument() {
@@ -315,6 +390,11 @@ public final class MainActivity extends Activity {
 
         Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.addFlags(
+            Intent.FLAG_GRANT_READ_URI_PERMISSION |
+            Intent.FLAG_GRANT_WRITE_URI_PERMISSION |
+            Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
+        );
         intent.setType("*/*");
         intent.putExtra(
             Intent.EXTRA_MIME_TYPES,
@@ -344,12 +424,63 @@ public final class MainActivity extends Activity {
         return false;
     }
 
-    private void requestSaveDocument(byte[] bytes, String fileName, String mimeType) {
+    private boolean isMarkdownSave(String fileName, String mimeType) {
+        String lowerName = fileName == null ? "" : fileName.toLowerCase();
+        String lowerType = mimeType == null ? "" : mimeType.toLowerCase();
+        return
+            lowerName.endsWith(".md") ||
+            lowerName.endsWith(".markdown") ||
+            lowerType.contains("markdown") ||
+            "text/plain".equals(lowerType);
+    }
+
+    private void handlePreparedSave(
+        byte[] bytes,
+        String fileName,
+        String mimeType,
+        boolean forceSaveAs
+    ) {
+        String safeName = sanitiseFileName(fileName);
+        boolean markdownSave = isMarkdownSave(safeName, mimeType);
+
+        if (
+            !forceSaveAs &&
+            markdownSave &&
+            currentDocumentUri != null &&
+            currentDocumentWritable
+        ) {
+            writeSavedDocument(
+                currentDocumentUri,
+                bytes,
+                currentDocumentName == null ? safeName : currentDocumentName,
+                mimeType,
+                true,
+                true
+            );
+            return;
+        }
+
+        requestSaveDocument(bytes, safeName, mimeType, markdownSave);
+    }
+
+    private void requestSaveDocument(
+        byte[] bytes,
+        String fileName,
+        String mimeType,
+        boolean shouldBecomeCurrent
+    ) {
         pendingSaveBytes = bytes;
         pendingSaveName = sanitiseFileName(fileName);
+        pendingSaveMimeType = mimeType;
+        pendingSaveShouldBecomeCurrent = shouldBecomeCurrent;
 
         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.addFlags(
+            Intent.FLAG_GRANT_READ_URI_PERMISSION |
+            Intent.FLAG_GRANT_WRITE_URI_PERMISSION |
+            Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
+        );
         intent.setType(
             mimeType == null || mimeType.trim().isEmpty()
                 ? "application/octet-stream"
@@ -360,8 +491,7 @@ public final class MainActivity extends Activity {
         try {
             startActivityForResult(intent, SAVE_DOCUMENT_REQUEST_CODE);
         } catch (ActivityNotFoundException exception) {
-            pendingSaveBytes = null;
-            pendingSaveName = null;
+            clearPendingSave();
             Toast.makeText(this, "No save location picker is available.", Toast.LENGTH_LONG).show();
         }
     }
@@ -375,14 +505,44 @@ public final class MainActivity extends Activity {
         return cleaned.isEmpty() ? "ScienceMD.md" : cleaned;
     }
 
-    private void writeSavedDocument(Uri uri, byte[] bytes, String fileName) {
+    private void clearPendingSave() {
+        pendingSaveBytes = null;
+        pendingSaveName = null;
+        pendingSaveMimeType = null;
+        pendingSaveShouldBecomeCurrent = false;
+    }
+
+    private OutputStream openWritableStream(Uri uri) throws IOException {
+        OutputStream output = getContentResolver().openOutputStream(uri, "wt");
+        if (output == null) {
+            output = getContentResolver().openOutputStream(uri, "w");
+        }
+        if (output == null) {
+            throw new IOException("The selected save location could not be opened.");
+        }
+        return output;
+    }
+
+    private void writeSavedDocument(
+        Uri uri,
+        byte[] bytes,
+        String fileName,
+        String mimeType,
+        boolean establishCurrent,
+        boolean fallbackToSaveAs
+    ) {
         new Thread(() -> {
-            try (OutputStream output = getContentResolver().openOutputStream(uri, "wt")) {
-                if (output == null) {
-                    throw new IOException("The selected save location could not be opened.");
-                }
+            try (OutputStream output = openWritableStream(uri)) {
                 output.write(bytes);
                 output.flush();
+
+                if (establishCurrent) {
+                    runOnUiThread(() -> {
+                        currentDocumentUri = uri;
+                        currentDocumentName = fileName;
+                        currentDocumentWritable = true;
+                    });
+                }
 
                 runOnUiThread(() -> Toast.makeText(
                     MainActivity.this,
@@ -390,6 +550,17 @@ public final class MainActivity extends Activity {
                     Toast.LENGTH_SHORT
                 ).show());
             } catch (Exception exception) {
+                if (fallbackToSaveAs) {
+                    currentDocumentWritable = false;
+                    runOnUiThread(() -> requestSaveDocument(
+                        bytes,
+                        fileName,
+                        mimeType,
+                        establishCurrent
+                    ));
+                    return;
+                }
+
                 runOnUiThread(() -> Toast.makeText(
                     MainActivity.this,
                     "ScienceMD could not save this file.",
@@ -406,8 +577,9 @@ public final class MainActivity extends Activity {
         if (requestCode == SAVE_DOCUMENT_REQUEST_CODE) {
             byte[] bytes = pendingSaveBytes;
             String fileName = pendingSaveName;
-            pendingSaveBytes = null;
-            pendingSaveName = null;
+            String mimeType = pendingSaveMimeType;
+            boolean shouldBecomeCurrent = pendingSaveShouldBecomeCurrent;
+            clearPendingSave();
 
             if (
                 resultCode == RESULT_OK &&
@@ -415,7 +587,16 @@ public final class MainActivity extends Activity {
                 data.getData() != null &&
                 bytes != null
             ) {
-                writeSavedDocument(data.getData(), bytes, fileName == null ? "ScienceMD.md" : fileName);
+                Uri uri = data.getData();
+                takePersistableDocumentPermission(uri, data.getFlags());
+                writeSavedDocument(
+                    uri,
+                    bytes,
+                    fileName == null ? "ScienceMD.md" : fileName,
+                    mimeType,
+                    shouldBecomeCurrent,
+                    false
+                );
             }
             return;
         }
@@ -427,6 +608,15 @@ public final class MainActivity extends Activity {
         Uri[] result = resultCode == RESULT_OK
             ? WebChromeClient.FileChooserParams.parseResult(resultCode, data)
             : null;
+
+        if (
+            resultCode == RESULT_OK &&
+            data != null &&
+            data.getData() != null
+        ) {
+            Uri uri = data.getData();
+            rememberCurrentDocument(uri, resolveDisplayName(uri), data.getFlags());
+        }
 
         pendingFileSelection.onReceiveValue(result);
         pendingFileSelection = null;
@@ -464,10 +654,20 @@ public final class MainActivity extends Activity {
         }
 
         @JavascriptInterface
-        public synchronized void beginFileSave(String fileName, String mimeType) {
+        public void clearCurrentDocument() {
+            runOnUiThread(MainActivity.this::clearCurrentDocument);
+        }
+
+        @JavascriptInterface
+        public synchronized void beginFileSave(
+            String fileName,
+            String mimeType,
+            boolean forceSaveAs
+        ) {
             incomingSaveBuffer = new ByteArrayOutputStream();
             incomingSaveName = fileName;
             incomingSaveMimeType = mimeType;
+            incomingSaveAs = forceSaveAs;
         }
 
         @JavascriptInterface
@@ -485,6 +685,7 @@ public final class MainActivity extends Activity {
             byte[] bytes;
             String fileName;
             String mimeType;
+            boolean forceSaveAs;
 
             synchronized (this) {
                 if (incomingSaveBuffer == null) {
@@ -494,12 +695,19 @@ public final class MainActivity extends Activity {
                 bytes = incomingSaveBuffer.toByteArray();
                 fileName = incomingSaveName;
                 mimeType = incomingSaveMimeType;
+                forceSaveAs = incomingSaveAs;
                 incomingSaveBuffer = null;
                 incomingSaveName = null;
                 incomingSaveMimeType = null;
+                incomingSaveAs = false;
             }
 
-            runOnUiThread(() -> requestSaveDocument(bytes, fileName, mimeType));
+            runOnUiThread(() -> handlePreparedSave(
+                bytes,
+                fileName,
+                mimeType,
+                forceSaveAs
+            ));
         }
 
         @JavascriptInterface
@@ -507,6 +715,7 @@ public final class MainActivity extends Activity {
             incomingSaveBuffer = null;
             incomingSaveName = null;
             incomingSaveMimeType = null;
+            incomingSaveAs = false;
             runOnUiThread(() -> Toast.makeText(
                 MainActivity.this,
                 "ScienceMD could not prepare this file for saving.",
