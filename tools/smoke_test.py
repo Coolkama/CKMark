@@ -74,10 +74,23 @@ gradle = (ANDROID / "app/build.gradle").read_text(encoding="utf-8")
 icon_source = ANDROID / "icon/sciencemd_launcher_icon.webp.b64"
 
 require("@drawable/sciencemd_launcher_icon" in manifest, "launcher icon is not configured")
+require("android.intent.action.VIEW" in manifest, "Markdown ACTION_VIEW association is missing")
+require("android.intent.action.EDIT" in manifest, "Markdown ACTION_EDIT association is missing")
+require("text/markdown" in manifest, "Markdown MIME association is missing")
+require("text/x-markdown" in manifest, "Legacy Markdown MIME association is missing")
+require("android:pathPattern=\".*\\.md\"" in manifest, ".md extension association is missing")
+require("android:launchMode=\"singleTop\"" in manifest, "singleTop launch mode is missing")
+
 require("text/markdown" in activity, "Android Markdown file picker support is missing")
+require("onNewIntent" in activity, "opening another Markdown file while running is unsupported")
+require("openInputStream" in activity, "incoming Markdown document reading is missing")
+require("OpenableColumns.DISPLAY_NAME" in activity, "incoming Markdown filename handling is missing")
+require("new DataTransfer()" in activity, "incoming Markdown hand-off to the web editor is missing")
 require("createPrintDocumentAdapter" in activity, "Android printing support is missing")
+
 require("SCIENCEMD_VERSION_CODE" in gradle, "release version override is missing")
 require("SCIENCEMD_KEYSTORE_PATH" in gradle, "release signing configuration is missing")
+require("?: '6'" in gradle and "?: '1.3.0'" in gradle, "Android 1.3.0 version defaults are missing")
 require(icon_source.is_file() and icon_source.stat().st_size > 1_000, "launcher icon source is missing")
 
 print("ScienceMD smoke checks passed.")
