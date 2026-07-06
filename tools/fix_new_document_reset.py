@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Maintain New Document reset behaviour and embedded licence notices."""
+"""Verify the New Document fix and maintain embedded licence notices."""
 
 from html import escape
 from pathlib import Path
@@ -8,126 +8,30 @@ ROOT = Path(__file__).resolve().parents[1]
 INDEX = ROOT / "index.html"
 SMOKE = ROOT / "tools/smoke_test.py"
 
-html = INDEX.read_text(encoding="utf-8")
+text = INDEX.read_text(encoding="utf-8")
 
-old = """    function clearDraft() {
-      const confirmed = confirm('Start a new document from the built-in ScienceMD starter? This will replace the current editor text, but it will not delete any files from your device.');
-      if (!confirmed) return;
+if "documentLoadInProgress = true" not in text:
+    raise SystemExit("The New Document reset protection is missing")
 
-      embeddedImages = {};
-      nextImageNumber = 1;
-      saveImageMap();
-
-      // New document must be treated like opening a completely different file.
-      // Updating the hidden Markdown textarea is not enough: if the visual editor
-      // currently has focus, the normal render path deliberately avoids rebuilding
-      // it, which left the previous document visible in WYSIWYG mode.
-      activeMathEditInput = null;
-      savedWysiwygRange = null;
-      hideTableTools();
-      setEditorMarkdown(starterText, { collapseImages: false, resetScroll: true });
-      setFileName('science-draft.md');
-
-      if (sourceMode) setSourceMode(false);
-      switchView('edit');
-
-      // Force the visual editor after switchView as well, because wide desktop
-      // mode calls renderNow() during the switch and renderNow() is intentionally
-      // conservative about rebuilding a focused WYSIWYG pane.
-      forceWysiwygFromMarkdown({ resetScroll: true, focusStart: true });
-      renderNow();
-      saveDraft(false);
-      resetHistory(editor.value || '');
-
-      requestAnimationFrame(() => {
-        forceWysiwygFromMarkdown({ resetScroll: true, focusStart: true });
-      });
-
-      showToast('New document created');
-    }
-"""
-
-new = """    function clearDraft() {
-      const confirmed = confirm('Start a new document from the built-in ScienceMD starter? This will replace the current editor text, but it will not delete any files from your device.');
-      if (!confirmed) return;
-
-      // Treat New exactly like loading another file. On mobile browsers and
-      // Android WebView, a delayed contenteditable/keyboard event can otherwise
-      // write the previous visual document back over the starter text.
-      documentLoadInProgress = true;
-      clearTimeout(renderTimer);
-      clearTimeout(historyTimer);
-
-      try {
-        try { wysiwygEditor.blur(); } catch (_error) {}
-        try { editor.blur(); } catch (_error) {}
-
-        embeddedImages = {};
-        nextImageNumber = 1;
-        saveImageMap();
-
-        activeMathEditInput = null;
-        savedWysiwygRange = null;
-        hideTableTools();
-        setEditorMarkdown(starterText, { collapseImages: false, resetScroll: true });
-        setFileName('science-draft.md');
-
-        sourceMode = false;
-        editor.classList.add('hidden');
-        wysiwygEditor.classList.remove('hidden');
-        editModeLabel.textContent = 'Visual editor';
-        switchView('edit');
-
-        forceWysiwygFromMarkdown({ resetScroll: true, focusStart: false });
-        renderNow();
-        saveDraft(false);
-        resetHistory(editor.value || '');
-
-        // Keep the document-load lock through two animation frames so any late
-        // IME or contenteditable input event is ignored before focus is restored.
-        requestAnimationFrame(() => requestAnimationFrame(() => {
-          forceWysiwygFromMarkdown({ resetScroll: true, focusStart: true });
-          renderNow();
-          documentLoadInProgress = false;
-        }));
-
-        showToast('New document created');
-      } catch (error) {
-        documentLoadInProgress = false;
-        console.error('Could not create a new document:', error);
-        editor.value = starterText;
-        safeSetStorage(STORAGE_KEY, starterText, true);
-        forceWysiwygFromMarkdown({ resetScroll: true, focusStart: true });
-        renderNow();
-        showToast('New document created with a visual-editor warning.');
-      }
-    }
-"""
-
-if old in html:
-    html = html.replace(old, new, 1)
-elif new not in html:
-    raise SystemExit("Expected clearDraft implementation was not found")
-
-html = html.replace(
+text = text.replace(
     "Released under the Apache license 2.0 and Mozilla Public License 2.0",
     "Released under the Apache License 2.0 OR Mozilla Public License 2.0",
 )
-html = html.replace(
+text = text.replace(
     "Released under the Apache License 2.0 and Mozilla Public License 2.0",
     "Released under the Apache License 2.0 OR Mozilla Public License 2.0",
 )
 
 project_notice = "<!-- ScienceMD | Copyright 2026 Trevor Neil Kelleher | Apache License 2.0 | Full notices in Help and About. -->"
-if project_notice not in html:
-    html = html.replace("<html", project_notice + "\n<html", 1)
+if project_notice not in text:
+    text = text.replace("<html", project_notice + "\n<html", 1)
 
 mathjax_notice = "<!-- MathJax 3.2.1 | Apache License 2.0 | Includes Speech Rule Engine 4.0.6 and Wicked Good XPath 1.3.0. -->"
-if mathjax_notice not in html:
+if mathjax_notice not in text:
     marker = "  <script>\n    window.MathJax = {"
-    if marker not in html:
+    if marker not in text:
         raise SystemExit("MathJax configuration marker was not found")
-    html = html.replace(marker, "  " + mathjax_notice + "\n" + marker, 1)
+    text = text.replace(marker, "  " + mathjax_notice + "\n" + marker, 1)
 
 apache_text = escape((ROOT / "LICENSE").read_text(encoding="utf-8"))
 mit_text = escape((ROOT / "WICKED_GOOD_XPATH_LICENSE.txt").read_text(encoding="utf-8"))
@@ -152,15 +56,15 @@ licence_section = f"""<!-- SCIENCEMD-LICENCES-START -->
 
 start_marker = "<!-- SCIENCEMD-LICENCES-START -->"
 end_marker = "<!-- SCIENCEMD-LICENCES-END -->"
-if start_marker in html:
-    start = html.index(start_marker)
-    end = html.index(end_marker, start) + len(end_marker)
-    html = html[:start] + licence_section + html[end:]
+if start_marker in text:
+    start = text.index(start_marker)
+    end = text.index(end_marker, start) + len(end_marker)
+    text = text[:start] + licence_section + text[end:]
 else:
-    help_end_marker = "      <section>\n        <h3>Autosave warning</h3>"
-    help_start = html.index(help_end_marker)
-    help_end = html.index("      </section>", help_start) + len("      </section>")
-    html = html[:help_end] + "\n\n      " + licence_section + html[help_end:]
+    autosave_marker = "      <section>\n        <h3>Autosave warning</h3>"
+    section_start = text.index(autosave_marker)
+    section_end = text.index("      </section>", section_start) + len("      </section>")
+    text = text[:section_end] + "\n\n      " + licence_section + text[section_end:]
 
 licence_css = """
     .licence-details {
@@ -185,23 +89,16 @@ licence_css = """
     }
 
 """
-if ".licence-details {" not in html:
+if ".licence-details {" not in text:
     css_marker = "    .about-card {"
-    if css_marker not in html:
+    if css_marker not in text:
         raise SystemExit("About-panel CSS marker was not found")
-    html = html.replace(css_marker, licence_css + css_marker, 1)
+    text = text.replace(css_marker, licence_css + css_marker, 1)
 
-INDEX.write_text(html, encoding="utf-8")
-print("Updated New Document handling and embedded licence notices.")
+INDEX.write_text(text, encoding="utf-8")
+print("Embedded ScienceMD and third-party licence notices.")
 
 smoke = SMOKE.read_text(encoding="utf-8")
-marker = 'require("HTMLAnchorElement.prototype.click" in activity, "web download interception is missing")\n'
-new_document_check = 'require("documentLoadInProgress = true" in html, "New Document load lock is missing")\n'
-if new_document_check not in smoke:
-    if marker not in smoke:
-        raise SystemExit("Smoke-test insertion point was not found")
-    smoke = smoke.replace(marker, marker + new_document_check, 1)
-
 legal_checks = """
 require((ROOT / "LICENSE").is_file(), "Apache 2.0 LICENSE file is missing")
 require((ROOT / "NOTICE").is_file(), "NOTICE file is missing")
