@@ -49,6 +49,19 @@ external_assets = re.findall(
 )
 require(not external_assets, "index.html is no longer self-contained")
 
+starter_assignment = re.search(
+    r'const\s+starterText\s*=\s*"(?:\\.|[^"\\\r\n])*"\s*;',
+    html,
+)
+require(
+    starter_assignment is not None,
+    "starterText must be a valid single-line JavaScript string with escaped newlines",
+)
+
+require('id="aboutBtn"' in html, "About button is missing")
+require("aboutBtn.addEventListener" in html, "About button handler is missing")
+require('type="file"' in html and "fileInput" in html, "file input support is missing")
+
 manifest = (ANDROID / "app/src/main/AndroidManifest.xml").read_text(encoding="utf-8")
 activity = (
     ANDROID
