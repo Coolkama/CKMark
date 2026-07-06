@@ -1,4 +1,4 @@
-name: Extract New Document debug
+name: Apply New Document reset fix
 
 on:
   workflow_dispatch:
@@ -10,60 +10,37 @@ permissions:
   contents: write
 
 jobs:
-  extract:
+  apply:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Extract relevant HTML sections
+      - name: Apply New Document repair
+        run: python3 tools/fix_new_document_reset.py
+
+      - name: Run ScienceMD smoke checks
+        run: python3 tools/smoke_test.py
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Lint and build Android debug APK
+        working-directory: android
         run: |
-          python3 - <<'PY'
-          from pathlib import Path
+          chmod +x gradlew
+          ./gradlew --no-daemon :app:lintDebug :app:assembleDebug
 
-          path = Path('index.html')
-          lines = path.read_text(encoding='utf-8').splitlines()
-          terms = [
-              'starterText',
-              'new document',
-              'New Document',
-              'confirm(',
-              'newBtn',
-              'newFile',
-              'createNew',
-              'resetDocument',
-              'clearDraft',
-              'clearBtn',
-              'setEditorMarkdown',
-              'forceWysiwygFromMarkdown',
-              'hideTableTools',
-              "addEventListener('click', clearDraft",
-              'documentLoadInProgress',
-              'id="clear',
-              "type='submit'",
-              'type="submit"',
-          ]
-
-          hits = set()
-          for i, line in enumerate(lines):
-              if any(term in line for term in terms):
-                  for j in range(max(0, i - 30), min(len(lines), i + 55)):
-                      hits.add(j)
-
-          out = []
-          last = None
-          for i in sorted(hits):
-              if last is not None and i > last + 1:
-                  out.append('\n---\n')
-              out.append(f'{i+1:05d}: {lines[i]}')
-              last = i
-
-          Path('tools/new-document-debug.txt').write_text('\n'.join(out), encoding='utf-8')
-          PY
-
-      - name: Commit debug extract
+      - name: Commit repaired New Document behaviour
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add tools/new-document-debug.txt
-          git commit -m "Include New button binding in debug extract"
+          git add index.html tools/smoke_test.py
+          git commit -m "Fix New Document reset race"
           git push
