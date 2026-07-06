@@ -25,14 +25,22 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 public final class MainActivity extends Activity {
     private static final int FILE_CHOOSER_REQUEST_CODE = 1001;
+    private static final int SAVE_DOCUMENT_REQUEST_CODE = 1002;
 
     private WebView webView;
     private ValueCallback<Uri[]> pendingFileSelection;
     private Uri pendingIncomingDocument;
     private boolean pageReady;
+
+    private ByteArrayOutputStream incomingSaveBuffer;
+    private String incomingSaveName;
+    private String incomingSaveMimeType;
+    private byte[] pendingSaveBytes;
+    private String pendingSaveName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +85,7 @@ public final class MainActivity extends Activity {
                     "window.print = function () { AndroidBridge.printPage(); };",
                     null
                 );
+                installAndroidSaveHook();
                 openPendingIncomingDocument();
             }
         });
@@ -111,6 +120,50 @@ public final class MainActivity extends Activity {
         } else {
             webView.restoreState(savedInstanceState);
         }
+    }
+
+    private void installAndroidSaveHook() {
+        String script =
+            "(function(){" +
+            "if(window.__scienceMdAndroidSaveHook){return;}" +
+            "window.__scienceMdAndroidSaveHook=true;" +
+            "var pendingUrls=new Set();" +
+            "var originalRevoke=URL.revokeObjectURL.bind(URL);" +
+            "URL.revokeObjectURL=function(url){" +
+            "if(pendingUrls.has(url)){return;}" +
+            "originalRevoke(url);" +
+            "};" +
+            "var originalClick=HTMLAnchorElement.prototype.click;" +
+            "HTMLAnchorElement.prototype.click=function(){" +
+            "var href=this.href||'';" +
+            "var isDownload=this.hasAttribute('download');" +
+            "if(isDownload&&(href.indexOf('blob:')===0||href.indexOf('data:')===0)){" +
+            "var fileName=this.getAttribute('download')||'ScienceMD.md';" +
+            "pendingUrls.add(href);" +
+            "fetch(href).then(function(response){return response.blob();}).then(function(blob){" +
+            "return blob.arrayBuffer().then(function(buffer){return {blob:blob,buffer:buffer};});" +
+            "}).then(function(result){" +
+            "AndroidBridge.beginFileSave(fileName,result.blob.type||'application/octet-stream');" +
+            "var bytes=new Uint8Array(result.buffer);" +
+            "var chunkSize=24576;" +
+            "for(var offset=0;offset<bytes.length;offset+=chunkSize){" +
+            "var slice=bytes.subarray(offset,Math.min(offset+chunkSize,bytes.length));" +
+            "var binary='';" +
+            "for(var i=0;i<slice.length;i++){binary+=String.fromCharCode(slice[i]);}" +
+            "AndroidBridge.appendFileSaveChunk(btoa(binary));" +
+            "}" +
+            "AndroidBridge.completeFileSave();" +
+            "}).catch(function(error){AndroidBridge.fileSaveFailed(String(error));}).finally(function(){" +
+            "pendingUrls.delete(href);" +
+            "originalRevoke(href);" +
+            "});" +
+            "return;" +
+            "}" +
+            "return originalClick.apply(this,arguments);" +
+            "};" +
+            "})();";
+
+        webView.evaluateJavascript(script, null);
     }
 
     @Override
@@ -291,9 +344,81 @@ public final class MainActivity extends Activity {
         return false;
     }
 
+    private void requestSaveDocument(byte[] bytes, String fileName, String mimeType) {
+        pendingSaveBytes = bytes;
+        pendingSaveName = sanitiseFileName(fileName);
+
+        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType(
+            mimeType == null || mimeType.trim().isEmpty()
+                ? "application/octet-stream"
+                : mimeType
+        );
+        intent.putExtra(Intent.EXTRA_TITLE, pendingSaveName);
+
+        try {
+            startActivityForResult(intent, SAVE_DOCUMENT_REQUEST_CODE);
+        } catch (ActivityNotFoundException exception) {
+            pendingSaveBytes = null;
+            pendingSaveName = null;
+            Toast.makeText(this, "No save location picker is available.", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private String sanitiseFileName(String fileName) {
+        if (fileName == null || fileName.trim().isEmpty()) {
+            return "ScienceMD.md";
+        }
+
+        String cleaned = fileName.replaceAll("[\\\\/:*?\"<>|]", "_").trim();
+        return cleaned.isEmpty() ? "ScienceMD.md" : cleaned;
+    }
+
+    private void writeSavedDocument(Uri uri, byte[] bytes, String fileName) {
+        new Thread(() -> {
+            try (OutputStream output = getContentResolver().openOutputStream(uri, "wt")) {
+                if (output == null) {
+                    throw new IOException("The selected save location could not be opened.");
+                }
+                output.write(bytes);
+                output.flush();
+
+                runOnUiThread(() -> Toast.makeText(
+                    MainActivity.this,
+                    "Saved " + fileName,
+                    Toast.LENGTH_SHORT
+                ).show());
+            } catch (Exception exception) {
+                runOnUiThread(() -> Toast.makeText(
+                    MainActivity.this,
+                    "ScienceMD could not save this file.",
+                    Toast.LENGTH_LONG
+                ).show());
+            }
+        }).start();
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == SAVE_DOCUMENT_REQUEST_CODE) {
+            byte[] bytes = pendingSaveBytes;
+            String fileName = pendingSaveName;
+            pendingSaveBytes = null;
+            pendingSaveName = null;
+
+            if (
+                resultCode == RESULT_OK &&
+                data != null &&
+                data.getData() != null &&
+                bytes != null
+            ) {
+                writeSavedDocument(data.getData(), bytes, fileName == null ? "ScienceMD.md" : fileName);
+            }
+            return;
+        }
 
         if (requestCode != FILE_CHOOSER_REQUEST_CODE || pendingFileSelection == null) {
             return;
@@ -336,6 +461,57 @@ public final class MainActivity extends Activity {
         @JavascriptInterface
         public void printPage() {
             runOnUiThread(MainActivity.this::printScienceMdDocument);
+        }
+
+        @JavascriptInterface
+        public synchronized void beginFileSave(String fileName, String mimeType) {
+            incomingSaveBuffer = new ByteArrayOutputStream();
+            incomingSaveName = fileName;
+            incomingSaveMimeType = mimeType;
+        }
+
+        @JavascriptInterface
+        public synchronized void appendFileSaveChunk(String base64Chunk) {
+            if (incomingSaveBuffer == null) {
+                return;
+            }
+
+            byte[] decoded = Base64.decode(base64Chunk, Base64.DEFAULT);
+            incomingSaveBuffer.write(decoded, 0, decoded.length);
+        }
+
+        @JavascriptInterface
+        public void completeFileSave() {
+            byte[] bytes;
+            String fileName;
+            String mimeType;
+
+            synchronized (this) {
+                if (incomingSaveBuffer == null) {
+                    return;
+                }
+
+                bytes = incomingSaveBuffer.toByteArray();
+                fileName = incomingSaveName;
+                mimeType = incomingSaveMimeType;
+                incomingSaveBuffer = null;
+                incomingSaveName = null;
+                incomingSaveMimeType = null;
+            }
+
+            runOnUiThread(() -> requestSaveDocument(bytes, fileName, mimeType));
+        }
+
+        @JavascriptInterface
+        public synchronized void fileSaveFailed(String message) {
+            incomingSaveBuffer = null;
+            incomingSaveName = null;
+            incomingSaveMimeType = null;
+            runOnUiThread(() -> Toast.makeText(
+                MainActivity.this,
+                "ScienceMD could not prepare this file for saving.",
+                Toast.LENGTH_LONG
+            ).show());
         }
     }
 }
