@@ -1,3 +1,28 @@
+03724:     const caseSensitiveFind = document.getElementById('caseSensitiveFind');
+03725:     const findStatus = document.getElementById('findStatus');
+03726:     const prevMatchBtn = document.getElementById('prevMatchBtn');
+03727:     const nextMatchBtn = document.getElementById('nextMatchBtn');
+03728:     const replaceOneBtn = document.getElementById('replaceOneBtn');
+03729:     const replaceAllBtn = document.getElementById('replaceAllBtn');
+03730:     const navList = document.getElementById('navList');
+03731:     const toast = document.getElementById('toast');
+03732:     const stats = document.getElementById('stats');
+03733:     const footerStats = document.getElementById('footerStats');
+03734: 
+03735:     const editTab = document.getElementById('editTab');
+03736:     const previewTab = document.getElementById('previewTab');
+03737:     const splitTab = document.getElementById('splitTab');
+03738:     const editorPanel = document.getElementById('editorPanel');
+03739:     const previewPanel = document.getElementById('previewPanel');
+03740: 
+03741:     let currentFileName = 'science-draft.md';
+03742:     try { currentFileName = localStorage.getItem(FILENAME_KEY) || 'science-draft.md'; } catch (_error) { currentFileName = 'science-draft.md'; }
+03743:     let renderTimer = null;
+03744:     let toastTimer = null;
+03745:     let currentView = 'edit';
+03746:     let sourceMode = false;
+03747:     let wysiwygSyncLock = false;
+03748:     let documentLoadInProgress = false;
 03749:     const HISTORY_LIMIT = 50;
 03750:     let undoStack = [];
 03751:     let redoStack = [];
@@ -51,9 +76,25 @@
 03799:             return;
 03800:           }
 03801:         } else {
+03802:           if (document.exitFullscreen) {
+03803:             await document.exitFullscreen();
+03804:           } else if (document.webkitExitFullscreen) {
+03805:             document.webkitExitFullscreen();
+03806:           }
+03807:         }
+03808:       } catch (error) {
+03809:         console.error(error);
+03810:         showToast('Fullscreen was blocked or is not available here.');
+03811:       } finally {
 
 ---
 
+03841:       } catch (error) {
+03842:         console.warn('Could not read local storage:', key, error);
+03843:         return fallback;
+03844:       }
+03845:     }
+03846: 
 03847:     function safeSetStorage(key, value, quiet = false) {
 03848:       try {
 03849:         localStorage.setItem(key, value);
@@ -107,9 +148,92 @@
 03897:       let id;
 03898:       do {
 03899:         id = `image-${nextImageNumber++}`;
-
----
-
+03900:       } while (embeddedImages[id]);
+03901:       return id;
+03902:     }
+03903: 
+03904:     function formatBytes(bytes) {
+03905:       if (!Number.isFinite(bytes)) return 'unknown size';
+03906:       if (bytes < 1024) return `${bytes} B`;
+03907:       if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
+03908:       return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+03909:     }
+03910: 
+03911:     function collapseEmbeddedImages(markdown) {
+03912:       return markdown.replace(/!\[([^\]]*)\]\((data:image\/(?:png|jpeg|jpg|webp|gif);base64,[^)]+)\)/gi, (_match, alt, dataUri) => {
+03913:         const existing = Object.entries(embeddedImages).find(([, value]) => value === dataUri);
+03914:         const id = existing ? existing[0] : makeImageId();
+03915:         embeddedImages[id] = dataUri;
+03916:         return `![${alt}](wysiwygmd-embed:${id})`;
+03917:       });
+03918:     }
+03919: 
+03920:     function expandEmbeddedImages(markdown) {
+03921:       return markdown.replace(/!\[([^\]]*)\]\(wysiwygmd-embed:(image-\d+)\)/g, (match, alt, id) => {
+03922:         const dataUri = embeddedImages[id];
+03923:         return dataUri ? `![${alt}](${dataUri})` : match;
+03924:       });
+03925:     }
+03926: 
+03927:     function forceWysiwygFromMarkdown({ resetScroll = false, focusStart = false } = {}) {
+03928:       if (!wysiwygEditor) return;
+03929: 
+03930:       // Loading a new file must be a hard rebuild.  A normal sync can be
+03931:       // skipped while the visual editor has focus, which made file opening
+03932:       // look as though the old document was still loaded.
+03933:       activeMathEditInput = null;
+03934:       savedWysiwygRange = null;
+03935:       hideTableTools();
+03936: 
+03937:       try {
+03938:         wysiwygSyncLock = true;
+03939:         wysiwygEditor.innerHTML = prepareWysiwygHtmlFromMarkdown(editor.value || '');
+03940:       } catch (error) {
+03941:         console.error('Could not rebuild visual editor:', error);
+03942:         wysiwygEditor.textContent = editor.value || '';
+03943:         showToast('Visual editor could not render this file. Try MD mode.');
+03944:       } finally {
+03945:         wysiwygSyncLock = false;
+03946:       }
+03947:       typesetWysiwygMath(wysiwygEditor);
+03948: 
+03949:       if (resetScroll) {
+03950:         wysiwygEditor.scrollTop = 0;
+03951:         preview.scrollTop = 0;
+03952:       } else {
+03953:         resyncLinkedScrollAfterRender(getScrollProgress(getActiveEditorScroller()));
+03954:       }
+03955: 
+03956:       if (focusStart && !sourceMode) {
+03957:         requestAnimationFrame(() => {
+03958:           try {
+03959:             wysiwygEditor.focus({ preventScroll: true });
+03960:             const selection = window.getSelection();
+03961:             const range = document.createRange();
+03962:             range.selectNodeContents(wysiwygEditor);
+03963:             range.collapse(true);
+03964:             selection.removeAllRanges();
+03965:             selection.addRange(range);
+03966:             savedWysiwygRange = range.cloneRange();
+03967:           } catch (_error) {}
+03968:         });
+03969:       }
+03970:     }
+03971: 
+03972:     function setEditorMarkdown(markdown, { collapseImages = false, resetScroll = true } = {}) {
+03973:       loadImageMap();
+03974: 
+03975:       if (collapseImages) {
+03976:         editor.value = collapseEmbeddedImages(markdown);
+03977:         saveImageMap();
+03978:       } else {
+03979:         editor.value = markdown;
+03980:       }
+03981: 
+03982:       safeSetStorage(STORAGE_KEY, editor.value);
+03983:       updateNavigation();
+03984:       forceWysiwygFromMarkdown({ resetScroll, focusStart: false });
+03985:       scheduleRender();
 03986: 
 03987:       if (resetScroll) {
 03988:         editor.scrollTop = 0;
@@ -163,9 +287,25 @@
 04036: 
 04037:     function repairLegacyBareBracketMath(value) {
 04038:       // WysiwygMD v9 accidentally serialised visual maths as bare [ ... ] or
+04039:       // ( ... ) because JavaScript consumed the backslash in template literals.
+04040:       // Repair only standalone bracketed blocks that look like LaTeX maths.
+04041:       return String(value || '').replace(/(^|\n)\s*\[\s*([\s\S]*?)\s*\]\s*(?=\n|$)/g, (match, prefix, body) => {
+04042:         const inner = String(body || '').trim();
+04043:         const looksLikeLatex = /\\[a-zA-Z]+|[_^]\{|\\,|\{|\}|\^|_/.test(inner);
+04044:         const tooLarge = inner.length > 1200 || /\n\s*\n\s*\n/.test(inner);
+04045:         if (!inner || !looksLikeLatex || tooLarge) return match;
+04046:         return `${prefix}\\[\n${inner}\n\\]`;
+04047:       });
+04048:     }
 
 ---
 
+04367:       saveDraft();
+04368: 
+04369:       updateFindMatches(false);
+04370:       if (currentMatches.length) {
+04371:         selectCurrentMatch();
+04372:       } else {
 04373:         findStatus.textContent = 'No matches remaining';
 04374:       }
 04375:     }
@@ -219,9 +359,197 @@
 04423:     function isVisualModeActive() {
 04424:       return !sourceMode && wysiwygEditor && !wysiwygEditor.classList.contains('hidden');
 04425:     }
+04426: 
+04427:     function saveWysiwygSelection() {
+04428:       if (!wysiwygEditor) return;
+04429:       const selection = window.getSelection();
+04430:       if (!selection || selection.rangeCount === 0) return;
+04431:       const range = selection.getRangeAt(0);
+04432:       const container = range.commonAncestorContainer;
+04433:       const element = container.nodeType === Node.ELEMENT_NODE ? container : container.parentElement;
+04434:       if (element && wysiwygEditor.contains(element)) {
+04435:         savedWysiwygRange = range.cloneRange();
 
 ---
 
+05157: 
+05158:       if (nodes.length) {
+05159:         Promise.all(nodes.map(renderMathNodeDirectly)).catch(error => {
+05160:           console.error(error);
+05161:           showToast('Maths preview had a rendering issue.');
+05162:         });
+05163:         return;
+05164:       }
+05165: 
+05166:       if (!window.MathJax?.typesetPromise) return;
+05167:       try {
+05168:         MathJax.typesetClear([root]);
+05169:         MathJax.typesetPromise([root]).catch(error => {
+05170:           console.error(error);
+05171:           showToast('Maths preview had a rendering issue.');
+05172:         });
+05173:       } catch (error) {
+05174:         console.error(error);
+05175:       }
+05176:     }
+05177: 
+05178:     function syncWysiwygFromMarkdown(force = false) {
+05179:       if (!wysiwygEditor || wysiwygSyncLock) return;
+05180:       if (!force && document.activeElement === wysiwygEditor) return;
+05181:       hideTableTools();
+05182:       try {
+05183:         wysiwygSyncLock = true;
+05184:         wysiwygEditor.innerHTML = prepareWysiwygHtmlFromMarkdown(editor.value);
+05185:       } catch (error) {
+05186:         console.error('Could not sync visual editor:', error);
+05187:         wysiwygEditor.textContent = editor.value || '';
+05188:         showToast('Visual editor could not render this section. Try MD mode.');
+05189:       } finally {
+05190:         wysiwygSyncLock = false;
+05191:       }
+05192:       typesetWysiwygMath(wysiwygEditor);
+05193:     }
+05194: 
+05195:     function textOf(node) {
+05196:       return (node.textContent || '').replace(/\u00a0/g, ' ');
+05197:     }
+05198: 
+05199:     function inlineMarkdownFromNode(node) {
+05200:       if (node.nodeType === Node.TEXT_NODE) return node.nodeValue || '';
+05201:       if (node.nodeType !== Node.ELEMENT_NODE) return '';
+05202:       const mathKind = node.getAttribute('data-wysiwygmd-math');
+05203:       if (mathKind) {
+05204:         const latex = node.getAttribute('data-latex') || '';
+05205:         return mathKind === 'block' ? `\\[
+05206: ${latex}
+05207: \\]` : `\\(${latex}\\)`;
+05208:       }
+05209:       const tag = node.tagName.toLowerCase();
+05210:       if (tag === 'br') return '\n';
+05211:       if (tag === 'img') {
+05212:         const alt = node.getAttribute('alt') || '';
+05213:         const src = node.getAttribute('src') || '';
+05214:         if (!src) return '';
+05215:         if (/^data:image\//i.test(src)) {
+05216:           const collapsed = collapseEmbeddedImages(`![${alt}](${src})`);
+05217:           saveImageMap();
+05218:           return collapsed;
+05219:         }
+05220:         return `![${alt}](${src})`;
+05221:       }
+05222:       if (tag === 'a') {
+05223:         const href = node.getAttribute('href') || '';
+05224:         const label = Array.from(node.childNodes).map(inlineMarkdownFromNode).join('') || href;
+05225:         return href ? `[${label}](${href})` : label;
+
+---
+
+05266:       if (tag === 'table') {
+05267:         const cellMarkdown = cell => {
+05268:           const raw = Array.from(cell.childNodes).map(inlineMarkdownFromNode).join('');
+05269:           if (!raw.replace(/\s/g, '')) return '';
+05270:           return raw.replace(/\r?\n/g, '<br>').trim().replace(/\|/g, '\\|');
+05271:         };
+05272:         const rows = Array.from(node.rows || []).map(tr => Array.from(tr.cells || []).map(cellMarkdown));
+05273:         if (!rows.length) return '';
+05274:         const width = Math.max(...rows.map(row => row.length));
+05275:         const normalise = row => Array.from({ length: width }, (_unused, index) => row[index] || '');
+05276:         const head = normalise(rows[0]);
+05277:         const sep = head.map(() => '---');
+05278:         return [head, sep, ...rows.slice(1).map(normalise)].map(row => '| ' + row.join(' | ') + ' |').join('\n');
+05279:       }
+05280:       if (tag === 'img') return inlineMarkdownFromNode(node);
+05281:       return inline();
+05282:     }
+05283: 
+05284:     function markdownFromWysiwyg() {
+05285:       const blocks = Array.from(wysiwygEditor.childNodes).map(node => blockMarkdownFromNode(node)).filter(Boolean);
+05286:       return blocks.join('\n\n').replace(/\n{3,}/g, '\n\n').trim() + '\n';
+05287:     }
+05288: 
+05289:     function syncMarkdownFromWysiwyg() {
+05290:       if (!wysiwygEditor || wysiwygSyncLock || documentLoadInProgress) return;
+05291:       wysiwygSyncLock = true;
+05292:       editor.value = markdownFromWysiwyg();
+05293:       wysiwygSyncLock = false;
+05294:       saveDraft(false);
+05295:     }
+05296: 
+05297:     function hideTableTools() {
+05298:       if (activeTableCell) activeTableCell.classList.remove('table-cell-active');
+05299:       activeTableCell = null;
+05300:       if (tableTools) {
+05301:         tableTools.classList.remove('show');
+05302:         tableTools.setAttribute('aria-hidden', 'true');
+05303:       }
+05304:     }
+05305: 
+05306:     function tableCellFromSelection() {
+05307:       const selection = window.getSelection();
+05308:       if (!selection || selection.rangeCount === 0) return null;
+05309:       let node = selection.anchorNode;
+05310:       if (!node) return null;
+05311:       if (node.nodeType !== Node.ELEMENT_NODE) node = node.parentElement;
+05312:       const cell = node && node.closest ? node.closest('th, td') : null;
+05313:       return cell && wysiwygEditor.contains(cell) ? cell : null;
+05314:     }
+05315: 
+05316:     function setActiveTableCell(cell) {
+05317:       if (!cell || !wysiwygEditor.contains(cell)) {
+05318:         hideTableTools();
+05319:         return;
+05320:       }
+05321:       if (activeTableCell && activeTableCell !== cell) activeTableCell.classList.remove('table-cell-active');
+05322:       activeTableCell = cell;
+05323:       activeTableCell.classList.add('table-cell-active');
+05324:       tableTools.classList.add('show');
+05325:       tableTools.setAttribute('aria-hidden', 'false');
+05326: 
+05327:       const table = cell.closest('table');
+05328:       const row = cell.closest('tr');
+05329:       const deleteRowButton = tableTools.querySelector('[data-table-action="deleteRow"]');
+05330:       const deleteColumnButton = tableTools.querySelector('[data-table-action="deleteColumn"]');
+05331:       if (deleteRowButton) {
+05332:         const isHeader = !!row.closest('thead') || Array.from(row.cells).every(item => item.tagName.toLowerCase() === 'th');
+05333:         deleteRowButton.disabled = isHeader;
+05334:         deleteRowButton.title = isHeader ? 'The Markdown heading row cannot be deleted' : 'Delete this row';
+05335:       }
+05336:       if (deleteColumnButton) deleteColumnButton.disabled = !table || (table.rows[0]?.cells.length || 0) <= 1;
+05337:     }
+05338: 
+05339:     function focusTableCell(cell, selectContents = false) {
+05340:       if (!cell) return;
+05341:       wysiwygEditor.focus({ preventScroll: true });
+05342:       const selection = window.getSelection();
+05343:       const range = document.createRange();
+05344:       range.selectNodeContents(cell);
+05345:       if (!selectContents) range.collapse(true);
+05346:       selection.removeAllRanges();
+05347:       selection.addRange(range);
+05348:       savedWysiwygRange = range.cloneRange();
+05349:       setActiveTableCell(cell);
+05350:       cell.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+05351:     }
+05352: 
+05353:     function createVisualTable(dataRows, columns) {
+05354:       const table = document.createElement('table');
+05355:       const thead = document.createElement('thead');
+05356:       const headerRow = document.createElement('tr');
+05357:       for (let column = 0; column < columns; column++) {
+05358:         const th = document.createElement('th');
+05359:         th.textContent = `Heading ${column + 1}`;
+05360:         headerRow.appendChild(th);
+05361:       }
+05362:       thead.appendChild(headerRow);
+
+---
+
+05492:       });
+05493:       syncMarkdownFromWysiwyg();
+05494:       scheduleRender();
+05495:       focusTableCell(table.rows[cell.parentElement.rowIndex]?.cells[insertIndex] || table.rows[0]?.cells[insertIndex], true);
+05496:     }
+05497: 
 05498:     function deleteActiveTableColumn() {
 05499:       const cell = activeTableCell;
 05500:       const table = cell?.closest('table');
@@ -275,9 +603,73 @@
 05548:       if (index < 0) return;
 05549:       event.preventDefault();
 05550:       if (event.shiftKey) {
+05551:         if (index > 0) focusTableCell(cells[index - 1]);
+05552:         return;
+05553:       }
+05554:       if (index === cells.length - 1) {
+05555:         addTableRowBelow(cell);
+05556:         return;
+05557:       }
+05558:       focusTableCell(cells[index + 1]);
+05559:     }
+05560: 
+05561:     function setSourceMode(enabled) {
+05562:       sourceMode = !!enabled;
+05563:       if (sourceMode) {
+05564:         hideTableTools();
+05565:         syncMarkdownFromWysiwyg();
+05566:         editor.value = collapseEmbeddedImages(editor.value);
+05567:         saveImageMap();
+05568:         safeSetStorage(STORAGE_KEY, editor.value);
+05569:         wysiwygEditor.classList.add('hidden');
+05570:         editor.classList.remove('hidden');
+05571:         editModeLabel.textContent = 'Markdown source';
+05572:         editor.focus();
+05573:       } else {
+05574:         syncWysiwygFromMarkdown(true);
+05575:         editor.classList.add('hidden');
+05576:         wysiwygEditor.classList.remove('hidden');
+05577:         editModeLabel.textContent = 'Visual editor';
+05578:         wysiwygEditor.focus();
+05579:       }
+05580:       resyncLinkedScrollAfterRender(getScrollProgress(getActiveEditorScroller()));
+05581:     }
+05582: 
+05583:     function execWysiwyg(command, value = null) {
+05584:       restoreWysiwygSelection();
+05585:       document.execCommand(command, false, value);
+05586:       saveWysiwygSelection();
+05587:       syncMarkdownFromWysiwyg();
+05588:     }
+05589: 
+05590:     function insertTextInWysiwyg(text, selectStart = null, selectLength = null) {
+05591:       const range = restoreWysiwygSelection();
+05592:       if (!range) return;
+05593: 
+05594:       const textNode = document.createTextNode(text);
+05595:       range.deleteContents();
+05596:       range.insertNode(textNode);
+05597: 
+05598:       const selection = window.getSelection();
+05599:       const newRange = document.createRange();
+05600:       const hasSelection = selectStart !== null && selectLength !== null;
+05601:       const startOffset = hasSelection ? Number(selectStart) : text.length;
+05602:       const endOffset = hasSelection ? startOffset + Number(selectLength) : startOffset;
+05603: 
+05604:       newRange.setStart(textNode, Math.max(0, Math.min(startOffset, text.length)));
+05605:       newRange.setEnd(textNode, Math.max(0, Math.min(endOffset, text.length)));
+05606:       selection.removeAllRanges();
+05607:       selection.addRange(newRange);
+05608:       savedWysiwygRange = newRange.cloneRange();
 
 ---
 
+05812:       try {
+05813:         const editorRaw = editor.value || '';
+05814:         const raw = expandEmbeddedImages(editorRaw);
+05815:         updateStats(editorRaw);
+05816:         syncWysiwygFromMarkdown(false);
+05817: 
 05818:         const { protectedText, blocks, inlines } = protectMath(raw);
 05819:         preview.innerHTML = sanitiseRenderedHtml(simpleMarkdownToHtml(protectedText));
 05820: 
@@ -331,9 +723,106 @@
 05868:     function resetHistory(markdown = editor.value || '') {
 05869:       clearTimeout(historyTimer);
 05870:       historyTimer = null;
+05871:       undoStack = [];
+05872:       redoStack = [];
+05873:       historyCurrentMarkdown = markdown;
+05874:       updateHistoryButtons();
+05875:     }
+05876: 
+05877:     function flushHistoryCapture() {
+05878:       clearTimeout(historyTimer);
+05879:       historyTimer = null;
+05880:       if (historyApplying || documentLoadInProgress) return;
+05881: 
+05882:       const currentMarkdown = editor.value || '';
+05883:       if (historyCurrentMarkdown === null) {
+05884:         historyCurrentMarkdown = currentMarkdown;
+05885:         updateHistoryButtons();
+05886:         return;
+05887:       }
+05888:       if (currentMarkdown === historyCurrentMarkdown) return;
+05889: 
+05890:       undoStack.push(historyCurrentMarkdown);
+05891:       if (undoStack.length > HISTORY_LIMIT) undoStack.shift();
+05892:       historyCurrentMarkdown = currentMarkdown;
+05893:       redoStack = [];
+05894:       updateHistoryButtons();
+05895:     }
+05896: 
+05897:     function queueHistoryCapture(delay = 450) {
+05898:       if (historyApplying || documentLoadInProgress) return;
+05899:       clearTimeout(historyTimer);
+05900:       updateHistoryButtons();
+05901:       historyTimer = setTimeout(flushHistoryCapture, delay);
+05902:     }
+05903: 
+05904:     function applyHistoryMarkdown(markdown) {
+05905:       historyApplying = true;
+05906:       clearTimeout(historyTimer);
+05907:       historyTimer = null;
+05908:       activeMathEditInput = null;
+05909:       savedWysiwygRange = null;
+05910:       hideTableTools();
+05911: 
+05912:       try {
+05913:         editor.value = markdown;
+05914:         safeSetStorage(STORAGE_KEY, editor.value || '');
+05915:         saveImageMap();
+05916:         updateNavigation(false);
+05917:         forceWysiwygFromMarkdown({ resetScroll: false, focusStart: false });
+05918:         renderNow();
+05919:       } finally {
+05920:         historyApplying = false;
+05921:         updateHistoryButtons();
+05922:       }
+05923:     }
+05924: 
+05925:     function undoDocument() {
+05926:       if (isVisualModeActive()) commitActiveWysiwygMathEdit({ quiet: true });
+05927:       flushHistoryCapture();
+05928:       if (!undoStack.length) return;
+05929: 
+05930:       const currentMarkdown = editor.value || '';
+05931:       const previousMarkdown = undoStack.pop();
+05932:       redoStack.push(currentMarkdown);
+05933:       if (redoStack.length > HISTORY_LIMIT) redoStack.shift();
+05934:       historyCurrentMarkdown = previousMarkdown;
+05935:       applyHistoryMarkdown(previousMarkdown);
+05936:     }
+05937: 
+05938:     function redoDocument() {
+05939:       if (isVisualModeActive()) commitActiveWysiwygMathEdit({ quiet: true });
+05940:       flushHistoryCapture();
+05941:       if (!redoStack.length) return;
+05942: 
+05943:       const currentMarkdown = editor.value || '';
+05944:       const nextMarkdown = redoStack.pop();
+05945:       undoStack.push(currentMarkdown);
+05946:       if (undoStack.length > HISTORY_LIMIT) undoStack.shift();
+05947:       historyCurrentMarkdown = nextMarkdown;
+05948:       applyHistoryMarkdown(nextMarkdown);
+05949:     }
+05950: 
+05951:     function editorHistoryShortcutTarget(target) {
+05952:       return target === editor || target === wysiwygEditor || (wysiwygEditor && wysiwygEditor.contains(target));
+05953:     }
+05954: 
+05955:     function clamp(value, min, max) {
+05956:       return Math.min(max, Math.max(min, value));
+05957:     }
+05958: 
+05959:     function getScrollProgress(element) {
+05960:       if (!element) return 0;
+05961:       const maxScroll = Math.max(1, element.scrollHeight - element.clientHeight);
 
 ---
 
+06291:         clearPrintClasses();
+06292:         document.title = previousTitle;
+06293:         applyScrollProgress('edit', previousProgress);
+06294:       }, 450);
+06295:     }
+06296: 
 06297:     function downloadMarkdown(fileNameOverride = null) {
 06298:       if (isVisualModeActive()) {
 06299:         const committedMath = commitActiveWysiwygMathEdit({ quiet: true });
@@ -387,9 +876,26 @@
 06347:           .save-as-field, .save-as-check { display: grid; gap: 7px; font-weight: 700; }
 06348:           .save-as-field input { min-height: 44px; border-radius: 14px; border: 1px solid var(--border); background: var(--panel-2); color: var(--text); padding: 0 12px; font: inherit; }
 06349:           .save-as-check { grid-template-columns: auto 1fr; align-items: center; font-weight: 650; }
+06350:           .save-as-check input { width: 20px; height: 20px; }
+06351:           .save-as-note { margin: -4px 0 0; color: var(--muted); font-size: 0.9rem; }
+06352:           .save-as-actions { display: flex; justify-content: flex-end; gap: 10px; }
+06353:           .save-as-actions button { min-height: 42px; border-radius: 14px; border: 1px solid var(--border); background: var(--panel-2); color: var(--text); padding: 0 14px; font-weight: 800; }
+06354:           .save-as-actions .primary { background: var(--accent); color: white; border-color: var(--accent); }
+06355:         `;
+06356: 
+06357:         document.head.appendChild(style);
+06358:         document.body.appendChild(dialog);
+06359: 
 
 ---
 
+06471:       downloadTextFile(buildStaticHtmlDocument(), safeName, 'text/html;charset=utf-8');
+06472:       showToast(`Saved ${safeName}`);
+06473:     }
+06474: 
+06475:     async function saveMarkdownAs() {
+06476:       if (isVisualModeActive()) {
+06477:         const committedMath = commitActiveWysiwygMathEdit({ quiet: true });
 06478:         if (!committedMath) syncMarkdownFromWysiwyg();
 06479:       }
 06480:       const options = await getSaveAsOptions();
@@ -457,9 +963,30 @@
 06542:     }
 06543: 
 06544:     const fileOpenControl = document.querySelector('label[for="fileInput"]');
-
----
-
+06545:     if (fileOpenControl) fileOpenControl.addEventListener('pointerdown', prepareForDocumentOpen);
+06546:     fileInput.addEventListener('click', prepareForDocumentOpen);
+06547: 
+06548:     fileInput.addEventListener('change', async event => {
+06549:       const file = event.target.files?.[0];
+06550:       if (!file) return;
+06551: 
+06552:       prepareForDocumentOpen();
+06553:       const previousMarkdown = editor.value;
+06554:       const previousFileName = currentFileName;
+06555:       const previousImages = { ...embeddedImages };
+06556:       documentLoadInProgress = true;
+06557:       clearTimeout(renderTimer);
+06558: 
+06559:       try {
+06560:         const text = await file.text();
+06561:         setEditorMarkdown(text, { collapseImages: true, resetScroll: true });
+06562:         setFileName(file.name);
+06563: 
+06564:         // Do not call setSourceMode(false) here. It focuses the contenteditable
+06565:         // editor, which allows Android's old IME composition to write back over
+06566:         // the newly loaded Markdown. Switch the visible controls directly, then
+06567:         // perform a hard WYSIWYG rebuild while synchronisation is locked.
+06568:         sourceMode = false;
 06569:         editor.classList.add('hidden');
 06570:         wysiwygEditor.classList.remove('hidden');
 06571:         editModeLabel.textContent = 'Visual editor';
@@ -513,9 +1040,145 @@
 06619:         insertVisualTable(rows, columns);
 06620:       } else {
 06621:         if (savedTableSourceSelection) {
+06622:           editor.focus();
+06623:           editor.setSelectionRange(savedTableSourceSelection.start, savedTableSourceSelection.end);
+06624:         }
+06625:         replaceSelection('\n\n' + markdownTableText(rows, columns) + '\n\n', 2, 0);
+06626:         savedTableSourceSelection = null;
+06627:       }
+06628:     });
+06629:     tableDialogClose.addEventListener('click', () => {
+06630:       savedTableSourceSelection = null;
+06631:       tableDialog.close();
+06632:     });
+06633:     tableDialogCancel.addEventListener('click', () => {
+06634:       savedTableSourceSelection = null;
+06635:       tableDialog.close();
+06636:     });
+06637: 
+06638:     tableTools.addEventListener('pointerdown', event => {
+06639:       const button = event.target.closest('button[data-table-action]');
 
 ---
 
+06652:       imageInput.value = '';
+06653:     });
+06654: 
+06655:     editor.addEventListener('input', () => saveDraft(true));
+06656:     wysiwygEditor.addEventListener('input', () => {
+06657:       saveWysiwygSelection();
+06658:       syncMarkdownFromWysiwyg();
+06659:     });
+06660:     wysiwygEditor.addEventListener('keyup', () => {
+06661:       saveWysiwygSelection();
+06662:       const cell = tableCellFromSelection();
+06663:       if (cell) setActiveTableCell(cell);
+06664:     });
+06665:     wysiwygEditor.addEventListener('mouseup', () => {
+06666:       saveWysiwygSelection();
+06667:       const cell = tableCellFromSelection();
+06668:       if (cell) setActiveTableCell(cell);
+06669:     });
+06670:     wysiwygEditor.addEventListener('touchend', () => setTimeout(saveWysiwygSelection, 0));
+06671:     wysiwygEditor.addEventListener('focus', saveWysiwygSelection);
+06672:     wysiwygEditor.addEventListener('click', event => {
+06673:       if (event.target.closest && event.target.closest('.math-edit-input, .math-edit-controls')) return;
+06674:       const cell = event.target.closest && event.target.closest('th, td');
+06675:       if (cell && wysiwygEditor.contains(cell)) setActiveTableCell(cell);
+06676:       else hideTableTools();
+06677:       const mathNode = event.target.closest && event.target.closest('.wysiwyg-math[data-wysiwygmd-math]');
+06678:       if (!mathNode || !wysiwygEditor.contains(mathNode)) return;
+06679:       event.preventDefault();
+06680:       editWysiwygMathNode(mathNode);
+06681:     });
+06682:     wysiwygEditor.addEventListener('keydown', event => {
+06683:       if (event.target.closest && event.target.closest('.math-edit-input')) return;
+06684:       const cell = tableCellFromSelection() || (event.target.closest && event.target.closest('th, td'));
+06685:       if (event.key === 'Tab' && cell && wysiwygEditor.contains(cell)) {
+06686:         moveThroughTable(event, cell);
+06687:         return;
+06688:       }
+06689:       if (event.key !== 'Enter' && event.key !== ' ') return;
+06690:       const mathNode = event.target.closest && event.target.closest('.wysiwyg-math[data-wysiwygmd-math]');
+06691:       if (!mathNode || !wysiwygEditor.contains(mathNode)) return;
+06692:       event.preventDefault();
+06693:       editWysiwygMathNode(mathNode);
+06694:     });
+06695:     wysiwygEditor.addEventListener('paste', event => {
+06696:       event.preventDefault();
+06697:       const text = (event.clipboardData || window.clipboardData).getData('text/plain');
+06698:       document.execCommand('insertText', false, text);
+06699:       syncMarkdownFromWysiwyg();
+06700:     });
+06701:     editor.addEventListener('scroll', () => {
+06702:       if (currentView !== 'preview') lastScrollProgress = getScrollProgress(editor);
+06703:       if (sourceMode) syncPreviewScrollToEditor();
+06704:     });
+06705:     wysiwygEditor.addEventListener('scroll', () => {
+06706:       if (currentView !== 'preview') lastScrollProgress = getScrollProgress(wysiwygEditor);
+06707:       if (!sourceMode) syncPreviewScrollToEditor();
+06708:     });
+06709:     preview.addEventListener('scroll', () => {
+06710:       if (currentView !== 'edit') lastScrollProgress = getScrollProgress(preview);
+06711:       syncEditorScrollToPreview();
+06712:     });
+06713:     downloadBtn.addEventListener('click', () => downloadMarkdown());
+06714:     saveAsBtn.addEventListener('click', saveMarkdownAs);
+06715:     printBtn.addEventListener('click', printPreview);
+06716:     clearBtn.addEventListener('click', clearDraft);
+06717:     undoBtn.addEventListener('pointerdown', event => event.preventDefault());
+06718:     redoBtn.addEventListener('pointerdown', event => event.preventDefault());
+06719:     undoBtn.addEventListener('click', undoDocument);
+06720:     redoBtn.addEventListener('click', redoDocument);
+06721:     darkBtn.addEventListener('click', () => {
+06722:       setTheme(document.body.classList.contains('dark') ? 'light' : 'dark');
+06723:     });
+06724: 
+06725:     fullscreenBtn.addEventListener('click', toggleFullscreen);
+06726:     helpBtn.addEventListener('click', openHelpPanel);
+06727:     closeHelpBtn.addEventListener('click', closeHelpPanel);
+06728: 
+06729:     document.addEventListener('fullscreenchange', updateFullscreenButton);
+06730:     document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
+06731: 
+06732:     previewStyle.addEventListener('change', () => {
+06733:       setPreviewStyle(previewStyle.value);
+06734:       renderNow();
+06735:     });
+06736: 
+06737:     navBtn.addEventListener('click', openNavigation);
+06738:     findBtn.addEventListener('click', openFindPanel);
+06739:     closeFindBtn.addEventListener('click', closeFindPanel);
+06740: 
+06741:     findInput.addEventListener('input', () => updateFindMatches(false));
+06742:     caseSensitiveFind.addEventListener('change', () => updateFindMatches(false));
+06743:     nextMatchBtn.addEventListener('click', () => goToMatch(1));
+06744:     prevMatchBtn.addEventListener('click', () => goToMatch(-1));
+06745:     replaceOneBtn.addEventListener('click', replaceCurrentMatch);
+06746:     replaceAllBtn.addEventListener('click', replaceAllMatches);
+06747: 
+06748:     findInput.addEventListener('keydown', event => {
+06749:       if (event.key === 'Enter') {
+06750:         event.preventDefault();
+06751:         goToMatch(event.shiftKey ? -1 : 1);
+06752:       }
+06753:     });
+06754:     mathBtn.addEventListener('pointerdown', () => {
+06755:       if (isVisualModeActive()) saveWysiwygSelection();
+06756:     });
+06757:     mathBtn.addEventListener('click', openMathPalette);
+06758:     closeNavBtn.addEventListener('click', closeNavigation);
+06759:     closeMathBtn.addEventListener('click', closeMathPalette);
+06760: 
+
+---
+
+06806:       } else if (key === 'y') {
+06807:         event.preventDefault();
+06808:         redoDocument();
+06809:       }
+06810:     });
+06811: 
 06812:     editor.addEventListener('keydown', event => {
 06813:       if (event.key === 'Tab') {
 06814:         event.preventDefault();
@@ -569,3 +1232,13 @@
 06862: <script>
 06863:   // Preserve explicit ribbon labels in older saved copies of the interface.
 06864:   (function () {
+06865:     function ready(fn) {
+06866:       if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn, { once: true });
+06867:       else fn();
+06868:     }
+06869: 
+06870:     ready(function () {
+06871:       var labels = ['File', 'Document', 'Output', 'View'];
+06872:       Array.from(document.querySelectorAll('.top-toolbar .tool-group')).forEach(function (group, index) {
+06873:         if (!group.getAttribute('data-ribbon-label')) {
+06874:           group.setAttribute('data-ribbon-label', labels[index] || 'Tools');
