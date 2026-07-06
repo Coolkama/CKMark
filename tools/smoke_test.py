@@ -58,9 +58,12 @@ require(
     "starterText must be a valid single-line JavaScript string with escaped newlines",
 )
 
-require('id="aboutBtn"' in html, "About button is missing")
-require("aboutBtn.addEventListener" in html, "About button handler is missing")
-require('type="file"' in html and "fileInput" in html, "file input support is missing")
+require('<section class="about-card">' in html, "About panel is missing")
+require("Project source and releases on GitHub" in html, "Updated About information is missing")
+require(
+    re.search(r'type\s*=\s*["\']file["\']', html, flags=re.IGNORECASE) is not None,
+    "file picker input is missing",
+)
 
 manifest = (ANDROID / "app/src/main/AndroidManifest.xml").read_text(encoding="utf-8")
 activity = (
