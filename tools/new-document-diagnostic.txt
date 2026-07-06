@@ -1,0 +1,688 @@
+--- lines 3309-3364 ---
+3309:         font-size: 0.75rem;
+3310:       }
+3311: 
+3312:       .output-group #printBtn {
+3313:         width: 30px !important;
+3314:         min-width: 30px !important;
+3315:         height: 29px !important;
+3316:       }
+3317: 
+3318:       .style-select-wrap {
+3319:         height: 29px;
+3320:       }
+3321:     }
+3322: 
+3323:   </style>
+3324: </head>
+3325: <body>
+3326:   <header>
+3327:     <div class="top-line">
+3328:       <div>
+3329:         <h1>ScienceMD</h1>
+3330:         <div id="fileName" class="subtitle">No file loaded — using local draft</div>
+3331:       </div>
+3332:       <div class="buttons top-toolbar" aria-label="Main actions">
+3333:         <div class="tool-group" data-ribbon-label="File" aria-label="File actions">
+3334:           <button id="clearBtn" type="button" title="New document" aria-label="New document"><svg class="bi bi-file-earmark-plus" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path d="M8 6.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V11a.5.5 0 0 1-1 0V9.5H6a.5.5 0 0 1 0-1h1.5V7a.5.5 0 0 1 .5-.5"/><path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5z"/></svg></button>
+3335:           <label class="file-button" for="fileInput" title="Open Markdown file" aria-label="Open Markdown file"><svg class="bi bi-folder2-open" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h2.764a1.5 1.5 0 0 1 1.06.44l.768.768A1.5 1.5 0 0 0 8.152 3.5H13.5A1.5 1.5 0 0 1 15 5v1H1z"/><path d="M.5 6.5a1 1 0 0 1 1-1h13a1 1 0 0 1 .976 1.217l-1.5 6.75A2 2 0 0 1 12.024 15H3.976a2 2 0 0 1-1.952-1.533L.524 6.717A1 1 0 0 1 .5 6.5M2.024 6.5l1.5 6.75a1 1 0 0 0 .976.75h8.048a1 1 0 0 0 .976-.75l1.5-6.75z"/></svg></label>
+3336:           <input id="fileInput" type="file" accept=".md,.markdown,text/markdown,text/plain" />
+3337:           <button id="downloadBtn" class="primary" type="button" title="Save Markdown" aria-label="Save Markdown"><svg class="bi bi-floppy" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path d="M11 2H9v3h2z"/><path d="M1.5 0h11.586a1.5 1.5 0 0 1 1.06.44l1.414 1.414A1.5 1.5 0 0 1 16 2.914V14.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 14.5v-13A1.5 1.5 0 0 1 1.5 0M1 1.5v13a.5.5 0 0 0 .5.5H2v-4.5A1.5 1.5 0 0 1 3.5 9h9a1.5 1.5 0 0 1 1.5 1.5V15h.5a.5.5 0 0 0 .5-.5V2.914a.5.5 0 0 0-.146-.353l-1.415-1.415A.5.5 0 0 0 13.086 1H13v4.5A1.5 1.5 0 0 1 11.5 7h-7A1.5 1.5 0 0 1 3 5.5V1H1.5a.5.5 0 0 0-.5.5m3 4a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5V1H4zM3 15h10v-4.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5z"/></svg></button>
+3338:           <button id="saveAsBtn" type="button" title="Save As" aria-label="Save As"><svg class="bi bi-file-earmark-arrow-down" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path d="M8.5 6.5a.5.5 0 0 0-1 0v3.793L6.354 9.146a.5.5 0 1 0-.708.708l2 2 .007.007a.498.498 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L8.5 10.293z"/><path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5z"/></svg></button>
+3339:         </div>
+3340: 
+3341:         <div class="tool-group" data-ribbon-label="Document" aria-label="Document tools">
+3342:           <button id="undoBtn" type="button" title="Undo (Ctrl+Z)" aria-label="Undo" disabled><svg class="bi bi-arrow-counterclockwise" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2z"/><path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466"/></svg></button>
+3343:           <button id="redoBtn" type="button" title="Redo (Ctrl+Y)" aria-label="Redo" disabled><svg class="bi bi-arrow-clockwise" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/><path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966a.25.25 0 0 1 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/></svg></button>
+3344:           <button id="navBtn" type="button" title="Section navigation" aria-label="Section navigation"><svg class="bi bi-list-nested" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.5 11.5A.5.5 0 0 1 5 11h10a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5m-2-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m-2-4A.5.5 0 0 1 1 3h10a.5.5 0 0 1 0 1H1a.5.5 0 0 1-.5-.5"/></svg></button>
+3345:           <button id="mathBtn" type="button" title="Math palette" aria-label="Math palette"><svg class="bi bi-braces" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path d="M2.114 8.063V7.9c1.005-.102 1.497-.615 1.497-1.6V4.503c0-1.094.39-1.538 1.354-1.538h.273V2h-.376C3.25 2 2.49 2.759 2.49 4.352v1.524c0 1.094-.376 1.456-1.49 1.456v1.299c1.114 0 1.49.362 1.49 1.456v1.524c0 1.593.759 2.352 2.372 2.352h.376v-.965h-.273c-.964 0-1.354-.444-1.354-1.538V9.663c0-.984-.492-1.497-1.497-1.6M13.886 7.9v.163c-1.005.103-1.497.616-1.497 1.6v1.797c0 1.094-.39 1.538-1.354 1.538h-.273v.965h.376c1.613 0 2.372-.759 2.372-2.352v-1.524c0-1.094.376-1.456 1.49-1.456V7.332c-1.114 0-1.49-.362-1.49-1.456V4.352C13.51 2.759 12.75 2 11.138 2h-.376v.965h.273c.964 0 1.354.444 1.354 1.538V6.3c0 .984.492 1.497 1.497 1.6"/></svg></button>
+3346:           <button id="findBtn" type="button" title="Find and replace" aria-label="Find and replace"><svg class="bi bi-search" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/></svg></button>
+3347:         </div>
+3348: 
+3349:         <div class="tool-group output-group" data-ribbon-label="Output" aria-label="Document output">
+3350:           <div class="style-select-wrap" title="Document style">
+3351:             <label class="style-select-label" for="previewStyle">Style</label>
+3352:             <select id="previewStyle" aria-label="Document style">
+3353:               <option value="default">Default</option>
+3354:               <option value="physics">Science Paper</option>
+3355:               <option value="times">Times</option>
+3356:               <option value="draft">Clean Draft</option>
+3357:             </select>
+3358:           </div>
+3359:           <button id="printBtn" type="button" title="Print / Save as PDF" aria-label="Print or save as PDF"><svg class="bi bi-printer" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1"/><path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4zM3 12v-2h10v2a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1m11-6a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1V9H3v2H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1z"/></svg></button>
+3360:         </div>
+3361: 
+3362:         <div class="tool-group" data-ribbon-label="View" aria-label="View actions">
+3363:           <button id="fullscreenBtn" type="button" title="Fullscreen" aria-label="Fullscreen"><svg class="bi bi-fullscreen" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path d="M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5M.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5m15 0a.5.5 0 0 1 .5.5v4a1.5 1.5 0 0 1-1.5 1.5h-4a.5.5 0 0 1 0-1h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 1 .5-.5"/></svg></button>
+3364:           <button id="darkBtn" type="button" title="Dark or light mode" aria-label="Dark or light mode"><svg class="bi bi-circle-half" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 0 8 1zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16"/></svg></button>
+
+--- lines 3742-3797 ---
+3742:     try { currentFileName = localStorage.getItem(FILENAME_KEY) || 'science-draft.md'; } catch (_error) { currentFileName = 'science-draft.md'; }
+3743:     let renderTimer = null;
+3744:     let toastTimer = null;
+3745:     let currentView = 'edit';
+3746:     let sourceMode = false;
+3747:     let wysiwygSyncLock = false;
+3748:     let documentLoadInProgress = false;
+3749:     const HISTORY_LIMIT = 50;
+3750:     let undoStack = [];
+3751:     let redoStack = [];
+3752:     let historyCurrentMarkdown = null;
+3753:     let historyTimer = null;
+3754:     let historyApplying = false;
+3755:     let lastScrollProgress = 0;
+3756:     let linkedScrollLock = false;
+3757:     let linkedScrollTimer = null;
+3758:     let currentMatchIndex = -1;
+3759:     let currentMatches = [];
+3760:     let embeddedImages = {};
+3761:     let nextImageNumber = 1;
+3762:     let savedWysiwygRange = null;
+3763:     let activeMathEditInput = null;
+3764:     let activeTableCell = null;
+3765:     let savedTableSourceSelection = null;
+3766: 
+3767:     const starterText = "# Welcome to ScienceMD\n\n**ScienceMD** is an offline-first Markdown and LaTeX editor for scientific notes, technical documents, revision material, and print-ready papers.\n\nUse **Write** for visual editing or **MD** when you want direct control of the Markdown source. Your document remains a normal `.md` file.\n\n> Delete this starter guide when you are ready and begin writing.\n\n---\n\n## Quick start\n\n- **New** creates a fresh starter document.\n- **Open** loads an existing Markdown file.\n- **Save** downloads the current `.md` file.\n- **Save As** saves under a new name or exports rendered HTML.\n- **Undo** and **Redo** reverse or restore editing changes.\n- **Print** prints the selected document style or saves it as PDF.\n\nAutosave is a safety net stored on this device. Use **Save** regularly to create a real file.\n\n---\n\n## Headings and formatting\n\nUse headings to organise longer documents:\n\n```markdown\n# Document title\n## Main section\n### Subsection\n```\n\nThe edit toolbar also provides bold, italic, quotations, lists, horizontal rules, images, tables, inline maths, and block maths.\n\n---\n\n## Maths\n\nInline maths uses `\\( ... \\)`:\n\n\\(E = mc^2\\)\n\nDisplay maths uses `\\[ ... \\]`:\n\n\\[\nF = G\\frac{m_1m_2}{r^2}\n\\]\n\nIn **Write** mode, select a rendered formula to edit its LaTeX source, then choose **Done** to render it again.\n\n---\n\n## Tables\n\nUse the **Table** button to insert and edit a Markdown table visually.\n\n| Quantity | Meaning | Relationship |\n|---|---|---|\n| \\(v\\) | wave speed | \\(v = f\\lambda\\) |\n| \\(f\\) | frequency | measured in hertz |\n| \\(\\lambda\\) | wavelength | measured in metres |\n\n---\n\n## Code\n\nTriple backticks create a code block:\n\n```csharp\npublic static double KineticEnergy(double mass, double velocity)\n{\n    return 0.5 * mass * velocity * velocity;\n}\n```\n\n---\n\n## Output styles\n\nChoose a style from the **Output** group to change the visual document and its printed or PDF appearance. The selected style does not change the Markdown source.\n\nScienceMD works as a standalone HTML file, through GitHub Pages, and as an Android app.\n";
+3768: 
+3769:     function showToast(message) {
+3770:       clearTimeout(toastTimer);
+3771:       toast.textContent = message;
+3772:       toast.classList.add('show');
+3773:       toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+3774:     }
+3775: 
+3776: 
+3777:     function isFullscreenActive() {
+3778:       return !!(document.fullscreenElement || document.webkitFullscreenElement);
+3779:     }
+3780: 
+3781:     function updateFullscreenButton() {
+3782:       if (!fullscreenBtn) return;
+3783:       fullscreenBtn.textContent = isFullscreenActive() ? '×' : '⛶';
+3784:       fullscreenBtn.setAttribute('aria-label', isFullscreenActive() ? 'Exit fullscreen' : 'Enter fullscreen');
+3785:       fullscreenBtn.setAttribute('title', isFullscreenActive() ? 'Exit fullscreen' : 'Enter fullscreen');
+3786:     }
+3787: 
+3788:     async function toggleFullscreen() {
+3789:       const target = document.documentElement;
+3790: 
+3791:       try {
+3792:         if (!isFullscreenActive()) {
+3793:           if (target.requestFullscreen) {
+3794:             await target.requestFullscreen();
+3795:           } else if (target.webkitRequestFullscreen) {
+3796:             target.webkitRequestFullscreen();
+3797:           } else {
+
+--- lines 3840-3895 ---
+3840:         return value === null ? fallback : value;
+3841:       } catch (error) {
+3842:         console.warn('Could not read local storage:', key, error);
+3843:         return fallback;
+3844:       }
+3845:     }
+3846: 
+3847:     function safeSetStorage(key, value, quiet = false) {
+3848:       try {
+3849:         localStorage.setItem(key, value);
+3850:         return true;
+3851:       } catch (error) {
+3852:         console.warn('Could not write local storage:', key, error);
+3853:         if (!quiet) showToast('Autosave storage is full or unavailable. Save the file manually.');
+3854:         return false;
+3855:       }
+3856:     }
+3857: 
+3858:     function safeRemoveStorage(key) {
+3859:       try { localStorage.removeItem(key); } catch (_error) {}
+3860:     }
+3861: 
+3862:     function resetBrokenAutosave() {
+3863:       safeRemoveStorage(STORAGE_KEY);
+3864:       safeRemoveStorage(IMAGE_MAP_KEY);
+3865:       editor.value = starterText;
+3866:       embeddedImages = {};
+3867:       nextImageNumber = 1;
+3868:       safeSetStorage(STORAGE_KEY, editor.value, true);
+3869:       setFileName('science-draft.md');
+3870:       showToast('Recovered by clearing the broken autosave draft.');
+3871:     }
+3872: 
+3873: 
+3874:     function loadImageMap() {
+3875:       try {
+3876:         const rawImageMap = safeGetStorage(IMAGE_MAP_KEY, '{}') || '{}';
+3877:         if (rawImageMap.length > 2500000) throw new Error('Stored image map is too large to restore safely.');
+3878:         embeddedImages = JSON.parse(rawImageMap) || {};
+3879:       } catch (_error) {
+3880:         embeddedImages = {};
+3881:       }
+3882: 
+3883:       nextImageNumber = 1;
+3884:       Object.keys(embeddedImages).forEach(key => {
+3885:         const match = /^image-(\d+)$/.exec(key);
+3886:         if (match) {
+3887:           nextImageNumber = Math.max(nextImageNumber, Number(match[1]) + 1);
+3888:         }
+3889:       });
+3890:     }
+3891: 
+3892:     function saveImageMap() {
+3893:       safeSetStorage(IMAGE_MAP_KEY, JSON.stringify(embeddedImages));
+3894:     }
+3895: 
+
+--- lines 3979-4034 ---
+3979:         editor.value = markdown;
+3980:       }
+3981: 
+3982:       safeSetStorage(STORAGE_KEY, editor.value);
+3983:       updateNavigation();
+3984:       forceWysiwygFromMarkdown({ resetScroll, focusStart: false });
+3985:       scheduleRender();
+3986: 
+3987:       if (resetScroll) {
+3988:         editor.scrollTop = 0;
+3989:         try { editor.setSelectionRange(0, 0); } catch (_error) {}
+3990:       }
+3991:     }
+3992: 
+3993: 
+3994:     function insertEmbeddedImageFromFile(file) {
+3995:       if (!file) return;
+3996:       loadImageMap();
+3997: 
+3998:       if (!/^image\/(png|jpeg|jpg|webp|gif)$/i.test(file.type)) {
+3999:         showToast('Choose a PNG, JPEG, WebP, or GIF image.');
+4000:         return;
+4001:       }
+4002: 
+4003:       if (file.size > 3 * 1024 * 1024) {
+4004:         const ok = confirm(`This image is ${formatBytes(file.size)}. Embedding it will make the Markdown file large. Continue?`);
+4005:         if (!ok) return;
+4006:       }
+4007: 
+4008:       const reader = new FileReader();
+4009:       reader.onload = event => {
+4010:         const dataUri = String(event.target.result || '');
+4011:         if (!dataUri.startsWith('data:image/')) {
+4012:           showToast('Could not read image data.');
+4013:           return;
+4014:         }
+4015: 
+4016:         const defaultAlt = (file.name || 'embedded image').replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' ');
+4017:         const alt = prompt('Image alt text:', defaultAlt) ?? defaultAlt;
+4018: 
+4019:         if (isVisualModeActive()) {
+4020:           const inserted = insertImageInWysiwyg(dataUri, alt || 'Image');
+4021:           if (inserted) {
+4022:             showToast(`Embedded ${file.name || 'image'}`);
+4023:             return;
+4024:           }
+4025:         }
+4026: 
+4027:         const markdownImage = collapseEmbeddedImages(`![${alt || 'Image'}](${dataUri})`);
+4028:         saveImageMap();
+4029:         replaceSelection(markdownImage, markdownImage.length, 0);
+4030:         showToast(`Embedded ${file.name || 'image'}`);
+4031:       };
+4032: 
+4033:       reader.onerror = () => showToast('Could not read image file.');
+4034:       reader.readAsDataURL(file);
+
+--- lines 4366-4421 ---
+4366:       editor.setSelectionRange(match.start, match.start + replacement.length);
+4367:       saveDraft();
+4368: 
+4369:       updateFindMatches(false);
+4370:       if (currentMatches.length) {
+4371:         selectCurrentMatch();
+4372:       } else {
+4373:         findStatus.textContent = 'No matches remaining';
+4374:       }
+4375:     }
+4376: 
+4377:     function replaceAllMatches() {
+4378:       const regex = buildFindRegex();
+4379:       if (!regex) {
+4380:         findStatus.textContent = 'Enter text to search';
+4381:         return;
+4382:       }
+4383: 
+4384:       updateFindMatches(false);
+4385:       const count = currentMatches.length;
+4386:       if (!count) {
+4387:         findStatus.textContent = 'No matches';
+4388:         return;
+4389:       }
+4390: 
+4391:       const confirmed = confirm(`Replace all ${count} matches?`);
+4392:       if (!confirmed) return;
+4393: 
+4394:       editor.value = editor.value.replace(regex, replaceInput.value);
+4395:       editor.focus();
+4396:       saveDraft();
+4397: 
+4398:       currentMatches = [];
+4399:       currentMatchIndex = -1;
+4400:       findStatus.textContent = `Replaced ${count} matches`;
+4401:       showToast(`Replaced ${count} matches`);
+4402:     }
+4403: 
+4404: 
+4405:     function openHelpPanel() {
+4406:       drawerBackdrop.classList.add('show');
+4407:       helpDrawer.classList.add('open');
+4408:       helpDrawer.setAttribute('aria-hidden', 'false');
+4409:     }
+4410: 
+4411:     function closeHelpPanel() {
+4412:       helpDrawer.classList.remove('open');
+4413:       helpDrawer.setAttribute('aria-hidden', 'true');
+4414: 
+4415:       const mathOpen = typeof mathDrawer !== 'undefined' && mathDrawer && mathDrawer.classList.contains('open');
+4416:       const findOpen = typeof findDrawer !== 'undefined' && findDrawer && findDrawer.classList.contains('open');
+4417: 
+4418:       if (!navDrawer.classList.contains('open') && !mathOpen && !findOpen) {
+4419:         drawerBackdrop.classList.remove('show');
+4420:       }
+4421:     }
+
+--- lines 5491-5546 ---
+5491:         row.insertBefore(newCell, reference);
+5492:       });
+5493:       syncMarkdownFromWysiwyg();
+5494:       scheduleRender();
+5495:       focusTableCell(table.rows[cell.parentElement.rowIndex]?.cells[insertIndex] || table.rows[0]?.cells[insertIndex], true);
+5496:     }
+5497: 
+5498:     function deleteActiveTableColumn() {
+5499:       const cell = activeTableCell;
+5500:       const table = cell?.closest('table');
+5501:       if (!table || (table.rows[0]?.cells.length || 0) <= 1) return;
+5502:       const columnIndex = cell.cellIndex;
+5503:       const rowIndex = cell.parentElement.rowIndex;
+5504:       Array.from(table.rows).forEach(row => {
+5505:         if (row.cells[columnIndex]) row.deleteCell(columnIndex);
+5506:       });
+5507:       syncMarkdownFromWysiwyg();
+5508:       scheduleRender();
+5509:       const targetRow = table.rows[Math.min(rowIndex, table.rows.length - 1)];
+5510:       focusTableCell(targetRow?.cells[Math.min(columnIndex, targetRow.cells.length - 1)] || table.rows[0]?.cells[0]);
+5511:     }
+5512: 
+5513:     function deleteActiveTable() {
+5514:       const table = activeTableCell?.closest('table');
+5515:       if (!table) return;
+5516:       if (!confirm('Delete this table?')) return;
+5517:       const replacement = document.createElement('p');
+5518:       replacement.appendChild(document.createElement('br'));
+5519:       table.replaceWith(replacement);
+5520:       hideTableTools();
+5521:       syncMarkdownFromWysiwyg();
+5522:       scheduleRender();
+5523:       const range = document.createRange();
+5524:       range.selectNodeContents(replacement);
+5525:       range.collapse(true);
+5526:       const selection = window.getSelection();
+5527:       selection.removeAllRanges();
+5528:       selection.addRange(range);
+5529:       savedWysiwygRange = range.cloneRange();
+5530:       showToast('Table deleted');
+5531:     }
+5532: 
+5533:     function handleTableToolAction(action) {
+5534:       switch (action) {
+5535:         case 'addRow': addTableRowBelow(); break;
+5536:         case 'deleteRow': deleteActiveTableRow(); break;
+5537:         case 'addColumn': addTableColumnRight(); break;
+5538:         case 'deleteColumn': deleteActiveTableColumn(); break;
+5539:         case 'deleteTable': deleteActiveTable(); break;
+5540:       }
+5541:     }
+5542: 
+5543:     function moveThroughTable(event, cell) {
+5544:       const table = cell.closest('table');
+5545:       if (!table) return;
+5546:       const cells = Array.from(table.querySelectorAll('th, td'));
+
+--- lines 5811-5866 ---
+5811: 
+5812:       try {
+5813:         const editorRaw = editor.value || '';
+5814:         const raw = expandEmbeddedImages(editorRaw);
+5815:         updateStats(editorRaw);
+5816:         syncWysiwygFromMarkdown(false);
+5817: 
+5818:         const { protectedText, blocks, inlines } = protectMath(raw);
+5819:         preview.innerHTML = sanitiseRenderedHtml(simpleMarkdownToHtml(protectedText));
+5820: 
+5821:         restoreMath(preview, blocks, inlines);
+5822:         markSubmissionStructure(preview);
+5823:         resyncLinkedScrollAfterRender(linkedProgressBeforeRender);
+5824: 
+5825:         if (window.MathJax?.typesetPromise) {
+5826:           MathJax.typesetClear([preview]);
+5827:           MathJax.typesetPromise([preview]).then(() => {
+5828:             resyncLinkedScrollAfterRender(linkedProgressBeforeRender);
+5829:           }).catch(err => {
+5830:             console.error(err);
+5831:             showToast('Maths preview had a rendering issue. Check the equation syntax.');
+5832:           });
+5833:         }
+5834:       } catch (error) {
+5835:         console.error('Preview render failed:', error);
+5836:         preview.innerHTML = '<p><strong>The print renderer could not prepare this file.</strong></p><p>Save a Markdown copy or start a new document.</p>';
+5837:         showToast('The print renderer could not prepare this file.');
+5838:       }
+5839:     }
+5840: 
+5841: 
+5842:     function scheduleRender() {
+5843:       clearTimeout(renderTimer);
+5844:       renderTimer = setTimeout(renderNow, 220);
+5845:     }
+5846: 
+5847:     function saveDraft(updateVisual = true) {
+5848:       try {
+5849:         queueHistoryCapture();
+5850:         safeSetStorage(STORAGE_KEY, editor.value || '');
+5851:         saveImageMap();
+5852:         updateNavigation(false);
+5853:         if (updateVisual) syncWysiwygFromMarkdown(false);
+5854:         scheduleRender();
+5855:       } catch (error) {
+5856:         console.error('Autosave failed:', error);
+5857:         showToast('Autosave failed. Save the file manually.');
+5858:       }
+5859:     }
+5860: 
+5861: 
+5862:     function updateHistoryButtons() {
+5863:       const pendingChange = historyCurrentMarkdown !== null && (editor.value || '') !== historyCurrentMarkdown;
+5864:       if (undoBtn) undoBtn.disabled = undoStack.length === 0 && !pendingChange;
+5865:       if (redoBtn) redoBtn.disabled = redoStack.length === 0 || pendingChange;
+5866:     }
+
+--- lines 6290-6345 ---
+6290:       setTimeout(() => {
+6291:         clearPrintClasses();
+6292:         document.title = previousTitle;
+6293:         applyScrollProgress('edit', previousProgress);
+6294:       }, 450);
+6295:     }
+6296: 
+6297:     function downloadMarkdown(fileNameOverride = null) {
+6298:       if (isVisualModeActive()) {
+6299:         const committedMath = commitActiveWysiwygMathEdit({ quiet: true });
+6300:         if (!committedMath) syncMarkdownFromWysiwyg();
+6301:       }
+6302:       const text = expandEmbeddedImages(editor.value);
+6303:       const safeName = normaliseMarkdownFileName(fileNameOverride || currentFileName || 'science-draft.md');
+6304:       downloadTextFile(text, safeName, 'text/markdown;charset=utf-8');
+6305:       setFileName(safeName);
+6306:       showToast(`Saved ${safeName}`);
+6307:     }
+6308: 
+6309:     function getSaveAsOptions() {
+6310:       const suggestedName = normaliseMarkdownFileName(currentFileName || 'science-draft.md');
+6311: 
+6312:       if (typeof HTMLDialogElement === 'undefined') {
+6313:         const requestedName = prompt('Save as filename:', suggestedName);
+6314:         if (requestedName === null) return Promise.resolve(null);
+6315:         const asHtml = confirm('Save as rendered HTML instead of Markdown?');
+6316:         return Promise.resolve({ fileName: requestedName, asHtml });
+6317:       }
+6318: 
+6319:       return new Promise(resolve => {
+6320:         const dialog = document.createElement('dialog');
+6321:         dialog.className = 'save-as-dialog';
+6322:         dialog.innerHTML = `
+6323:           <form method="dialog" class="save-as-form">
+6324:             <h3>Save As</h3>
+6325:             <label class="save-as-field">
+6326:               <span>Filename</span>
+6327:               <input name="fileName" type="text" value="${escapeHtml(suggestedName)}" autocomplete="off">
+6328:             </label>
+6329:             <label class="save-as-check">
+6330:               <input name="asHtml" type="checkbox">
+6331:               <span>Save rendered preview as HTML</span>
+6332:             </label>
+6333:             <p class="save-as-note">Leave unticked to save the Markdown source.</p>
+6334:             <div class="save-as-actions">
+6335:               <button value="cancel" formnovalidate>Cancel</button>
+6336:               <button class="primary" value="save">Save</button>
+6337:             </div>
+6338:           </form>
+6339:         `;
+6340: 
+6341:         const style = document.createElement('style');
+6342:         style.textContent = `
+6343:           .save-as-dialog { border: 1px solid var(--border); border-radius: 22px; padding: 0; background: var(--panel); color: var(--text); box-shadow: var(--shadow); width: min(92vw, 430px); }
+6344:           .save-as-dialog::backdrop { background: rgba(15, 23, 42, 0.42); backdrop-filter: blur(3px); }
+6345:           .save-as-form { padding: 18px; display: grid; gap: 14px; }
+
+--- lines 6471-6577 ---
+6471:       downloadTextFile(buildStaticHtmlDocument(), safeName, 'text/html;charset=utf-8');
+6472:       showToast(`Saved ${safeName}`);
+6473:     }
+6474: 
+6475:     async function saveMarkdownAs() {
+6476:       if (isVisualModeActive()) {
+6477:         const committedMath = commitActiveWysiwygMathEdit({ quiet: true });
+6478:         if (!committedMath) syncMarkdownFromWysiwyg();
+6479:       }
+6480:       const options = await getSaveAsOptions();
+6481: 
+6482:       if (!options) {
+6483:         return;
+6484:       }
+6485: 
+6486:       if (options.asHtml) {
+6487:         await downloadRenderedHtml(options.fileName);
+6488:         return;
+6489:       }
+6490: 
+6491:       downloadMarkdown(options.fileName);
+6492:     }
+6493: 
+6494: 
+6495:     function clearDraft() {
+6496:       const confirmed = confirm('Start a new document from the built-in ScienceMD starter? This will replace the current editor text, but it will not delete any files from your device.');
+6497:       if (!confirmed) return;
+6498: 
+6499:       // Treat New exactly like loading another file. On mobile browsers and
+6500:       // Android WebView, a delayed contenteditable/keyboard event can otherwise
+6501:       // write the previous visual document back over the starter text.
+6502:       documentLoadInProgress = true;
+6503:       clearTimeout(renderTimer);
+6504:       clearTimeout(historyTimer);
+6505: 
+6506:       try {
+6507:         try { wysiwygEditor.blur(); } catch (_error) {}
+6508:         try { editor.blur(); } catch (_error) {}
+6509: 
+6510:         embeddedImages = {};
+6511:         nextImageNumber = 1;
+6512:         saveImageMap();
+6513: 
+6514:         activeMathEditInput = null;
+6515:         savedWysiwygRange = null;
+6516:         hideTableTools();
+6517:         setEditorMarkdown(starterText, { collapseImages: false, resetScroll: true });
+6518:         setFileName('science-draft.md');
+6519: 
+6520:         sourceMode = false;
+6521:         editor.classList.add('hidden');
+6522:         wysiwygEditor.classList.remove('hidden');
+6523:         editModeLabel.textContent = 'Visual editor';
+6524:         switchView('edit');
+6525: 
+6526:         forceWysiwygFromMarkdown({ resetScroll: true, focusStart: false });
+6527:         renderNow();
+6528:         saveDraft(false);
+6529:         resetHistory(editor.value || '');
+6530: 
+6531:         // Keep the document-load lock through two animation frames so any late
+6532:         // IME or contenteditable input event is ignored before focus is restored.
+6533:         requestAnimationFrame(() => requestAnimationFrame(() => {
+6534:           forceWysiwygFromMarkdown({ resetScroll: true, focusStart: true });
+6535:           renderNow();
+6536:           documentLoadInProgress = false;
+6537:         }));
+6538: 
+6539:         showToast('New document created');
+6540:       } catch (error) {
+6541:         documentLoadInProgress = false;
+6542:         console.error('Could not create a new document:', error);
+6543:         editor.value = starterText;
+6544:         safeSetStorage(STORAGE_KEY, starterText, true);
+6545:         forceWysiwygFromMarkdown({ resetScroll: true, focusStart: true });
+6546:         renderNow();
+6547:         showToast('New document created with a visual-editor warning.');
+6548:       }
+6549:     }
+6550: 
+6551:     function prepareForDocumentOpen() {
+6552:       // Android WebView can leave an active composition attached to the
+6553:       // contenteditable editor while its file picker is open. Commit the
+6554:       // current visual document, then blur it before handing control to the
+6555:       // picker so a delayed IME event cannot restore stale WYSIWYG content.
+6556:       if (isVisualModeActive()) syncMarkdownFromWysiwyg();
+6557:       activeMathEditInput = null;
+6558:       savedWysiwygRange = null;
+6559:       hideTableTools();
+6560:       try { wysiwygEditor.blur(); } catch (_error) {}
+6561:       try { editor.blur(); } catch (_error) {}
+6562:     }
+6563: 
+6564:     const fileOpenControl = document.querySelector('label[for="fileInput"]');
+6565:     if (fileOpenControl) fileOpenControl.addEventListener('pointerdown', prepareForDocumentOpen);
+6566:     fileInput.addEventListener('click', prepareForDocumentOpen);
+6567: 
+6568:     fileInput.addEventListener('change', async event => {
+6569:       const file = event.target.files?.[0];
+6570:       if (!file) return;
+6571: 
+6572:       prepareForDocumentOpen();
+6573:       const previousMarkdown = editor.value;
+6574:       const previousFileName = currentFileName;
+6575:       const previousImages = { ...embeddedImages };
+6576:       documentLoadInProgress = true;
+6577:       clearTimeout(renderTimer);
+
+--- lines 6582-6637 ---
+6582:         setFileName(file.name);
+6583: 
+6584:         // Do not call setSourceMode(false) here. It focuses the contenteditable
+6585:         // editor, which allows Android's old IME composition to write back over
+6586:         // the newly loaded Markdown. Switch the visible controls directly, then
+6587:         // perform a hard WYSIWYG rebuild while synchronisation is locked.
+6588:         sourceMode = false;
+6589:         editor.classList.add('hidden');
+6590:         wysiwygEditor.classList.remove('hidden');
+6591:         editModeLabel.textContent = 'Visual editor';
+6592:         switchView('edit');
+6593:         forceWysiwygFromMarkdown({ resetScroll: true, focusStart: false });
+6594:         saveDraft(false);
+6595:         renderNow();
+6596: 
+6597:         // Rebuild once more after the picker and virtual keyboard have fully
+6598:         // settled. This also protects devices that dispatch a late composition
+6599:         // event after the file input change event.
+6600:         await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+6601:         forceWysiwygFromMarkdown({ resetScroll: true, focusStart: false });
+6602:         renderNow();
+6603:         resetHistory(editor.value || '');
+6604:         showToast(`Opened ${file.name}`);
+6605:       } catch (error) {
+6606:         console.error(error);
+6607:         editor.value = previousMarkdown || starterText;
+6608:         embeddedImages = previousImages || {};
+6609:         setFileName(previousFileName || 'science-draft.md');
+6610:         forceWysiwygFromMarkdown({ resetScroll: false, focusStart: false });
+6611:         renderNow();
+6612:         showToast('Could not open that file. Your previous document was restored.');
+6613:       } finally {
+6614:         fileInput.value = '';
+6615:         documentLoadInProgress = false;
+6616:       }
+6617:     });
+6618: 
+6619:     formatToolbar.addEventListener('pointerdown', event => {
+6620:       const button = event.target.closest('button[data-action]');
+6621:       if (!button) return;
+6622:       if (isVisualModeActive()) saveWysiwygSelection();
+6623:       event.preventDefault();
+6624:     });
+6625: 
+6626:     formatToolbar.addEventListener('click', event => {
+6627:       const button = event.target.closest('button[data-action]');
+6628:       if (!button) return;
+6629:       event.preventDefault();
+6630:       handleFormatAction(button.getAttribute('data-action'));
+6631:     });
+6632: 
+6633:     tableForm.addEventListener('submit', event => {
+6634:       event.preventDefault();
+6635:       const columns = Math.max(1, Math.min(12, Number(tableColumns.value) || 3));
+6636:       const rows = Math.max(1, Math.min(30, Number(tableRows.value) || 2));
+6637:       tableDialog.close();
+
+--- lines 6825-6880 ---
+6825:         else undoDocument();
+6826:       } else if (key === 'y') {
+6827:         event.preventDefault();
+6828:         redoDocument();
+6829:       }
+6830:     });
+6831: 
+6832:     editor.addEventListener('keydown', event => {
+6833:       if (event.key === 'Tab') {
+6834:         event.preventDefault();
+6835:         const start = editor.selectionStart;
+6836:         const end = editor.selectionEnd;
+6837:         editor.value = editor.value.substring(0, start) + '  ' + editor.value.substring(end);
+6838:         editor.selectionStart = editor.selectionEnd = start + 2;
+6839:         saveDraft();
+6840:       }
+6841:     });
+6842: 
+6843:     loadImageMap();
+6844: 
+6845:     setTheme(safeGetStorage(THEME_KEY, 'light') || 'light');
+6846:     setPreviewStyle(safeGetStorage(PREVIEW_STYLE_KEY, 'default') || 'default');
+6847:     setFileName(currentFileName);
+6848:     updateFullscreenButton();
+6849:     try {
+6850:       const restoredDraft = safeGetStorage(STORAGE_KEY, starterText) || starterText;
+6851:       if (restoredDraft.length > 2500000) throw new Error('Autosaved draft is too large to restore safely.');
+6852:       editor.value = collapseEmbeddedImages(restoredDraft);
+6853:     } catch (error) {
+6854:       console.error('Could not restore autosaved draft:', error);
+6855:       resetBrokenAutosave();
+6856:     }
+6857:     try { saveImageMap(); } catch (error) { console.warn(error); }
+6858:     safeSetStorage(STORAGE_KEY, editor.value || '', true);
+6859:     try {
+6860:       setSourceMode(false);
+6861:       updateNavigation();
+6862:       resetHistory(editor.value || '');
+6863:     } catch (error) {
+6864:       console.error('Startup render failed:', error);
+6865:       resetBrokenAutosave();
+6866:       try { setSourceMode(false); updateNavigation(); } catch (_error) {}
+6867:     }
+6868:     window.addEventListener('resize', () => {
+6869:       clearTimeout(renderTimer);
+6870:       renderTimer = setTimeout(handleResponsiveLayout, 150);
+6871:     });
+6872: 
+6873:     window.addEventListener('load', () => {
+6874:       setTimeout(() => {
+6875:         renderNow();
+6876:         handleResponsiveLayout();
+6877:       }, 250);
+6878:     });
+6879:   
+6880:   </script>
