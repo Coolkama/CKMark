@@ -88,10 +88,16 @@ require("openInputStream" in activity, "incoming Markdown document reading is mi
 require("OpenableColumns.DISPLAY_NAME" in activity, "incoming Markdown filename handling is missing")
 require("new DataTransfer()" in activity, "incoming Markdown hand-off to the web editor is missing")
 require("createPrintDocumentAdapter" in activity, "Android printing support is missing")
+require("ACTION_CREATE_DOCUMENT" in activity, "native Android save picker is missing")
+require("beginFileSave" in activity, "native Android save bridge is missing")
+require("appendFileSaveChunk" in activity, "chunked Android save transfer is missing")
+require("completeFileSave" in activity, "Android save completion handling is missing")
+require("openOutputStream" in activity, "Android document writing is missing")
+require("HTMLAnchorElement.prototype.click" in activity, "web download interception is missing")
 
 require("SCIENCEMD_VERSION_CODE" in gradle, "release version override is missing")
 require("SCIENCEMD_KEYSTORE_PATH" in gradle, "release signing configuration is missing")
-require("?: '6'" in gradle and "?: '1.3.0'" in gradle, "Android 1.3.0 version defaults are missing")
+require("?: '7'" in gradle and "?: '1.3.1'" in gradle, "Android 1.3.1 version defaults are missing")
 require(icon_source.is_file() and icon_source.stat().st_size > 1_000, "launcher icon source is missing")
 
 print("ScienceMD smoke checks passed.")
