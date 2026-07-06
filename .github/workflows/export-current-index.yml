@@ -1,0 +1,30 @@
+name: Export current index for maintenance
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/export-current-index.yml
+
+permissions:
+  contents: write
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Export compressed index in reviewable chunks
+        run: |
+          rm -rf tools/current-index-parts
+          mkdir -p tools/current-index-parts
+          gzip -9 -c index.html | base64 -w 0 | split -b 200000 -d -a 2 - tools/current-index-parts/part-
+          sha1sum index.html > tools/current-index-parts/sha1.txt
+          wc -c index.html > tools/current-index-parts/size.txt
+      - name: Commit export
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tools/current-index-parts
+          git commit -m "Export current index for licensing maintenance" || exit 0
+          git push
