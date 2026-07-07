@@ -156,7 +156,7 @@ public final class MainActivity extends Activity {
             "var href=this.href||'';" +
             "var isDownload=this.hasAttribute('download');" +
             "if(isDownload&&(href.indexOf('blob:')===0||href.indexOf('data:')===0)){" +
-            "var fileName=this.getAttribute('download')||'ScienceMD.md';" +
+            "var fileName=this.getAttribute('download')||'CKMark.md';" +
             "var forceSaveAs=nextSaveAs;" +
             "nextSaveAs=false;" +
             "pendingUrls.add(href);" +
@@ -287,7 +287,7 @@ public final class MainActivity extends Activity {
             } catch (Exception exception) {
                 runOnUiThread(() -> Toast.makeText(
                     MainActivity.this,
-                    "ScienceMD could not open this Markdown file.",
+                    "CKMark could not open this Markdown file.",
                     Toast.LENGTH_LONG
                 ).show());
             }
@@ -369,7 +369,7 @@ public final class MainActivity extends Activity {
             if (result == null || result.contains("no-input") || result.contains("error:")) {
                 Toast.makeText(
                     MainActivity.this,
-                    "ScienceMD could not pass this file to the editor.",
+                    "CKMark could not pass this file to the editor.",
                     Toast.LENGTH_LONG
                 ).show();
                 return;
@@ -498,11 +498,11 @@ public final class MainActivity extends Activity {
 
     private String sanitiseFileName(String fileName) {
         if (fileName == null || fileName.trim().isEmpty()) {
-            return "ScienceMD.md";
+            return "CKMark.md";
         }
 
         String cleaned = fileName.replaceAll("[\\\\/:*?\"<>|]", "_").trim();
-        return cleaned.isEmpty() ? "ScienceMD.md" : cleaned;
+        return cleaned.isEmpty() ? "CKMark.md" : cleaned;
     }
 
     private void clearPendingSave() {
@@ -563,7 +563,7 @@ public final class MainActivity extends Activity {
 
                 runOnUiThread(() -> Toast.makeText(
                     MainActivity.this,
-                    "ScienceMD could not save this file.",
+                    "CKMark could not save this file.",
                     Toast.LENGTH_LONG
                 ).show());
             }
@@ -592,7 +592,7 @@ public final class MainActivity extends Activity {
                 writeSavedDocument(
                     uri,
                     bytes,
-                    fileName == null ? "ScienceMD.md" : fileName,
+                    fileName == null ? "CKMark.md" : fileName,
                     mimeType,
                     shouldBecomeCurrent,
                     false
@@ -639,9 +639,9 @@ public final class MainActivity extends Activity {
 
     private void printScienceMdDocument() {
         PrintManager printManager = (PrintManager) getSystemService(PRINT_SERVICE);
-        PrintDocumentAdapter adapter = webView.createPrintDocumentAdapter("ScienceMD document");
+        PrintDocumentAdapter adapter = webView.createPrintDocumentAdapter("CKMark document");
         printManager.print(
-            "ScienceMD document",
+            "CKMark document",
             adapter,
             new PrintAttributes.Builder().build()
         );
@@ -718,7 +718,7 @@ public final class MainActivity extends Activity {
             incomingSaveAs = false;
             runOnUiThread(() -> Toast.makeText(
                 MainActivity.this,
-                "ScienceMD could not prepare this file for saving.",
+                "CKMark could not prepare this file for saving.",
                 Toast.LENGTH_LONG
             ).show());
         }

@@ -4,7 +4,7 @@
     <application
         android:allowBackup="true"
         android:icon="@drawable/sciencemd_launcher_icon"
-        android:label="ScienceMD"
+        android:label="CKMark"
         android:roundIcon="@drawable/sciencemd_launcher_icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">

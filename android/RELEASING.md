@@ -1,6 +1,6 @@
-# Releasing the ScienceMD Android app
+# Releasing the CKMark Android app
 
-ScienceMD release APKs are built, signed and published by `.github/workflows/release-android-apk.yml`.
+CKMark release APKs are built, signed and published by `.github/workflows/release-android-apk.yml`.
 
 ## One-time signing setup
 
@@ -46,8 +46,8 @@ Never commit the `.jks` file, its Base64 form or its passwords to the repository
 
 The workflow performs the repository smoke checks, Android release lint, a signed release build, APK signature verification and SHA-256 generation. It then publishes a GitHub Release containing:
 
-- `ScienceMD-v<version>.apk`
-- `ScienceMD-v<version>.apk.sha256`
+- `CKMark-v<version>.apk`
+- `CKMark-v<version>.apk.sha256`
 
 ## Debug and release installations
 

@@ -111,7 +111,7 @@
 03326:   <header>
 03327:     <div class="top-line">
 03328:       <div>
-03329:         <h1>ScienceMD</h1>
+03329:         <h1>CKMark</h1>
 03330:         <div id="fileName" class="subtitle">No file loaded — using local draft</div>
 03331:       </div>
 03332:       <div class="buttons top-toolbar" aria-label="Main actions">
@@ -166,7 +166,7 @@
 03381:           <span id="editModeLabel">Visual editor</span>
 03382:           <span id="stats" class="status">0 words</span>
 03383:         </div>
-03384:         <div class="format-toolbar" aria-label="ScienceMD formatting toolbar">
+03384:         <div class="format-toolbar" aria-label="CKMark formatting toolbar">
 03385:           <button type="button" data-action="h1" title="Heading 1" aria-label="Heading 1"><svg class="bi bi-type-h1" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><text x="1.1" y="11.8" font-size="9.5" font-family="Arial, Helvetica, sans-serif" font-weight="800" fill="currentColor">H1</text></svg></button>
 03386:           <button type="button" data-action="h2" title="Heading 2" aria-label="Heading 2"><svg class="bi bi-type-h2" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><text x="1.1" y="11.8" font-size="9.5" font-family="Arial, Helvetica, sans-serif" font-weight="800" fill="currentColor">H2</text></svg></button>
 03387:           <button type="button" data-action="h3" title="Heading 3" aria-label="Heading 3"><svg class="bi bi-type-h3" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><text x="1.1" y="11.8" font-size="9.5" font-family="Arial, Helvetica, sans-serif" font-weight="800" fill="currentColor">H3</text></svg></button>
@@ -355,7 +355,7 @@
 03764:     let activeTableCell = null;
 03765:     let savedTableSourceSelection = null;
 03766: 
-03767:     const starterText = "# Welcome to ScienceMD\n\n**ScienceMD** is an offline-first Markdown and LaTeX editor for scientific notes, technical documents, revision material, and print-ready papers.\n\nUse **Write** for visual editing or **MD** when you want direct control of the Markdown source. Your document remains a normal `.md` file.\n\n> Delete this starter guide when you are ready and begin writing.\n\n---\n\n## Quick start\n\n- **New** creates a fresh starter document.\n- **Open** loads an existing Markdown file.\n- **Save** downloads the current `.md` file.\n- **Save As** saves under a new name or exports rendered HTML.\n- **Undo** and **Redo** reverse or restore editing changes.\n- **Print** prints the selected document style or saves it as PDF.\n\nAutosave is a safety net stored on this device. Use **Save** regularly to create a real file.\n\n---\n\n## Headings and formatting\n\nUse headings to organise longer documents:\n\n```markdown\n# Document title\n## Main section\n### Subsection\n```\n\nThe edit toolbar also provides bold, italic, quotations, lists, horizontal rules, images, tables, inline maths, and block maths.\n\n---\n\n## Maths\n\nInline maths uses `\\( ... \\)`:\n\n\\(E = mc^2\\)\n\nDisplay maths uses `\\[ ... \\]`:\n\n\\[\nF = G\\frac{m_1m_2}{r^2}\n\\]\n\nIn **Write** mode, select a rendered formula to edit its LaTeX source, then choose **Done** to render it again.\n\n---\n\n## Tables\n\nUse the **Table** button to insert and edit a Markdown table visually.\n\n| Quantity | Meaning | Relationship |\n|---|---|---|\n| \\(v\\) | wave speed | \\(v = f\\lambda\\) |\n| \\(f\\) | frequency | measured in hertz |\n| \\(\\lambda\\) | wavelength | measured in metres |\n\n---\n\n## Code\n\nTriple backticks create a code block:\n\n```csharp\npublic static double KineticEnergy(double mass, double velocity)\n{\n    return 0.5 * mass * velocity * velocity;\n}\n```\n\n---\n\n## Output styles\n\nChoose a style from the **Output** group to change the visual document and its printed or PDF appearance. The selected style does not change the Markdown source.\n\nScienceMD works as a standalone HTML file, through GitHub Pages, and as an Android app.\n";
+03767:     const starterText = "# Welcome to CKMark\n\n**CKMark** is an offline-first Markdown and LaTeX editor for scientific notes, technical documents, revision material, and print-ready papers.\n\nUse **Write** for visual editing or **MD** when you want direct control of the Markdown source. Your document remains a normal `.md` file.\n\n> Delete this starter guide when you are ready and begin writing.\n\n---\n\n## Quick start\n\n- **New** creates a fresh starter document.\n- **Open** loads an existing Markdown file.\n- **Save** downloads the current `.md` file.\n- **Save As** saves under a new name or exports rendered HTML.\n- **Undo** and **Redo** reverse or restore editing changes.\n- **Print** prints the selected document style or saves it as PDF.\n\nAutosave is a safety net stored on this device. Use **Save** regularly to create a real file.\n\n---\n\n## Headings and formatting\n\nUse headings to organise longer documents:\n\n```markdown\n# Document title\n## Main section\n### Subsection\n```\n\nThe edit toolbar also provides bold, italic, quotations, lists, horizontal rules, images, tables, inline maths, and block maths.\n\n---\n\n## Maths\n\nInline maths uses `\\( ... \\)`:\n\n\\(E = mc^2\\)\n\nDisplay maths uses `\\[ ... \\]`:\n\n\\[\nF = G\\frac{m_1m_2}{r^2}\n\\]\n\nIn **Write** mode, select a rendered formula to edit its LaTeX source, then choose **Done** to render it again.\n\n---\n\n## Tables\n\nUse the **Table** button to insert and edit a Markdown table visually.\n\n| Quantity | Meaning | Relationship |\n|---|---|---|\n| \\(v\\) | wave speed | \\(v = f\\lambda\\) |\n| \\(f\\) | frequency | measured in hertz |\n| \\(\\lambda\\) | wavelength | measured in metres |\n\n---\n\n## Code\n\nTriple backticks create a code block:\n\n```csharp\npublic static double KineticEnergy(double mass, double velocity)\n{\n    return 0.5 * mass * velocity * velocity;\n}\n```\n\n---\n\n## Output styles\n\nChoose a style from the **Output** group to change the visual document and its printed or PDF appearance. The selected style does not change the Markdown source.\n\nCKMark works as a standalone HTML file, through GitHub Pages, and as an Android app.\n";
 03768: 
 03769:     function showToast(message) {
 03770:       clearTimeout(toastTimer);
@@ -1356,7 +1356,7 @@
 06493: 
 06494: 
 06495:     function clearDraft() {
-06496:       const confirmed = confirm('Start a new document from the built-in ScienceMD starter? This will replace the current editor text, but it will not delete any files from your device.');
+06496:       const confirmed = confirm('Start a new document from the built-in CKMark starter? This will replace the current editor text, but it will not delete any files from your device.');
 06497:       if (!confirmed) return;
 06498: 
 06499:       embeddedImages = {};

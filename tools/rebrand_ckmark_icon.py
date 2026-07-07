@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Replace the embedded ScienceMD browser badge with a CKMark badge."""
+"""Replace the embedded CKMark browser badge with a CKMark badge."""
 
 from pathlib import Path
 from urllib.parse import quote

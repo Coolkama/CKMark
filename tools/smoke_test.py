@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Lightweight repository smoke checks for ScienceMD and its Android wrapper."""
+"""Lightweight repository smoke checks for CKMark and its Android wrapper."""
 
 from __future__ import annotations
 
@@ -29,7 +29,7 @@ html = HTML.read_text(encoding="utf-8")
 lower = html.lower()
 
 checks = {
-    "ScienceMD title": "<title>sciencemd</title>" in lower,
+    "CKMark title": "<title>ckmark</title>" in lower,
     "Markdown support": ".md" in lower and "markdown" in lower,
     "WYSIWYG editor": "wysiwyg" in lower,
     "MathJax maths rendering": "mathjax" in lower,
@@ -105,7 +105,7 @@ require("forceSaveAs" in activity, "Save As distinction is missing")
 
 require("SCIENCEMD_VERSION_CODE" in gradle, "release version override is missing")
 require("SCIENCEMD_KEYSTORE_PATH" in gradle, "release signing configuration is missing")
-require("?: '10'" in gradle and "?: '1.3.4'" in gradle, "Android 1.3.4 version defaults are missing")
+require("?: '11'" in gradle and "?: '1.4.0'" in gradle, "Android 1.4.0 version defaults are missing")
 require(icon_source.is_file() and icon_source.stat().st_size > 1_000, "launcher icon source is missing")
 
 
@@ -117,4 +117,4 @@ require("Licence and acknowledgements" in html, "in-app licence acknowledgements
 require("Apache License 2.0 OR Mozilla Public License 2.0" in html, "DOMPurify licence choice is recorded incorrectly")
 require("MathJax 3.2.1 | Apache License 2.0" in html, "MathJax licence banner is missing")
 
-print("ScienceMD smoke checks passed.")
+print("CKMark smoke checks passed.")

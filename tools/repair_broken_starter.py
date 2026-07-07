@@ -10,9 +10,9 @@ ROOT = Path(__file__).resolve().parents[1]
 INDEX = ROOT / "index.html"
 BUILD_GRADLE = ROOT / "android/app/build.gradle"
 
-starter_text = r"""# Welcome to ScienceMD
+starter_text = r"""# Welcome to CKMark
 
-**ScienceMD** is an offline-first Markdown and LaTeX editor for scientific notes, technical documents, revision material, and print-ready papers.
+**CKMark** is an offline-first Markdown and LaTeX editor for scientific notes, technical documents, revision material, and print-ready papers.
 
 Use **Write** for visual editing or **MD** when you want direct control of the Markdown source. Your document remains a normal `.md` file.
 
@@ -92,7 +92,7 @@ public static double KineticEnergy(double mass, double velocity)
 
 Choose a style from the **Output** group to change the visual document and its printed or PDF appearance. The selected style does not change the Markdown source.
 
-ScienceMD works as a standalone HTML file, through GitHub Pages, and as an Android app.
+CKMark works as a standalone HTML file, through GitHub Pages, and as an Android app.
 """
 
 html = INDEX.read_text(encoding="utf-8")

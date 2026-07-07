@@ -14,5 +14,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ScienceMDAndroid"
+rootProject.name = "CKMarkAndroid"
 include ':app'
