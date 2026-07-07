@@ -58,13 +58,36 @@ android {
         rename { 'index.html' }
     }
 
-    tasks.register('copyScienceMdIcon', Copy) {
-        from(rootProject.file('../assets/ScienceMD-icon.png'))
-        into(new File(generatedResDir, 'drawable'))
-        rename { 'sciencemd_launcher_icon.png' }
+    tasks.register('generateScienceMdLauncherIcon') {
+        def sourceFile = rootProject.file('icon/sciencemd_launcher_icon.webp.b64')
+        def outputFile = new File(
+            generatedResDir,
+            'drawable/sciencemd_launcher_icon.webp'
+        )
+
+        inputs.file(sourceFile)
+        outputs.file(outputFile)
+
+        doLast {
+            if (!sourceFile.exists()) {
+                throw new GradleException(
+                    "ScienceMD launcher icon source is missing: ${sourceFile}"
+                )
+            }
+
+            outputFile.parentFile.mkdirs()
+            String encoded = sourceFile.getText('UTF-8').replaceAll('\\s+', '')
+            outputFile.bytes = encoded.decodeBase64()
+
+            if (!outputFile.exists() || outputFile.length() == 0) {
+                throw new GradleException(
+                    "ScienceMD launcher icon was not generated: ${outputFile}"
+                )
+            }
+        }
     }
 
     tasks.named('preBuild').configure {
-        dependsOn('copyScienceMdWebApp', 'copyScienceMdIcon')
+        dependsOn('copyScienceMdWebApp', 'generateScienceMdLauncherIcon')
     }
 }
