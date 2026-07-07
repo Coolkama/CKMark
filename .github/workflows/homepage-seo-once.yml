@@ -1,0 +1,65 @@
+name: Apply homepage SEO once
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/homepage-seo-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  apply-homepage-seo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Apply deterministic SEO patch
+        run: python3 tools/add_homepage_seo.py
+
+      - name: Validate generated files
+        run: |
+          python3 - <<'PY'
+          import json
+          import re
+          import xml.etree.ElementTree as ET
+          from pathlib import Path
+
+          html = Path('home/index.html').read_text(encoding='utf-8')
+          ET.parse('sitemap.xml')
+          match = re.search(
+              r'<script type="application/ld\+json">\s*(.*?)\s*</script>',
+              html,
+              re.S,
+          )
+          if not match:
+              raise SystemExit('JSON-LD block not found')
+          json.loads(match.group(1))
+          if html.count('<link rel="canonical"') != 1:
+              raise SystemExit('Expected exactly one canonical link')
+          print('SEO metadata, JSON-LD and sitemap are valid.')
+          PY
+
+      - name: Remove one-time maintenance files
+        run: |
+          rm tools/add_homepage_seo.py
+          rm .github/workflows/homepage-seo-once.yml
+
+      - name: Check and commit changes
+        run: |
+          git diff --check
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Improve homepage search visibility"
+          git push origin main
