@@ -1,1837 +1,13 @@
-
-===== PATTERN: save as =====
-matches: [25, 3362, 3383, 3605, 3606, 3617, 3675, 4030, 6576, 6578, 6587]
-
---- lines 19-37 (match 25) ---
-19:     - Visual editing with Markdown kept underneath
-20:     - WYSIWYG editing with headings, lists, tables, code blocks, images, and maths
-21:     - Supports inline and display LaTeX-style maths
-22:     - Full-width single-document workspace on desktop
-23:     - Hidden print/export renderer with selectable document styles
-24:     - Autosaves drafts to browser storage
-25:     - Download/export edited Markdown, rendered HTML, or print/save as PDF
-26: 
-27:     Notes:
-28:     - Fully self-contained: no CDN, no server, no build step, and no internet required.
-29:     - The editor runs locally in the browser.
-30:     - Saving exports a new file rather than overwriting the original.
-31:   -->
-32:   <!-- MathJax 3.2.1 | Apache License 2.0 | Includes Speech Rule Engine 4.0.6 and Wicked Good XPath 1.3.0. -->
-33:   <script>
-34:     window.MathJax = {
-35:       tex: {
-36:         inlineMath: [['$', '$'], ['\\(', '\\)']],
-37:         displayMath: [['$$', '$$'], ['\\[', '\\]']],
-
---- lines 3356-3374 (match 3362) ---
-3356:       <div class="buttons top-toolbar" aria-label="Main actions">
-3357:         <div class="tool-group" data-ribbon-label="File" aria-label="File actions">
-3358:           <button id="clearBtn" type="button" title="New document" aria-label="New document"><svg class="bi bi-file-earmark-plus" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path d="M8 6.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V11a.5.5 0 0 1-1 0V9.5H6a.5.5 0 0 1 0-1h1.5V7a.5.5 0 0 1 .5-.5"/><path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5z"/></svg></button>
-3359:           <label class="file-button" for="fileInput" title="Open Markdown file" aria-label="Open Markdown file"><svg class="bi bi-folder2-open" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h2.764a1.5 1.5 0 0 1 1.06.44l.768.768A1.5 1.5 0 0 0 8.152 3.5H13.5A1.5 1.5 0 0 1 15 5v1H1z"/><path d="M.5 6.5a1 1 0 0 1 1-1h13a1 1 0 0 1 .976 1.217l-1.5 6.75A2 2 0 0 1 12.024 15H3.976a2 2 0 0 1-1.952-1.533L.524 6.717A1 1 0 0 1 .5 6.5M2.024 6.5l1.5 6.75a1 1 0 0 0 . …[truncated]
-3360:           <input id="fileInput" type="file" accept=".md,.markdown,text/markdown,text/plain" />
-3361:           <button id="downloadBtn" class="primary" type="button" title="Save Markdown" aria-label="Save Markdown"><svg class="bi bi-floppy" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path d="M11 2H9v3h2z"/><path d="M1.5 0h11.586a1.5 1.5 0 0 1 1.06.44l1.414 1.414A1.5 1.5 0 0 1 16 2.914V14.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 14.5v-13A1.5 1.5 0 0 1 1.5 0M1 1.5v13a.5.5 0 0 0 .5.5H2v-4.5A1.5 1.5 0 0 1 3.5 9h9a1.5 1.5 0 0 1 1.5 1.5V15h.5a.5.5 0 0 0 .5-.5V2.914a.5.5 0 0 0-.146-.3 …[truncated]
-3362:           <button id="saveAsBtn" type="button" title="Save As" aria-label="Save As"><svg class="bi bi-file-earmark-arrow-down" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path d="M8.5 6.5a.5.5 0 0 0-1 0v3.793L6.354 9.146a.5.5 0 1 0-.708.708l2 2 .007.007a.498.498 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L8.5 10.293z"/><path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5z"/></svg></button>
-3363:         </div>
-3364: 
-3365:         <div class="tool-group" data-ribbon-label="Document" aria-label="Document tools">
-3366:           <button id="undoBtn" type="button" title="Undo (Ctrl+Z)" aria-label="Undo" disabled><svg class="bi bi-arrow-counterclockwise" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2z"/><path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466"/></svg></button>
-3367:           <button id="redoBtn" type="button" title="Redo (Ctrl+Y)" aria-label="Redo" disabled><svg class="bi bi-arrow-clockwise" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/><path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966a.25.25 0 0 1 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/></svg></button>
-3368:           <button id="navBtn" type="button" title="Section navigation" aria-label="Section navigation"><svg class="bi bi-list-nested" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.5 11.5A.5.5 0 0 1 5 11h10a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5m-2-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m-2-4A.5.5 0 0 1 1 3h10a.5.5 0 0 1 0 1H1a.5.5 0 0 1-.5-.5"/></svg></button>
-3369:           <button id="mathBtn" type="button" title="Math palette" aria-label="Math palette"><svg class="bi bi-braces" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path d="M2.114 8.063V7.9c1.005-.102 1.497-.615 1.497-1.6V4.503c0-1.094.39-1.538 1.354-1.538h.273V2h-.376C3.25 2 2.49 2.759 2.49 4.352v1.524c0 1.094-.376 1.456-1.49 1.456v1.299c1.114 0 1.49.362 1.49 1.456v1.524c0 1.593.759 2.352 2.372 2.352h.376v-.965h-.273c-.964 0-1.354-.444-1.354-1.538V9.663c0-.984-.492-1.497-1.497-1.6M13 …[truncated]
-3370:           <button id="findBtn" type="button" title="Find and replace" aria-label="Find and replace"><svg class="bi bi-search" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/></svg></button>
-3371:         </div>
-3372: 
-3373:         <div class="tool-group output-group" data-ribbon-label="Output" aria-label="Document output">
-3374:           <div class="style-select-wrap" title="Document style">
-
---- lines 3377-3395 (match 3383) ---
-3377:               <option value="default">Default</option>
-3378:               <option value="physics">Science Paper</option>
-3379:               <option value="times">Times</option>
-3380:               <option value="draft">Clean Draft</option>
-3381:             </select>
-3382:           </div>
-3383:           <button id="printBtn" type="button" title="Print / Save as PDF" aria-label="Print or save as PDF"><svg class="bi bi-printer" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1"/><path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4zM3 12v-2h10v2a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1m11-6a1 1 0 0 1 1 1v3a1 1 0  …[truncated]
-3384:         </div>
-3385: 
-3386:         <div class="tool-group" data-ribbon-label="View" aria-label="View actions">
-3387:           <button id="fullscreenBtn" type="button" title="Fullscreen" aria-label="Fullscreen"><svg class="bi bi-fullscreen" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path d="M1.5 1a.5.5 0 0 0-.5.5v4a.5.5 0 0 1-1 0v-4A1.5 1.5 0 0 1 1.5 0h4a.5.5 0 0 1 0 1zM10 .5a.5.5 0 0 1 .5-.5h4A1.5 1.5 0 0 1 16 1.5v4a.5.5 0 0 1-1 0v-4a.5.5 0 0 0-.5-.5h-4a.5.5 0 0 1-.5-.5M.5 10a.5.5 0 0 1 .5.5v4a.5.5 0 0 0 .5.5h4a.5.5 0 0 1 0 1h-4A1.5 1.5 0 0 1 0 14.5v-4a.5.5 0 0 1 .5-.5m15 0a.5.5 0 0 1 .5.5v4a1. …[truncated]
-3388:           <button id="darkBtn" type="button" title="Dark or light mode" aria-label="Dark or light mode"><svg class="bi bi-circle-half" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 0 8 1zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16"/></svg></button>
-3389:           <button id="helpBtn" type="button" title="Help and About" aria-label="Help and About"><svg class="bi bi-question-circle" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/><path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 …[truncated]
-3390:         </div>
-3391:       </div>
-3392:     </div>
-3393:   </header>
-3394: 
-3395:   <nav class="tabs" aria-label="Editor view">
-
---- lines 3599-3617 (match 3605) ---
-3599:         <h3>Basic workflow</h3>
-3600:         <ol>
-3601:           <li>Use <strong>New</strong> to start from the built-in ScienceMD starter document.</li>
-3602:           <li>Use <strong>Open</strong> to load a <code>.md</code> file.</li>
-3603:           <li>Write in the visual editor, or switch to <strong>MD</strong> for exact Markdown source editing.</li>
-3604:           <li>Choose a document style from the <strong>Output</strong> group.</li>
-3605:           <li>Use <strong>Save</strong> or <strong>Save As</strong> to download your Markdown.</li>
-3606:           <li>Use <strong>Print</strong> in the Output group to print or save as PDF.</li>
-3607:         </ol>
-3608:       </section>
-3609: 
-3610:       <section>
-3611:         <h3>Top toolbar</h3>
-3612:         <table>
-3613:           <tr><th>Button</th><th>Meaning</th></tr>
-3614:           <tr><td>New</td><td>Start a fresh ScienceMD starter document</td></tr>
-3615:           <tr><td>Open</td><td>Open a Markdown file</td></tr>
-3616:           <tr><td>Save</td><td>Save the current Markdown file</td></tr>
-3617:           <tr><td>Save As</td><td>Save with a new filename or export rendered HTML</td></tr>
-
---- lines 3600-3618 (match 3606) ---
-3600:         <ol>
-3601:           <li>Use <strong>New</strong> to start from the built-in ScienceMD starter document.</li>
-3602:           <li>Use <strong>Open</strong> to load a <code>.md</code> file.</li>
-3603:           <li>Write in the visual editor, or switch to <strong>MD</strong> for exact Markdown source editing.</li>
-3604:           <li>Choose a document style from the <strong>Output</strong> group.</li>
-3605:           <li>Use <strong>Save</strong> or <strong>Save As</strong> to download your Markdown.</li>
-3606:           <li>Use <strong>Print</strong> in the Output group to print or save as PDF.</li>
-3607:         </ol>
-3608:       </section>
-3609: 
-3610:       <section>
-3611:         <h3>Top toolbar</h3>
-3612:         <table>
-3613:           <tr><th>Button</th><th>Meaning</th></tr>
-3614:           <tr><td>New</td><td>Start a fresh ScienceMD starter document</td></tr>
-3615:           <tr><td>Open</td><td>Open a Markdown file</td></tr>
-3616:           <tr><td>Save</td><td>Save the current Markdown file</td></tr>
-3617:           <tr><td>Save As</td><td>Save with a new filename or export rendered HTML</td></tr>
-3618:           <tr><td>Undo</td><td>Undo the most recent editing change</td></tr>
-
---- lines 3611-3629 (match 3617) ---
-3611:         <h3>Top toolbar</h3>
-3612:         <table>
-3613:           <tr><th>Button</th><th>Meaning</th></tr>
-3614:           <tr><td>New</td><td>Start a fresh ScienceMD starter document</td></tr>
-3615:           <tr><td>Open</td><td>Open a Markdown file</td></tr>
-3616:           <tr><td>Save</td><td>Save the current Markdown file</td></tr>
-3617:           <tr><td>Save As</td><td>Save with a new filename or export rendered HTML</td></tr>
-3618:           <tr><td>Undo</td><td>Undo the most recent editing change</td></tr>
-3619:           <tr><td>Redo</td><td>Restore the most recently undone change</td></tr>
-3620:           <tr><td>Navigation</td><td>Open the section navigator built from headings</td></tr>
-3621:           <tr><td>Maths</td><td>Open the maths palette</td></tr>
-3622:           <tr><td>Find</td><td>Find and replace text in the Markdown source</td></tr>
-3623:           <tr><td>Fullscreen</td><td>Enter or exit fullscreen mode</td></tr>
-3624:           <tr><td>Theme</td><td>Switch between light and dark mode</td></tr>
-3625:           <tr><td>Help</td><td>Open this Help and About panel</td></tr>
-3626:         </table>
-3627:       </section>
-3628: 
-3629:       <section>
-
---- lines 3669-3687 (match 3675) ---
-3669:         <p>ScienceMD uses a full-width visual editor. A hidden renderer prepares styled print, PDF, and HTML output without taking up document workspace.</p>
-3670:         <p>The word count and character count are shown in the bottom footer status bar.</p>
-3671:       </section>
-3672: 
-3673:       <section>
-3674:         <h3>Autosave warning</h3>
-3675:         <p>Autosave is browser storage. It is useful as a safety net, but it is not the same as saving a file. Use <strong>Save</strong> or <strong>Save As</strong> to create a real Markdown file.</p>
-3676:         <p>Embedded images keep their original file format and dimensions. ScienceMD only shortens them in the editor view; saved Markdown contains the full standard embedded image.</p>
-3677:       </section>
-3678: 
-3679:       <!-- SCIENCEMD-LICENCES-START -->
-3680:       <section id="licenceAcknowledgements">
-3681:         <h3>Licence and acknowledgements</h3>
-3682:         <p><strong>ScienceMD</strong> is Copyright 2026 Trevor Neil Kelleher and is licensed under the <strong>Apache License 2.0</strong>.</p>
-3683:         <p>This application includes MathJax 3.2.1, DOMPurify 3.4.8, Speech Rule Engine 4.0.6, and Wicked Good XPath 1.3.0. Each component remains governed by its respective licence.</p>
-3684:         <details class="licence-details"><summary>Apache License 2.0</summary><pre>Apache License
-3685:                            Version 2.0, January 2004
-3686:                         http://www.apache.org/licenses/
-3687: 
-
---- lines 4024-4042 (match 4030) ---
-4024:     let nextImageNumber = 1;
-4025:     let savedWysiwygRange = null;
-4026:     let activeMathEditInput = null;
-4027:     let activeTableCell = null;
-4028:     let savedTableSourceSelection = null;
-4029: 
-4030:     const starterText = "# Welcome to ScienceMD\n\n**ScienceMD** is an offline-first Markdown and LaTeX editor for scientific notes, technical documents, revision material, and print-ready papers.\n\nUse **Write** for visual editing or **MD** when you want direct control of the Markdown source. Your document remains a normal `.md` file.\n\n> Delete this starter guide when you are ready and begin writing.\n\n---\n\n## Quick start\n\n- **New** creates a fresh starter document.\n- **Open** loads an …[truncated]
-4031: 
-4032:     function showToast(message) {
-4033:       clearTimeout(toastTimer);
-4034:       toast.textContent = message;
-4035:       toast.classList.add('show');
-4036:       toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
-4037:     }
-4038: 
-4039: 
-4040:     function isFullscreenActive() {
-4041:       return !!(document.fullscreenElement || document.webkitFullscreenElement);
-4042:     }
-
---- lines 6570-6588 (match 6576) ---
-6570:     }
-6571: 
-6572:     function getSaveAsOptions() {
-6573:       const suggestedName = normaliseMarkdownFileName(currentFileName || 'science-draft.md');
-6574: 
-6575:       if (typeof HTMLDialogElement === 'undefined') {
-6576:         const requestedName = prompt('Save as filename:', suggestedName);
-6577:         if (requestedName === null) return Promise.resolve(null);
-6578:         const asHtml = confirm('Save as rendered HTML instead of Markdown?');
-6579:         return Promise.resolve({ fileName: requestedName, asHtml });
-6580:       }
-6581: 
-6582:       return new Promise(resolve => {
-6583:         const dialog = document.createElement('dialog');
-6584:         dialog.className = 'save-as-dialog';
-6585:         dialog.innerHTML = `
-6586:           <form method="dialog" class="save-as-form">
-6587:             <h3>Save As</h3>
-6588:             <label class="save-as-field">
-
---- lines 6572-6590 (match 6578) ---
-6572:     function getSaveAsOptions() {
-6573:       const suggestedName = normaliseMarkdownFileName(currentFileName || 'science-draft.md');
-6574: 
-6575:       if (typeof HTMLDialogElement === 'undefined') {
-6576:         const requestedName = prompt('Save as filename:', suggestedName);
-6577:         if (requestedName === null) return Promise.resolve(null);
-6578:         const asHtml = confirm('Save as rendered HTML instead of Markdown?');
-6579:         return Promise.resolve({ fileName: requestedName, asHtml });
-6580:       }
-6581: 
-6582:       return new Promise(resolve => {
-6583:         const dialog = document.createElement('dialog');
-6584:         dialog.className = 'save-as-dialog';
-6585:         dialog.innerHTML = `
-6586:           <form method="dialog" class="save-as-form">
-6587:             <h3>Save As</h3>
-6588:             <label class="save-as-field">
-6589:               <span>Filename</span>
-6590:               <input name="fileName" type="text" value="${escapeHtml(suggestedName)}" autocomplete="off">
-
---- lines 6581-6599 (match 6587) ---
-6581: 
-6582:       return new Promise(resolve => {
-6583:         const dialog = document.createElement('dialog');
-6584:         dialog.className = 'save-as-dialog';
-6585:         dialog.innerHTML = `
-6586:           <form method="dialog" class="save-as-form">
-6587:             <h3>Save As</h3>
-6588:             <label class="save-as-field">
-6589:               <span>Filename</span>
-6590:               <input name="fileName" type="text" value="${escapeHtml(suggestedName)}" autocomplete="off">
-6591:             </label>
-6592:             <label class="save-as-check">
-6593:               <input name="asHtml" type="checkbox">
-6594:               <span>Save rendered preview as HTML</span>
-6595:             </label>
-6596:             <p class="save-as-note">Leave unticked to save the Markdown source.</p>
-6597:             <div class="save-as-actions">
-6598:               <button value="cancel" formnovalidate>Cancel</button>
-6599:               <button class="primary" value="save">Save</button>
-
-===== PATTERN: saveas =====
-matches: [3362, 3965, 6572, 6743, 6997]
-
---- lines 3356-3374 (match 3362) ---
-3356:       <div class="buttons top-toolbar" aria-label="Main actions">
-3357:         <div class="tool-group" data-ribbon-label="File" aria-label="File actions">
-3358:           <button id="clearBtn" type="button" title="New document" aria-label="New document"><svg class="bi bi-file-earmark-plus" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path d="M8 6.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V11a.5.5 0 0 1-1 0V9.5H6a.5.5 0 0 1 0-1h1.5V7a.5.5 0 0 1 .5-.5"/><path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5z"/></svg></button>
-3359:           <label class="file-button" for="fileInput" title="Open Markdown file" aria-label="Open Markdown file"><svg class="bi bi-folder2-open" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h2.764a1.5 1.5 0 0 1 1.06.44l.768.768A1.5 1.5 0 0 0 8.152 3.5H13.5A1.5 1.5 0 0 1 15 5v1H1z"/><path d="M.5 6.5a1 1 0 0 1 1-1h13a1 1 0 0 1 .976 1.217l-1.5 6.75A2 2 0 0 1 12.024 15H3.976a2 2 0 0 1-1.952-1.533L.524 6.717A1 1 0 0 1 .5 6.5M2.024 6.5l1.5 6.75a1 1 0 0 0 . …[truncated]
-3360:           <input id="fileInput" type="file" accept=".md,.markdown,text/markdown,text/plain" />
-3361:           <button id="downloadBtn" class="primary" type="button" title="Save Markdown" aria-label="Save Markdown"><svg class="bi bi-floppy" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path d="M11 2H9v3h2z"/><path d="M1.5 0h11.586a1.5 1.5 0 0 1 1.06.44l1.414 1.414A1.5 1.5 0 0 1 16 2.914V14.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 14.5v-13A1.5 1.5 0 0 1 1.5 0M1 1.5v13a.5.5 0 0 0 .5.5H2v-4.5A1.5 1.5 0 0 1 3.5 9h9a1.5 1.5 0 0 1 1.5 1.5V15h.5a.5.5 0 0 0 .5-.5V2.914a.5.5 0 0 0-.146-.3 …[truncated]
-3362:           <button id="saveAsBtn" type="button" title="Save As" aria-label="Save As"><svg class="bi bi-file-earmark-arrow-down" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path d="M8.5 6.5a.5.5 0 0 0-1 0v3.793L6.354 9.146a.5.5 0 1 0-.708.708l2 2 .007.007a.498.498 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L8.5 10.293z"/><path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5z"/></svg></button>
-3363:         </div>
-3364: 
-3365:         <div class="tool-group" data-ribbon-label="Document" aria-label="Document tools">
-3366:           <button id="undoBtn" type="button" title="Undo (Ctrl+Z)" aria-label="Undo" disabled><svg class="bi bi-arrow-counterclockwise" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2z"/><path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466"/></svg></button>
-3367:           <button id="redoBtn" type="button" title="Redo (Ctrl+Y)" aria-label="Redo" disabled><svg class="bi bi-arrow-clockwise" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/><path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966a.25.25 0 0 1 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/></svg></button>
-3368:           <button id="navBtn" type="button" title="Section navigation" aria-label="Section navigation"><svg class="bi bi-list-nested" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.5 11.5A.5.5 0 0 1 5 11h10a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5m-2-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m-2-4A.5.5 0 0 1 1 3h10a.5.5 0 0 1 0 1H1a.5.5 0 0 1-.5-.5"/></svg></button>
-3369:           <button id="mathBtn" type="button" title="Math palette" aria-label="Math palette"><svg class="bi bi-braces" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path d="M2.114 8.063V7.9c1.005-.102 1.497-.615 1.497-1.6V4.503c0-1.094.39-1.538 1.354-1.538h.273V2h-.376C3.25 2 2.49 2.759 2.49 4.352v1.524c0 1.094-.376 1.456-1.49 1.456v1.299c1.114 0 1.49.362 1.49 1.456v1.524c0 1.593.759 2.352 2.372 2.352h.376v-.965h-.273c-.964 0-1.354-.444-1.354-1.538V9.663c0-.984-.492-1.497-1.497-1.6M13 …[truncated]
-3370:           <button id="findBtn" type="button" title="Find and replace" aria-label="Find and replace"><svg class="bi bi-search" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/></svg></button>
-3371:         </div>
-3372: 
-3373:         <div class="tool-group output-group" data-ribbon-label="Output" aria-label="Document output">
-3374:           <div class="style-select-wrap" title="Document style">
-
---- lines 3959-3977 (match 3965) ---
-3959:     const tableDialogClose = document.getElementById('tableDialogClose');
-3960:     const tableDialogCancel = document.getElementById('tableDialogCancel');
-3961:     const fileInput = document.getElementById('fileInput');
-3962:     const imageInput = document.getElementById('imageInput');
-3963:     const fileNameLabel = document.getElementById('fileName');
-3964:     const downloadBtn = document.getElementById('downloadBtn');
-3965:     const saveAsBtn = document.getElementById('saveAsBtn');
-3966:     const printBtn = document.getElementById('printBtn');
-3967:     const clearBtn = document.getElementById('clearBtn');
-3968:     const undoBtn = document.getElementById('undoBtn');
-3969:     const redoBtn = document.getElementById('redoBtn');
-3970:     const darkBtn = document.getElementById('darkBtn');
-3971:     const fullscreenBtn = document.getElementById('fullscreenBtn');
-3972:     const helpBtn = document.getElementById('helpBtn');
-3973:     const helpDrawer = document.getElementById('helpDrawer');
-3974:     const closeHelpBtn = document.getElementById('closeHelpBtn');
-3975:     const navBtn = document.getElementById('navBtn');
-3976:     const findBtn = document.getElementById('findBtn');
-3977:     const mathBtn = document.getElementById('mathBtn');
-
---- lines 6566-6584 (match 6572) ---
-6566:       const safeName = normaliseMarkdownFileName(fileNameOverride || currentFileName || 'science-draft.md');
-6567:       downloadTextFile(text, safeName, 'text/markdown;charset=utf-8');
-6568:       setFileName(safeName);
-6569:       showToast(`Saved ${safeName}`);
-6570:     }
-6571: 
-6572:     function getSaveAsOptions() {
-6573:       const suggestedName = normaliseMarkdownFileName(currentFileName || 'science-draft.md');
-6574: 
-6575:       if (typeof HTMLDialogElement === 'undefined') {
-6576:         const requestedName = prompt('Save as filename:', suggestedName);
-6577:         if (requestedName === null) return Promise.resolve(null);
-6578:         const asHtml = confirm('Save as rendered HTML instead of Markdown?');
-6579:         return Promise.resolve({ fileName: requestedName, asHtml });
-6580:       }
-6581: 
-6582:       return new Promise(resolve => {
-6583:         const dialog = document.createElement('dialog');
-6584:         dialog.className = 'save-as-dialog';
-
---- lines 6737-6755 (match 6743) ---
-6737: 
-6738:     async function saveMarkdownAs() {
-6739:       if (isVisualModeActive()) {
-6740:         const committedMath = commitActiveWysiwygMathEdit({ quiet: true });
-6741:         if (!committedMath) syncMarkdownFromWysiwyg();
-6742:       }
-6743:       const options = await getSaveAsOptions();
-6744: 
-6745:       if (!options) {
-6746:         return;
-6747:       }
-6748: 
-6749:       if (options.asHtml) {
-6750:         await downloadRenderedHtml(options.fileName);
-6751:         return;
-6752:       }
-6753: 
-6754:       downloadMarkdown(options.fileName);
-6755:     }
-
---- lines 6991-7009 (match 6997) ---
-6991:     });
-6992:     preview.addEventListener('scroll', () => {
-6993:       if (currentView !== 'edit') lastScrollProgress = getScrollProgress(preview);
-6994:       syncEditorScrollToPreview();
-6995:     });
-6996:     downloadBtn.addEventListener('click', () => downloadMarkdown());
-6997:     saveAsBtn.addEventListener('click', saveMarkdownAs);
-6998:     printBtn.addEventListener('click', printPreview);
-6999:     clearBtn.addEventListener('click', clearDraft);
-7000:     undoBtn.addEventListener('pointerdown', event => event.preventDefault());
-7001:     redoBtn.addEventListener('pointerdown', event => event.preventDefault());
-7002:     undoBtn.addEventListener('click', undoDocument);
-7003:     redoBtn.addEventListener('click', redoDocument);
-7004:     darkBtn.addEventListener('click', () => {
-7005:       setTheme(document.body.classList.contains('dark') ? 'light' : 'dark');
-7006:     });
-7007: 
-7008:     fullscreenBtn.addEventListener('click', toggleFullscreen);
-7009:     helpBtn.addEventListener('click', openHelpPanel);
-
-===== PATTERN: export =====
-matches: [23, 25, 30, 47, 3206, 3261, 3617, 3936, 4030, 6645, 6656, 6661, 6663, 6670, 6688, 6691, 6696, 6697, 6709, 6710, 6711, 6715, 6732]
-
---- lines 17-35 (match 23) ---
-17:     Features:
-18:     - Open/import .md files
-19:     - Visual editing with Markdown kept underneath
-20:     - WYSIWYG editing with headings, lists, tables, code blocks, images, and maths
-21:     - Supports inline and display LaTeX-style maths
-22:     - Full-width single-document workspace on desktop
-23:     - Hidden print/export renderer with selectable document styles
-24:     - Autosaves drafts to browser storage
-25:     - Download/export edited Markdown, rendered HTML, or print/save as PDF
-26: 
-27:     Notes:
-28:     - Fully self-contained: no CDN, no server, no build step, and no internet required.
-29:     - The editor runs locally in the browser.
-30:     - Saving exports a new file rather than overwriting the original.
-31:   -->
-32:   <!-- MathJax 3.2.1 | Apache License 2.0 | Includes Speech Rule Engine 4.0.6 and Wicked Good XPath 1.3.0. -->
-33:   <script>
-34:     window.MathJax = {
-35:       tex: {
-
---- lines 19-37 (match 25) ---
-19:     - Visual editing with Markdown kept underneath
-20:     - WYSIWYG editing with headings, lists, tables, code blocks, images, and maths
-21:     - Supports inline and display LaTeX-style maths
-22:     - Full-width single-document workspace on desktop
-23:     - Hidden print/export renderer with selectable document styles
-24:     - Autosaves drafts to browser storage
-25:     - Download/export edited Markdown, rendered HTML, or print/save as PDF
-26: 
-27:     Notes:
-28:     - Fully self-contained: no CDN, no server, no build step, and no internet required.
-29:     - The editor runs locally in the browser.
-30:     - Saving exports a new file rather than overwriting the original.
-31:   -->
-32:   <!-- MathJax 3.2.1 | Apache License 2.0 | Includes Speech Rule Engine 4.0.6 and Wicked Good XPath 1.3.0. -->
-33:   <script>
-34:     window.MathJax = {
-35:       tex: {
-36:         inlineMath: [['$', '$'], ['\\(', '\\)']],
-37:         displayMath: [['$$', '$$'], ['\\[', '\\]']],
-
---- lines 24-42 (match 30) ---
-24:     - Autosaves drafts to browser storage
-25:     - Download/export edited Markdown, rendered HTML, or print/save as PDF
-26: 
-27:     Notes:
-28:     - Fully self-contained: no CDN, no server, no build step, and no internet required.
-29:     - The editor runs locally in the browser.
-30:     - Saving exports a new file rather than overwriting the original.
-31:   -->
-32:   <!-- MathJax 3.2.1 | Apache License 2.0 | Includes Speech Rule Engine 4.0.6 and Wicked Good XPath 1.3.0. -->
-33:   <script>
-34:     window.MathJax = {
-35:       tex: {
-36:         inlineMath: [['$', '$'], ['\\(', '\\)']],
-37:         displayMath: [['$$', '$$'], ['\\[', '\\]']],
-38:         processEscapes: true,
-39:         tags: 'ams'
-40:       },
-41:       svg: { fontCache: 'global' },
-42:       startup: { typeset: false }
-
---- lines 41-59 (match 47) ---
-41:       svg: { fontCache: 'global' },
-42:       startup: { typeset: false }
-43:     };
-44:   </script>
-45:   <script>
-46: 
-47: (function(){"use strict";var __webpack_modules__={351:function(t,e,r){var n,o=this&&this.__extends||(n=function(t,e){return n=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(t,e){t.__proto__=e}||function(t,e){for(var r in e)Object.prototype.hasOwnProperty.call(e,r)&&(t[r]=e[r])},n(t,e)},function(t,e){if("function"!=typeof e&&null!==e)throw new TypeError("Class extends value "+String(e)+" is not a constructor or null");function r(){this.constructor=t}n(t,e),t.prototype=null===e?Ob …[truncated]
-48:   
-49:   </script>
-50: 
-51:   <style>
-52:     :root {
-53:       --bg: #f6f7fb;
-54:       --panel: #ffffff;
-55:       --panel-2: #f0f2f7;
-56:       --text: #1d2433;
-57:       --muted: #687386;
-58:       --border: #d9deea;
-59:       --accent: #395bd6;
-
---- lines 3200-3218 (match 3206) ---
-3200:       main {
-3201:         padding-bottom: 12px !important;
-3202:       }
-3203:     }
-3204: 
-3205: 
-3206:     /* Single-document workspace: the rendered preview now exists only for print/export. */
-3207:     .output-group {
-3208:       align-items: center;
-3209:     }
-3210: 
-3211:     .style-select-wrap {
-3212:       display: inline-flex;
-3213:       flex: 0 0 auto;
-3214:       align-items: center;
-3215:       height: 31px;
-3216:       overflow: hidden;
-3217:       border: 1px solid var(--border);
-3218:       border-right: 0;
-
---- lines 3255-3273 (match 3261) ---
-3255:     @media screen {
-3256:       .tabs,
-3257:       #desktopSplitter {
-3258:         display: none !important;
-3259:       }
-3260: 
-3261:       /* Keep a laid-out, off-screen renderer so MathJax and print/export remain reliable. */
-3262:       #previewPanel,
-3263:       #previewPanel.hidden,
-3264:       #previewPanel.hidden-on-mobile,
-3265:       #previewPanel.hidden.hidden-on-mobile {
-3266:         display: block !important;
-3267:         position: fixed !important;
-3268:         left: -100000px !important;
-3269:         top: 0 !important;
-3270:         width: 794px !important;
-3271:         height: auto !important;
-3272:         max-height: none !important;
-3273:         visibility: hidden !important;
-
---- lines 3611-3629 (match 3617) ---
-3611:         <h3>Top toolbar</h3>
-3612:         <table>
-3613:           <tr><th>Button</th><th>Meaning</th></tr>
-3614:           <tr><td>New</td><td>Start a fresh ScienceMD starter document</td></tr>
-3615:           <tr><td>Open</td><td>Open a Markdown file</td></tr>
-3616:           <tr><td>Save</td><td>Save the current Markdown file</td></tr>
-3617:           <tr><td>Save As</td><td>Save with a new filename or export rendered HTML</td></tr>
-3618:           <tr><td>Undo</td><td>Undo the most recent editing change</td></tr>
-3619:           <tr><td>Redo</td><td>Restore the most recently undone change</td></tr>
-3620:           <tr><td>Navigation</td><td>Open the section navigator built from headings</td></tr>
-3621:           <tr><td>Maths</td><td>Open the maths palette</td></tr>
-3622:           <tr><td>Find</td><td>Find and replace text in the Markdown source</td></tr>
-3623:           <tr><td>Fullscreen</td><td>Enter or exit fullscreen mode</td></tr>
-3624:           <tr><td>Theme</td><td>Switch between light and dark mode</td></tr>
-3625:           <tr><td>Help</td><td>Open this Help and About panel</td></tr>
-3626:         </table>
-3627:       </section>
-3628: 
-3629:       <section>
-
---- lines 3930-3948 (match 3936) ---
-3930:   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-3931: 
-3932:   
-3933: <script>
-3934: /* DOMPurify 3.4.8 | official upstream browser build embedded for offline ScienceMD HTML compatibility. */
-3935: /*! @license DOMPurify 3.4.8 | (c) Cure53 and other contributors | Released under the Apache License 2.0 OR Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.4.8/LICENSE */
-3936: !function(e,t){"object"==typeof exports&&"undefined"!=typeof module?module.exports=t():"function"==typeof define&&define.amd?define(t):(e="undefined"!=typeof globalThis?globalThis:e||self).DOMPurify=t()}(this,function(){"use strict";function e(e,t){(null==t||t>e.length)&&(t=e.length);for(var n=0,o=Array(t);n<t;n++)o[n]=e[n];return o}function t(t,n){return function(e){if(Array.isArray(e))return e}(t)||function(e,t){var n=null==e?null:"undefined"!=typeof Symbol&&e[Symbol.iterator]||e["@@iterator"] …[truncated]
-3937: //# sourceMappingURL=purify.min.js.map
-3938: 
-3939: </script>
-3940: <script>
-3941: 
-3942:     const STORAGE_KEY = 'sciencemd:v1:draft';
-3943:     const THEME_KEY = 'sciencemd:theme';
-3944:     const FILENAME_KEY = 'sciencemd:v1:fileName';
-3945:     const PREVIEW_STYLE_KEY = 'sciencemd:previewStyle';
-3946:     const IMAGE_MAP_KEY = 'sciencemd:imageMap';
-3947: 
-3948:     const editor = document.getElementById('editor');
-
---- lines 4024-4042 (match 4030) ---
-4024:     let nextImageNumber = 1;
-4025:     let savedWysiwygRange = null;
-4026:     let activeMathEditInput = null;
-4027:     let activeTableCell = null;
-4028:     let savedTableSourceSelection = null;
-4029: 
-4030:     const starterText = "# Welcome to ScienceMD\n\n**ScienceMD** is an offline-first Markdown and LaTeX editor for scientific notes, technical documents, revision material, and print-ready papers.\n\nUse **Write** for visual editing or **MD** when you want direct control of the Markdown source. Your document remains a normal `.md` file.\n\n> Delete this starter guide when you are ready and begin writing.\n\n---\n\n## Quick start\n\n- **New** creates a fresh starter document.\n- **Open** loads an …[truncated]
-4031: 
-4032:     function showToast(message) {
-4033:       clearTimeout(toastTimer);
-4034:       toast.textContent = message;
-4035:       toast.classList.add('show');
-4036:       toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
-4037:     }
-4038: 
-4039: 
-4040:     function isFullscreenActive() {
-4041:       return !!(document.fullscreenElement || document.webkitFullscreenElement);
-4042:     }
-
---- lines 6639-6657 (match 6645) ---
-6639:         dialog.showModal();
-6640:         input.focus();
-6641:         input.select();
-6642:       });
-6643:     }
-6644: 
-6645:     async function ensurePreviewRenderedForExport() {
-6646:       if (isVisualModeActive()) {
-6647:         const committedMath = commitActiveWysiwygMathEdit({ quiet: true });
-6648:         if (!committedMath) syncMarkdownFromWysiwyg();
-6649:       }
-6650:       renderNow();
-6651:       if (window.MathJax?.typesetPromise) {
-6652:         try {
-6653:           await MathJax.typesetPromise([preview]);
-6654:         } catch (error) {
-6655:           console.error(error);
-6656:           showToast('Maths export had a rendering issue. Check the equation syntax.');
-6657:         }
-
---- lines 6650-6668 (match 6656) ---
-6650:       renderNow();
-6651:       if (window.MathJax?.typesetPromise) {
-6652:         try {
-6653:           await MathJax.typesetPromise([preview]);
-6654:         } catch (error) {
-6655:           console.error(error);
-6656:           showToast('Maths export had a rendering issue. Check the equation syntax.');
-6657:         }
-6658:       }
-6659:     }
-6660: 
-6661:     function getEmbeddedMathJaxScriptsForExport() {
-6662:       // The first two scripts in the head are the MathJax configuration and the
-6663:       // embedded MathJax library. The main app script is deliberately not exported.
-6664:       return Array.from(document.querySelectorAll('head > script'))
-6665:         .slice(0, 2)
-6666:         .map(script => `<script>${(script.textContent || '').replace(/<\/script/gi, '<\\/script')}<\/script>`)
-6667:         .join('\n');
-6668:     }
-
---- lines 6655-6673 (match 6661) ---
-6655:           console.error(error);
-6656:           showToast('Maths export had a rendering issue. Check the equation syntax.');
-6657:         }
-6658:       }
-6659:     }
-6660: 
-6661:     function getEmbeddedMathJaxScriptsForExport() {
-6662:       // The first two scripts in the head are the MathJax configuration and the
-6663:       // embedded MathJax library. The main app script is deliberately not exported.
-6664:       return Array.from(document.querySelectorAll('head > script'))
-6665:         .slice(0, 2)
-6666:         .map(script => `<script>${(script.textContent || '').replace(/<\/script/gi, '<\\/script')}<\/script>`)
-6667:         .join('\n');
-6668:     }
-6669: 
-6670:     function buildUntypesetPreviewHtmlForExport() {
-6671:       // Build from the Markdown source rather than from preview.innerHTML.
-6672:       // preview.innerHTML may contain MathJax's live DOM, which is not reliable
-6673:       // when copied into a standalone saved HTML file on Android/Chrome.
-
---- lines 6657-6675 (match 6663) ---
-6657:         }
-6658:       }
-6659:     }
-6660: 
-6661:     function getEmbeddedMathJaxScriptsForExport() {
-6662:       // The first two scripts in the head are the MathJax configuration and the
-6663:       // embedded MathJax library. The main app script is deliberately not exported.
-6664:       return Array.from(document.querySelectorAll('head > script'))
-6665:         .slice(0, 2)
-6666:         .map(script => `<script>${(script.textContent || '').replace(/<\/script/gi, '<\\/script')}<\/script>`)
-6667:         .join('\n');
-6668:     }
-6669: 
-6670:     function buildUntypesetPreviewHtmlForExport() {
-6671:       // Build from the Markdown source rather than from preview.innerHTML.
-6672:       // preview.innerHTML may contain MathJax's live DOM, which is not reliable
-6673:       // when copied into a standalone saved HTML file on Android/Chrome.
-6674:       const raw = expandEmbeddedImages(editor.value);
-6675:       const { protectedText, blocks, inlines } = protectMath(raw);
-
---- lines 6664-6682 (match 6670) ---
-6664:       return Array.from(document.querySelectorAll('head > script'))
-6665:         .slice(0, 2)
-6666:         .map(script => `<script>${(script.textContent || '').replace(/<\/script/gi, '<\\/script')}<\/script>`)
-6667:         .join('\n');
-6668:     }
-6669: 
-6670:     function buildUntypesetPreviewHtmlForExport() {
-6671:       // Build from the Markdown source rather than from preview.innerHTML.
-6672:       // preview.innerHTML may contain MathJax's live DOM, which is not reliable
-6673:       // when copied into a standalone saved HTML file on Android/Chrome.
-6674:       const raw = expandEmbeddedImages(editor.value);
-6675:       const { protectedText, blocks, inlines } = protectMath(raw);
-6676:       const temp = document.createElement('article');
-6677:       temp.innerHTML = sanitiseRenderedHtml(simpleMarkdownToHtml(protectedText));
-6678:       restoreMath(temp, blocks, inlines);
-6679:       markSubmissionStructure(temp);
-6680:       return temp.innerHTML;
-6681:     }
-6682: 
-
---- lines 6682-6700 (match 6688) ---
-6682: 
-6683:     function buildStaticHtmlDocument() {
-6684:       const title = getDocumentTitleFromMarkdown();
-6685:       const styleText = Array.from(document.querySelectorAll('style'))
-6686:         .map(style => style.textContent || '')
-6687:         .join('\n');
-6688:       const mathJaxScripts = getEmbeddedMathJaxScriptsForExport();
-6689:       const themeClass = document.body.classList.contains('dark') ? 'dark' : '';
-6690:       const previewClasses = Array.from(preview.classList).join(' ');
-6691:       const exportPrintClass = preview.classList.contains('preview-style-physics') || preview.classList.contains('preview-style-times')
-6692:         ? 'print-style-paper print-page-numbers'
-6693:         : preview.classList.contains('preview-style-draft')
-6694:           ? 'print-style-large print-page-numbers'
-6695:           : 'print-page-numbers';
-6696:       const bodyClasses = [themeClass, exportPrintClass].filter(Boolean).join(' ');
-6697:       const articleHtml = buildUntypesetPreviewHtmlForExport();
-6698: 
-6699:       return `<!doctype html>
-6700: <html lang="en-GB">
-
---- lines 6685-6703 (match 6691) ---
-6685:       const styleText = Array.from(document.querySelectorAll('style'))
-6686:         .map(style => style.textContent || '')
-6687:         .join('\n');
-6688:       const mathJaxScripts = getEmbeddedMathJaxScriptsForExport();
-6689:       const themeClass = document.body.classList.contains('dark') ? 'dark' : '';
-6690:       const previewClasses = Array.from(preview.classList).join(' ');
-6691:       const exportPrintClass = preview.classList.contains('preview-style-physics') || preview.classList.contains('preview-style-times')
-6692:         ? 'print-style-paper print-page-numbers'
-6693:         : preview.classList.contains('preview-style-draft')
-6694:           ? 'print-style-large print-page-numbers'
-6695:           : 'print-page-numbers';
-6696:       const bodyClasses = [themeClass, exportPrintClass].filter(Boolean).join(' ');
-6697:       const articleHtml = buildUntypesetPreviewHtmlForExport();
-6698: 
-6699:       return `<!doctype html>
-6700: <html lang="en-GB">
-6701: <head>
-6702: <meta charset="utf-8">
-6703: <meta name="viewport" content="width=device-width, initial-scale=1">
-
---- lines 6690-6708 (match 6696) ---
-6690:       const previewClasses = Array.from(preview.classList).join(' ');
-6691:       const exportPrintClass = preview.classList.contains('preview-style-physics') || preview.classList.contains('preview-style-times')
-6692:         ? 'print-style-paper print-page-numbers'
-6693:         : preview.classList.contains('preview-style-draft')
-6694:           ? 'print-style-large print-page-numbers'
-6695:           : 'print-page-numbers';
-6696:       const bodyClasses = [themeClass, exportPrintClass].filter(Boolean).join(' ');
-6697:       const articleHtml = buildUntypesetPreviewHtmlForExport();
-6698: 
-6699:       return `<!doctype html>
-6700: <html lang="en-GB">
-6701: <head>
-6702: <meta charset="utf-8">
-6703: <meta name="viewport" content="width=device-width, initial-scale=1">
-6704: <title>${escapeHtml(title)}</title>
-6705: ${mathJaxScripts}
-6706: <style>
-6707: ${styleText}
-6708: body { background: var(--bg); padding: 0; }
-
---- lines 6691-6709 (match 6697) ---
-6691:       const exportPrintClass = preview.classList.contains('preview-style-physics') || preview.classList.contains('preview-style-times')
-6692:         ? 'print-style-paper print-page-numbers'
-6693:         : preview.classList.contains('preview-style-draft')
-6694:           ? 'print-style-large print-page-numbers'
-6695:           : 'print-page-numbers';
-6696:       const bodyClasses = [themeClass, exportPrintClass].filter(Boolean).join(' ');
-6697:       const articleHtml = buildUntypesetPreviewHtmlForExport();
-6698: 
-6699:       return `<!doctype html>
-6700: <html lang="en-GB">
-6701: <head>
-6702: <meta charset="utf-8">
-6703: <meta name="viewport" content="width=device-width, initial-scale=1">
-6704: <title>${escapeHtml(title)}</title>
-6705: ${mathJaxScripts}
-6706: <style>
-6707: ${styleText}
-6708: body { background: var(--bg); padding: 0; }
-6709: .export-wrap { max-width: 920px; margin: 0 auto; padding: 24px 16px; }
-
---- lines 6703-6721 (match 6709) ---
-6703: <meta name="viewport" content="width=device-width, initial-scale=1">
-6704: <title>${escapeHtml(title)}</title>
-6705: ${mathJaxScripts}
-6706: <style>
-6707: ${styleText}
-6708: body { background: var(--bg); padding: 0; }
-6709: .export-wrap { max-width: 920px; margin: 0 auto; padding: 24px 16px; }
-6710: .export-wrap .preview { height: auto !important; min-height: 0 !important; overflow: visible !important; }
-6711: @media print { .export-wrap { padding: 0; max-width: none; } }
-6712: </style>
-6713: </head>
-6714: <body class="${escapeHtml(bodyClasses)}">
-6715: <main class="export-wrap">
-6716: <article class="${escapeHtml(previewClasses)}">
-6717: ${articleHtml}
-6718: </article>
-6719: </main>
-6720: <script>
-6721: window.addEventListener('load', function () {
-
---- lines 6704-6722 (match 6710) ---
-6704: <title>${escapeHtml(title)}</title>
-6705: ${mathJaxScripts}
-6706: <style>
-6707: ${styleText}
-6708: body { background: var(--bg); padding: 0; }
-6709: .export-wrap { max-width: 920px; margin: 0 auto; padding: 24px 16px; }
-6710: .export-wrap .preview { height: auto !important; min-height: 0 !important; overflow: visible !important; }
-6711: @media print { .export-wrap { padding: 0; max-width: none; } }
-6712: </style>
-6713: </head>
-6714: <body class="${escapeHtml(bodyClasses)}">
-6715: <main class="export-wrap">
-6716: <article class="${escapeHtml(previewClasses)}">
-6717: ${articleHtml}
-6718: </article>
-6719: </main>
-6720: <script>
-6721: window.addEventListener('load', function () {
-6722:   if (window.MathJax && MathJax.typesetPromise) {
-
---- lines 6705-6723 (match 6711) ---
-6705: ${mathJaxScripts}
-6706: <style>
-6707: ${styleText}
-6708: body { background: var(--bg); padding: 0; }
-6709: .export-wrap { max-width: 920px; margin: 0 auto; padding: 24px 16px; }
-6710: .export-wrap .preview { height: auto !important; min-height: 0 !important; overflow: visible !important; }
-6711: @media print { .export-wrap { padding: 0; max-width: none; } }
-6712: </style>
-6713: </head>
-6714: <body class="${escapeHtml(bodyClasses)}">
-6715: <main class="export-wrap">
-6716: <article class="${escapeHtml(previewClasses)}">
-6717: ${articleHtml}
-6718: </article>
-6719: </main>
-6720: <script>
-6721: window.addEventListener('load', function () {
-6722:   if (window.MathJax && MathJax.typesetPromise) {
-6723:     MathJax.typesetPromise().catch(function (error) { console.error(error); });
-
---- lines 6709-6727 (match 6715) ---
-6709: .export-wrap { max-width: 920px; margin: 0 auto; padding: 24px 16px; }
-6710: .export-wrap .preview { height: auto !important; min-height: 0 !important; overflow: visible !important; }
-6711: @media print { .export-wrap { padding: 0; max-width: none; } }
-6712: </style>
-6713: </head>
-6714: <body class="${escapeHtml(bodyClasses)}">
-6715: <main class="export-wrap">
-6716: <article class="${escapeHtml(previewClasses)}">
-6717: ${articleHtml}
-6718: </article>
-6719: </main>
-6720: <script>
-6721: window.addEventListener('load', function () {
-6722:   if (window.MathJax && MathJax.typesetPromise) {
-6723:     MathJax.typesetPromise().catch(function (error) { console.error(error); });
-6724:   }
-6725: });
-6726: <\/script>
-6727: </body>
-
---- lines 6726-6744 (match 6732) ---
-6726: <\/script>
-6727: </body>
-6728: </html>`;
-6729:     }
-6730: 
-6731:     async function downloadRenderedHtml(fileNameOverride = null) {
-6732:       await ensurePreviewRenderedForExport();
-6733:       const safeName = normaliseHtmlFileName(fileNameOverride || currentFileName || 'draft.html');
-6734:       downloadTextFile(buildStaticHtmlDocument(), safeName, 'text/html;charset=utf-8');
-6735:       showToast(`Saved ${safeName}`);
-6736:     }
-6737: 
-6738:     async function saveMarkdownAs() {
-6739:       if (isVisualModeActive()) {
-6740:         const committedMath = commitActiveWysiwygMathEdit({ quiet: true });
-6741:         if (!committedMath) syncMarkdownFromWysiwyg();
-6742:       }
-6743:       const options = await getSaveAsOptions();
-6744: 
-
-===== PATTERN: html =====
-matches: [1, 3, 25, 47, 82, 2038, 2733, 3617, 3669, 3934, 3936, 4030, 4202, 4417, 4427, 4473, 4477, 4479, 4935, 4943, 4948, 4956, 4973, 4982, 4984, 5003, 5006, 5007, 5010, 5013, 5014, 5015, 5021, 5024, 5025, 5026, 5027, 5028, 5034, 5037, 5038, 5039, 5040, 5041, 5042, 5043, 5044, 5047, 5048, 5049, 5052, 5053, 5056, 5061, 5076, 5080, 5081, 5084, 5091, 5094, 5096, 5100, 5105, 5106, 5107, 5108, 5109, 5110, 5112, 5113, 5114, 5115, 5126, 5195, 5196, 5235, 5238, 5262, 5264, 5265, 5266, 5290, 5297, 5327, 5334, 5342, 5379, 5383, 5385, 5404, 5447, 5949, 6082, 6099, 6321, 6463, 6466, 6467, 6472, 6473, 6479, 6575, 6578, 6579, 6585, 6590, 6593, 6594, 6624, 6627, 6632, 6670, 6671, 6672, 6673, 6677, 6680, 6683, 6697, 6699, 6700, 6704, 6714, 6716, 6717, 6728, 6731, 6733, 6734, 6749, 6750, 7165]
-
---- lines 1-13 (match 1) ---
-1: <!doctype html>
-2: <!-- ScienceMD | Copyright 2026 Trevor Neil Kelleher | Apache License 2.0 | Full notices in Help and About. -->
-3: <html lang="en-GB">
-4: <head>
-5:   <meta charset="utf-8" />
-6:   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-7:   <title>ScienceMD</title>
-8:   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20128%20128%27%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%27g%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%271%27%20y2%3D%271%27%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%270%25%27%20stop-color%3D%27%232563eb%27%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%27100%25%27%20stop-color%3D%27%230f766e%27%2F%3E%0A%20%20%20%20%3C%2FlinearGradi …[truncated]
-9:   <link rel="shortcut icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20128%20128%27%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%27g%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%271%27%20y2%3D%271%27%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%270%25%27%20stop-color%3D%27%232563eb%27%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%27100%25%27%20stop-color%3D%27%230f766e%27%2F%3E%0A%20%20%20%20%3C%2FlinearGradient%3E%0A%20 …[truncated]
-10:   <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20128%20128%27%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%27g%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%271%27%20y2%3D%271%27%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%270%25%27%20stop-color%3D%27%232563eb%27%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%27100%25%27%20stop-color%3D%27%230f766e%27%2F%3E%0A%20%20%20%20%3C%2FlinearGradient%3E%0A …[truncated]
-11: 
-12:   <!--
-13:     ScienceMD — self-contained Markdown + LaTeX-style maths editor
-
---- lines 1-15 (match 3) ---
-1: <!doctype html>
-2: <!-- ScienceMD | Copyright 2026 Trevor Neil Kelleher | Apache License 2.0 | Full notices in Help and About. -->
-3: <html lang="en-GB">
-4: <head>
-5:   <meta charset="utf-8" />
-6:   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-7:   <title>ScienceMD</title>
-8:   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20128%20128%27%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%27g%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%271%27%20y2%3D%271%27%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%270%25%27%20stop-color%3D%27%232563eb%27%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%27100%25%27%20stop-color%3D%27%230f766e%27%2F%3E%0A%20%20%20%20%3C%2FlinearGradi …[truncated]
-9:   <link rel="shortcut icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20128%20128%27%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%27g%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%271%27%20y2%3D%271%27%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%270%25%27%20stop-color%3D%27%232563eb%27%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%27100%25%27%20stop-color%3D%27%230f766e%27%2F%3E%0A%20%20%20%20%3C%2FlinearGradient%3E%0A%20 …[truncated]
-10:   <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20128%20128%27%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%27g%27%20x1%3D%270%27%20y1%3D%270%27%20x2%3D%271%27%20y2%3D%271%27%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%270%25%27%20stop-color%3D%27%232563eb%27%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%27100%25%27%20stop-color%3D%27%230f766e%27%2F%3E%0A%20%20%20%20%3C%2FlinearGradient%3E%0A …[truncated]
-11: 
-12:   <!--
-13:     ScienceMD — self-contained Markdown + LaTeX-style maths editor
-14:     --------------------------------------------------------------
-15:     This is a single-page browser app. It does not need a server.
-
---- lines 19-37 (match 25) ---
-19:     - Visual editing with Markdown kept underneath
-20:     - WYSIWYG editing with headings, lists, tables, code blocks, images, and maths
-21:     - Supports inline and display LaTeX-style maths
-22:     - Full-width single-document workspace on desktop
-23:     - Hidden print/export renderer with selectable document styles
-24:     - Autosaves drafts to browser storage
-25:     - Download/export edited Markdown, rendered HTML, or print/save as PDF
-26: 
-27:     Notes:
-28:     - Fully self-contained: no CDN, no server, no build step, and no internet required.
-29:     - The editor runs locally in the browser.
-30:     - Saving exports a new file rather than overwriting the original.
-31:   -->
-32:   <!-- MathJax 3.2.1 | Apache License 2.0 | Includes Speech Rule Engine 4.0.6 and Wicked Good XPath 1.3.0. -->
-33:   <script>
-34:     window.MathJax = {
-35:       tex: {
-36:         inlineMath: [['$', '$'], ['\\(', '\\)']],
-37:         displayMath: [['$$', '$$'], ['\\[', '\\]']],
-
---- lines 41-59 (match 47) ---
-41:       svg: { fontCache: 'global' },
-42:       startup: { typeset: false }
-43:     };
-44:   </script>
-45:   <script>
-46: 
-47: (function(){"use strict";var __webpack_modules__={351:function(t,e,r){var n,o=this&&this.__extends||(n=function(t,e){return n=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(t,e){t.__proto__=e}||function(t,e){for(var r in e)Object.prototype.hasOwnProperty.call(e,r)&&(t[r]=e[r])},n(t,e)},function(t,e){if("function"!=typeof e&&null!==e)throw new TypeError("Class extends value "+String(e)+" is not a constructor or null");function r(){this.constructor=t}n(t,e),t.prototype=null===e?Ob …[truncated]
-48:   
-49:   </script>
-50: 
-51:   <style>
-52:     :root {
-53:       --bg: #f6f7fb;
-54:       --panel: #ffffff;
-55:       --panel-2: #f0f2f7;
-56:       --text: #1d2433;
-57:       --muted: #687386;
-58:       --border: #d9deea;
-59:       --accent: #395bd6;
-
---- lines 76-94 (match 82) ---
-76:       --shadow: 0 10px 30px rgba(0, 0, 0, 0.30);
-77:       color-scheme: dark;
-78:     }
-79: 
-80:     * { box-sizing: border-box; }
-81: 
-82:     html, body {
-83:       margin: 0;
-84:       min-height: 100%;
-85:       max-width: 100%;
-86:       overflow-x: hidden;
-87:       background: var(--bg);
-88:       color: var(--text);
-89:       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-90:     }
-91: 
-92:     body {
-93:       padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-94:     }
-
---- lines 2032-2050 (match 2038) ---
-2032:           font-family: "Times New Roman", Times, serif;
-2033:           font-size: 9pt;
-2034:           color: #555555;
-2035:         }
-2036:       }
-2037: 
-2038:       html,
-2039:       body {
-2040:         background: #ffffff !important;
-2041:         color: #000000 !important;
-2042:         padding: 0 !important;
-2043:         margin: 0 !important;
-2044:         overflow: visible !important;
-2045:       }
-2046: 
-2047:       header,
-2048:       .tabs,
-2049:       .format-toolbar,
-2050:       .panel-head,
-
---- lines 2727-2745 (match 2733) ---
-2727:         --desktop-gap: 14px;
-2728:         --desktop-splitter: 12px;
-2729:         --desktop-editor-col: 1fr;
-2730:         --desktop-preview-col: 1fr;
-2731:       }
-2732: 
-2733:       html,
-2734:       body {
-2735:         height: 100dvh;
-2736:         min-height: 100dvh;
-2737:         overflow: hidden !important;
-2738:       }
-2739: 
-2740:       body {
-2741:         display: flex;
-2742:         flex-direction: column;
-2743:         background:
-2744:           linear-gradient(180deg, color-mix(in srgb, var(--panel-2) 60%, var(--bg)), var(--bg) 190px),
-2745:           var(--bg);
-
---- lines 3611-3629 (match 3617) ---
-3611:         <h3>Top toolbar</h3>
-3612:         <table>
-3613:           <tr><th>Button</th><th>Meaning</th></tr>
-3614:           <tr><td>New</td><td>Start a fresh ScienceMD starter document</td></tr>
-3615:           <tr><td>Open</td><td>Open a Markdown file</td></tr>
-3616:           <tr><td>Save</td><td>Save the current Markdown file</td></tr>
-3617:           <tr><td>Save As</td><td>Save with a new filename or export rendered HTML</td></tr>
-3618:           <tr><td>Undo</td><td>Undo the most recent editing change</td></tr>
-3619:           <tr><td>Redo</td><td>Restore the most recently undone change</td></tr>
-3620:           <tr><td>Navigation</td><td>Open the section navigator built from headings</td></tr>
-3621:           <tr><td>Maths</td><td>Open the maths palette</td></tr>
-3622:           <tr><td>Find</td><td>Find and replace text in the Markdown source</td></tr>
-3623:           <tr><td>Fullscreen</td><td>Enter or exit fullscreen mode</td></tr>
-3624:           <tr><td>Theme</td><td>Switch between light and dark mode</td></tr>
-3625:           <tr><td>Help</td><td>Open this Help and About panel</td></tr>
-3626:         </table>
-3627:       </section>
-3628: 
-3629:       <section>
-
---- lines 3663-3681 (match 3669) ---
-3663: \]</code></pre>
-3664:         <p>In the visual editor, click a rendered formula to edit its LaTeX source, then click <strong>Done</strong> to re-render it.</p>
-3665:       </section>
-3666: 
-3667:       <section>
-3668:         <h3>Desktop layout</h3>
-3669:         <p>ScienceMD uses a full-width visual editor. A hidden renderer prepares styled print, PDF, and HTML output without taking up document workspace.</p>
-3670:         <p>The word count and character count are shown in the bottom footer status bar.</p>
-3671:       </section>
-3672: 
-3673:       <section>
-3674:         <h3>Autosave warning</h3>
-3675:         <p>Autosave is browser storage. It is useful as a safety net, but it is not the same as saving a file. Use <strong>Save</strong> or <strong>Save As</strong> to create a real Markdown file.</p>
-3676:         <p>Embedded images keep their original file format and dimensions. ScienceMD only shortens them in the editor view; saved Markdown contains the full standard embedded image.</p>
-3677:       </section>
-3678: 
-3679:       <!-- SCIENCEMD-LICENCES-START -->
-3680:       <section id="licenceAcknowledgements">
-3681:         <h3>Licence and acknowledgements</h3>
-
---- lines 3928-3946 (match 3934) ---
-3928:   </aside>
-3929: 
-3930:   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-3931: 
-3932:   
-3933: <script>
-3934: /* DOMPurify 3.4.8 | official upstream browser build embedded for offline ScienceMD HTML compatibility. */
-3935: /*! @license DOMPurify 3.4.8 | (c) Cure53 and other contributors | Released under the Apache License 2.0 OR Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.4.8/LICENSE */
-3936: !function(e,t){"object"==typeof exports&&"undefined"!=typeof module?module.exports=t():"function"==typeof define&&define.amd?define(t):(e="undefined"!=typeof globalThis?globalThis:e||self).DOMPurify=t()}(this,function(){"use strict";function e(e,t){(null==t||t>e.length)&&(t=e.length);for(var n=0,o=Array(t);n<t;n++)o[n]=e[n];return o}function t(t,n){return function(e){if(Array.isArray(e))return e}(t)||function(e,t){var n=null==e?null:"undefined"!=typeof Symbol&&e[Symbol.iterator]||e["@@iterator"] …[truncated]
-3937: //# sourceMappingURL=purify.min.js.map
-3938: 
-3939: </script>
-3940: <script>
-3941: 
-3942:     const STORAGE_KEY = 'sciencemd:v1:draft';
-3943:     const THEME_KEY = 'sciencemd:theme';
-3944:     const FILENAME_KEY = 'sciencemd:v1:fileName';
-3945:     const PREVIEW_STYLE_KEY = 'sciencemd:previewStyle';
-3946:     const IMAGE_MAP_KEY = 'sciencemd:imageMap';
-
---- lines 3930-3948 (match 3936) ---
-3930:   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-3931: 
-3932:   
-3933: <script>
-3934: /* DOMPurify 3.4.8 | official upstream browser build embedded for offline ScienceMD HTML compatibility. */
-3935: /*! @license DOMPurify 3.4.8 | (c) Cure53 and other contributors | Released under the Apache License 2.0 OR Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.4.8/LICENSE */
-3936: !function(e,t){"object"==typeof exports&&"undefined"!=typeof module?module.exports=t():"function"==typeof define&&define.amd?define(t):(e="undefined"!=typeof globalThis?globalThis:e||self).DOMPurify=t()}(this,function(){"use strict";function e(e,t){(null==t||t>e.length)&&(t=e.length);for(var n=0,o=Array(t);n<t;n++)o[n]=e[n];return o}function t(t,n){return function(e){if(Array.isArray(e))return e}(t)||function(e,t){var n=null==e?null:"undefined"!=typeof Symbol&&e[Symbol.iterator]||e["@@iterator"] …[truncated]
-3937: //# sourceMappingURL=purify.min.js.map
-3938: 
-3939: </script>
-3940: <script>
-3941: 
-3942:     const STORAGE_KEY = 'sciencemd:v1:draft';
-3943:     const THEME_KEY = 'sciencemd:theme';
-3944:     const FILENAME_KEY = 'sciencemd:v1:fileName';
-3945:     const PREVIEW_STYLE_KEY = 'sciencemd:previewStyle';
-3946:     const IMAGE_MAP_KEY = 'sciencemd:imageMap';
-3947: 
-3948:     const editor = document.getElementById('editor');
-
---- lines 4024-4042 (match 4030) ---
-4024:     let nextImageNumber = 1;
-4025:     let savedWysiwygRange = null;
-4026:     let activeMathEditInput = null;
-4027:     let activeTableCell = null;
-4028:     let savedTableSourceSelection = null;
-4029: 
-4030:     const starterText = "# Welcome to ScienceMD\n\n**ScienceMD** is an offline-first Markdown and LaTeX editor for scientific notes, technical documents, revision material, and print-ready papers.\n\nUse **Write** for visual editing or **MD** when you want direct control of the Markdown source. Your document remains a normal `.md` file.\n\n> Delete this starter guide when you are ready and begin writing.\n\n---\n\n## Quick start\n\n- **New** creates a fresh starter document.\n- **Open** loads an …[truncated]
-4031: 
-4032:     function showToast(message) {
-4033:       clearTimeout(toastTimer);
-4034:       toast.textContent = message;
-4035:       toast.classList.add('show');
-4036:       toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
-4037:     }
-4038: 
-4039: 
-4040:     function isFullscreenActive() {
-4041:       return !!(document.fullscreenElement || document.webkitFullscreenElement);
-4042:     }
-
---- lines 4196-4214 (match 4202) ---
-4196:       activeMathEditInput = null;
-4197:       savedWysiwygRange = null;
-4198:       hideTableTools();
-4199: 
-4200:       try {
-4201:         wysiwygSyncLock = true;
-4202:         wysiwygEditor.innerHTML = prepareWysiwygHtmlFromMarkdown(editor.value || '');
-4203:       } catch (error) {
-4204:         console.error('Could not rebuild visual editor:', error);
-4205:         wysiwygEditor.textContent = editor.value || '';
-4206:         showToast('Visual editor could not render this file. Try MD mode.');
-4207:       } finally {
-4208:         wysiwygSyncLock = false;
-4209:       }
-4210:       typesetWysiwygMath(wysiwygEditor);
-4211: 
-4212:       if (resetScroll) {
-4213:         wysiwygEditor.scrollTop = 0;
-4214:         preview.scrollTop = 0;
-
---- lines 4411-4429 (match 4417) ---
-4411:         const index = Number(node.getAttribute('data-math-index'));
-4412:         setWysiwygMathNode(node, 'inline', inlines[index] || 'x');
-4413:       });
-4414:     }
-4415: 
-4416: 
-4417:     function escapeHtml(value) {
-4418:       return value
-4419:         .replaceAll('&', '&amp;')
-4420:         .replaceAll('<', '&lt;')
-4421:         .replaceAll('>', '&gt;')
-4422:         .replaceAll('"', '&quot;')
-4423:         .replaceAll("'", '&#039;');
-4424:     }
-4425: 
-4426:     function escapeAttribute(value) {
-4427:       return escapeHtml(String(value || ''));
-4428:     }
-4429: 
-
---- lines 4421-4439 (match 4427) ---
-4421:         .replaceAll('>', '&gt;')
-4422:         .replaceAll('"', '&quot;')
-4423:         .replaceAll("'", '&#039;');
-4424:     }
-4425: 
-4426:     function escapeAttribute(value) {
-4427:       return escapeHtml(String(value || ''));
-4428:     }
-4429: 
-4430:     function getHeadings(markdown) {
-4431:       const headings = [];
-4432:       const lines = markdown.split(/\r?\n/);
-4433:       let offset = 0;
-4434:       let inFence = false;
-4435: 
-4436:       for (let i = 0; i < lines.length; i++) {
-4437:         const line = lines[i];
-4438: 
-4439:         if (/^\s*```/.test(line) || /^\s*~~~/.test(line)) {
-
---- lines 4467-4485 (match 4473) ---
-4467:         if (!editingMath) syncMarkdownFromWysiwyg();
-4468:       }
-4469: 
-4470:       const headings = getHeadings(editor.value);
-4471: 
-4472:       if (!headings.length) {
-4473:         navList.innerHTML = '<div class="nav-empty">No Markdown headings found. Use headings like <strong># Abstract</strong> or <strong>## 1. Introduction</strong>.</div>';
-4474:         return;
-4475:       }
-4476: 
-4477:       navList.innerHTML = headings.map((heading, index) => {
-4478:         heading.navIndex = index;
-4479:         const title = escapeHtml(heading.title);
-4480:         return `<button class="nav-item nav-level-${heading.level}" type="button" data-heading-index="${index}">${title}<br><span class="status">Line ${heading.line}</span></button>`;
-4481:       }).join('');
-4482: 
-4483:       navList.querySelectorAll('[data-heading-index]').forEach(button => {
-4484:         button.addEventListener('click', () => {
-4485:           const heading = headings[Number(button.getAttribute('data-heading-index'))];
-
---- lines 4471-4489 (match 4477) ---
-4471: 
-4472:       if (!headings.length) {
-4473:         navList.innerHTML = '<div class="nav-empty">No Markdown headings found. Use headings like <strong># Abstract</strong> or <strong>## 1. Introduction</strong>.</div>';
-4474:         return;
-4475:       }
-4476: 
-4477:       navList.innerHTML = headings.map((heading, index) => {
-4478:         heading.navIndex = index;
-4479:         const title = escapeHtml(heading.title);
-4480:         return `<button class="nav-item nav-level-${heading.level}" type="button" data-heading-index="${index}">${title}<br><span class="status">Line ${heading.line}</span></button>`;
-4481:       }).join('');
-4482: 
-4483:       navList.querySelectorAll('[data-heading-index]').forEach(button => {
-4484:         button.addEventListener('click', () => {
-4485:           const heading = headings[Number(button.getAttribute('data-heading-index'))];
-4486:           jumpToHeading(heading);
-4487:         });
-4488:       });
-4489:     }
-
---- lines 4473-4491 (match 4479) ---
-4473:         navList.innerHTML = '<div class="nav-empty">No Markdown headings found. Use headings like <strong># Abstract</strong> or <strong>## 1. Introduction</strong>.</div>';
-4474:         return;
-4475:       }
-4476: 
-4477:       navList.innerHTML = headings.map((heading, index) => {
-4478:         heading.navIndex = index;
-4479:         const title = escapeHtml(heading.title);
-4480:         return `<button class="nav-item nav-level-${heading.level}" type="button" data-heading-index="${index}">${title}<br><span class="status">Line ${heading.line}</span></button>`;
-4481:       }).join('');
-4482: 
-4483:       navList.querySelectorAll('[data-heading-index]').forEach(button => {
-4484:         button.addEventListener('click', () => {
-4485:           const heading = headings[Number(button.getAttribute('data-heading-index'))];
-4486:           jumpToHeading(heading);
-4487:         });
-4488:       });
-4489:     }
-4490: 
-4491:     function openNavigation() {
-
---- lines 4929-4947 (match 4935) ---
-4929:       if (/^(https?:|mailto:|tel:|data:image\/(png|jpeg|jpg|webp|gif|svg\+xml);base64,|data:image\/(png|jpeg|jpg|webp|gif|svg\+xml),)/i.test(url)) {
-4930:         return url.replace(/"/g, '%22');
-4931:       }
-4932:       return '';
-4933:     }
-4934: 
-4935:     const HTML_COMPAT_TAGS = [
-4936:       'a', 'abbr', 'b', 'blockquote', 'br', 'caption', 'cite', 'code', 'col', 'colgroup',
-4937:       'dd', 'del', 'details', 'dfn', 'div', 'dl', 'dt', 'em', 'figcaption', 'figure',
-4938:       'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'i', 'img', 'kbd', 'li', 'mark',
-4939:       'ol', 'p', 'pre', 's', 'samp', 'small', 'span', 'strong', 'sub', 'summary',
-4940:       'sup', 'table', 'tbody', 'td', 'tfoot', 'th', 'thead', 'tr', 'u', 'ul', 'var'
-4941:     ];
-4942: 
-4943:     const HTML_COMPAT_ATTRS = [
-4944:       'abbr', 'align', 'alt', 'aria-hidden', 'class', 'colspan', 'height', 'href', 'id',
-4945:       'rel', 'rowspan', 'scope', 'src', 'style', 'target', 'title', 'width'
-4946:     ];
-4947: 
-
---- lines 4937-4955 (match 4943) ---
-4937:       'dd', 'del', 'details', 'dfn', 'div', 'dl', 'dt', 'em', 'figcaption', 'figure',
-4938:       'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'i', 'img', 'kbd', 'li', 'mark',
-4939:       'ol', 'p', 'pre', 's', 'samp', 'small', 'span', 'strong', 'sub', 'summary',
-4940:       'sup', 'table', 'tbody', 'td', 'tfoot', 'th', 'thead', 'tr', 'u', 'ul', 'var'
-4941:     ];
-4942: 
-4943:     const HTML_COMPAT_ATTRS = [
-4944:       'abbr', 'align', 'alt', 'aria-hidden', 'class', 'colspan', 'height', 'href', 'id',
-4945:       'rel', 'rowspan', 'scope', 'src', 'style', 'target', 'title', 'width'
-4946:     ];
-4947: 
-4948:     const HTML_COMPAT_ALLOWED_STYLES = new Set([
-4949:       'text-align', 'break-before', 'break-after', 'page-break-before', 'page-break-after',
-4950:       'width', 'height', 'max-width', 'min-width', 'color', 'background-color',
-4951:       'font-size', 'font-weight', 'font-style', 'text-decoration', 'vertical-align',
-4952:       'margin', 'margin-left', 'margin-right', 'margin-top', 'margin-bottom',
-4953:       'padding', 'padding-left', 'padding-right', 'padding-top', 'padding-bottom'
-4954:     ]);
-4955: 
-
---- lines 4942-4960 (match 4948) ---
-4942: 
-4943:     const HTML_COMPAT_ATTRS = [
-4944:       'abbr', 'align', 'alt', 'aria-hidden', 'class', 'colspan', 'height', 'href', 'id',
-4945:       'rel', 'rowspan', 'scope', 'src', 'style', 'target', 'title', 'width'
-4946:     ];
-4947: 
-4948:     const HTML_COMPAT_ALLOWED_STYLES = new Set([
-4949:       'text-align', 'break-before', 'break-after', 'page-break-before', 'page-break-after',
-4950:       'width', 'height', 'max-width', 'min-width', 'color', 'background-color',
-4951:       'font-size', 'font-weight', 'font-style', 'text-decoration', 'vertical-align',
-4952:       'margin', 'margin-left', 'margin-right', 'margin-top', 'margin-bottom',
-4953:       'padding', 'padding-left', 'padding-right', 'padding-top', 'padding-bottom'
-4954:     ]);
-4955: 
-4956:     function isPageBreakHtml(value) {
-4957:       const raw = String(value || '').trim();
-4958:       if (/^<!--\s*(?:page\s*break|pagebreak|pb)\s*-->$/i.test(raw)) return true;
-4959:       if (/class\s*=\s*['"][^'"]*(?:page-break|pagebreak|wysiwygmd-page-break|marktex-page-break)[^'"]*['"]/i.test(raw)) return true;
-4960:       if (/style\s*=\s*['"][^'"]*(?:page-break-before\s*:\s*always|break-before\s*:\s*page|page-break-after\s*:\s*always|break-after\s*:\s*page)[^'"]*['"]/i.test(raw)) return true;
-
---- lines 4950-4968 (match 4956) ---
-4950:       'width', 'height', 'max-width', 'min-width', 'color', 'background-color',
-4951:       'font-size', 'font-weight', 'font-style', 'text-decoration', 'vertical-align',
-4952:       'margin', 'margin-left', 'margin-right', 'margin-top', 'margin-bottom',
-4953:       'padding', 'padding-left', 'padding-right', 'padding-top', 'padding-bottom'
-4954:     ]);
-4955: 
-4956:     function isPageBreakHtml(value) {
-4957:       const raw = String(value || '').trim();
-4958:       if (/^<!--\s*(?:page\s*break|pagebreak|pb)\s*-->$/i.test(raw)) return true;
-4959:       if (/class\s*=\s*['"][^'"]*(?:page-break|pagebreak|wysiwygmd-page-break|marktex-page-break)[^'"]*['"]/i.test(raw)) return true;
-4960:       if (/style\s*=\s*['"][^'"]*(?:page-break-before\s*:\s*always|break-before\s*:\s*page|page-break-after\s*:\s*always|break-after\s*:\s*page)[^'"]*['"]/i.test(raw)) return true;
-4961:       return false;
-4962:     }
-4963: 
-4964:     function cleanAllowedStyles(root) {
-4965:       root.querySelectorAll('[style]').forEach(node => {
-4966:         const declarations = String(node.getAttribute('style') || '').split(';');
-4967:         const safe = [];
-4968:         declarations.forEach(part => {
-
---- lines 4967-4985 (match 4973) ---
-4967:         const safe = [];
-4968:         declarations.forEach(part => {
-4969:           const pieces = part.split(':');
-4970:           if (pieces.length < 2) return;
-4971:           const prop = pieces.shift().trim().toLowerCase();
-4972:           const value = pieces.join(':').trim();
-4973:           if (!HTML_COMPAT_ALLOWED_STYLES.has(prop)) return;
-4974:           if (/url\s*\(|expression\s*\(|javascript\s*:|@import|behavior\s*:/i.test(value)) return;
-4975:           safe.push(`${prop}: ${value}`);
-4976:         });
-4977:         if (safe.length) node.setAttribute('style', safe.join('; '));
-4978:         else node.removeAttribute('style');
-4979:       });
-4980:     }
-4981: 
-4982:     function normaliseSanitisedHtml(html) {
-4983:       const wrapper = document.createElement('template');
-4984:       wrapper.innerHTML = html;
-4985: 
-
---- lines 4976-4994 (match 4982) ---
-4976:         });
-4977:         if (safe.length) node.setAttribute('style', safe.join('; '));
-4978:         else node.removeAttribute('style');
-4979:       });
-4980:     }
-4981: 
-4982:     function normaliseSanitisedHtml(html) {
-4983:       const wrapper = document.createElement('template');
-4984:       wrapper.innerHTML = html;
-4985: 
-4986:       wrapper.content.querySelectorAll('a[href]').forEach(link => {
-4987:         const href = safeUrl(link.getAttribute('href'));
-4988:         if (!href) link.removeAttribute('href');
-4989:         else {
-4990:           link.setAttribute('href', href);
-4991:           link.setAttribute('rel', 'noopener noreferrer');
-4992:           if (!link.getAttribute('target')) link.setAttribute('target', '_blank');
-4993:         }
-4994:       });
-
---- lines 4978-4996 (match 4984) ---
-4978:         else node.removeAttribute('style');
-4979:       });
-4980:     }
-4981: 
-4982:     function normaliseSanitisedHtml(html) {
-4983:       const wrapper = document.createElement('template');
-4984:       wrapper.innerHTML = html;
-4985: 
-4986:       wrapper.content.querySelectorAll('a[href]').forEach(link => {
-4987:         const href = safeUrl(link.getAttribute('href'));
-4988:         if (!href) link.removeAttribute('href');
-4989:         else {
-4990:           link.setAttribute('href', href);
-4991:           link.setAttribute('rel', 'noopener noreferrer');
-4992:           if (!link.getAttribute('target')) link.setAttribute('target', '_blank');
-4993:         }
-4994:       });
-4995: 
-4996:       wrapper.content.querySelectorAll('img[src]').forEach(img => {
-
---- lines 4997-5015 (match 5003) ---
-4997:         const src = safeUrl(img.getAttribute('src'));
-4998:         if (!src) img.removeAttribute('src');
-4999:         else img.setAttribute('src', src);
-5000:       });
-5001: 
-5002:       cleanAllowedStyles(wrapper.content);
-5003:       return wrapper.innerHTML;
-5004:     }
-5005: 
-5006:     function sanitiseHtmlFragment(html) {
-5007:       if (isPageBreakHtml(html)) return '<div class="wysiwygmd-page-break" aria-hidden="true"></div>';
-5008: 
-5009:       if (!window.DOMPurify || typeof DOMPurify.sanitize !== 'function') {
-5010:         return escapeHtml(String(html || ''));
-5011:       }
-5012: 
-5013:       const clean = DOMPurify.sanitize(String(html || ''), {
-5014:         ALLOWED_TAGS: HTML_COMPAT_TAGS,
-5015:         ALLOWED_ATTR: HTML_COMPAT_ATTRS,
-
---- lines 5000-5018 (match 5006) ---
-5000:       });
-5001: 
-5002:       cleanAllowedStyles(wrapper.content);
-5003:       return wrapper.innerHTML;
-5004:     }
-5005: 
-5006:     function sanitiseHtmlFragment(html) {
-5007:       if (isPageBreakHtml(html)) return '<div class="wysiwygmd-page-break" aria-hidden="true"></div>';
-5008: 
-5009:       if (!window.DOMPurify || typeof DOMPurify.sanitize !== 'function') {
-5010:         return escapeHtml(String(html || ''));
-5011:       }
-5012: 
-5013:       const clean = DOMPurify.sanitize(String(html || ''), {
-5014:         ALLOWED_TAGS: HTML_COMPAT_TAGS,
-5015:         ALLOWED_ATTR: HTML_COMPAT_ATTRS,
-5016:         ALLOW_DATA_ATTR: false,
-5017:         FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form', 'input', 'button', 'textarea', 'select', 'option', 'link', 'meta'],
-5018:         FORBID_ATTR: ['srcset'],
-
---- lines 5001-5019 (match 5007) ---
-5001: 
-5002:       cleanAllowedStyles(wrapper.content);
-5003:       return wrapper.innerHTML;
-5004:     }
-5005: 
-5006:     function sanitiseHtmlFragment(html) {
-5007:       if (isPageBreakHtml(html)) return '<div class="wysiwygmd-page-break" aria-hidden="true"></div>';
-5008: 
-5009:       if (!window.DOMPurify || typeof DOMPurify.sanitize !== 'function') {
-5010:         return escapeHtml(String(html || ''));
-5011:       }
-5012: 
-5013:       const clean = DOMPurify.sanitize(String(html || ''), {
-5014:         ALLOWED_TAGS: HTML_COMPAT_TAGS,
-5015:         ALLOWED_ATTR: HTML_COMPAT_ATTRS,
-5016:         ALLOW_DATA_ATTR: false,
-5017:         FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form', 'input', 'button', 'textarea', 'select', 'option', 'link', 'meta'],
-5018:         FORBID_ATTR: ['srcset'],
-5019:         RETURN_TRUSTED_TYPE: false
-
---- lines 5004-5022 (match 5010) ---
-5004:     }
-5005: 
-5006:     function sanitiseHtmlFragment(html) {
-5007:       if (isPageBreakHtml(html)) return '<div class="wysiwygmd-page-break" aria-hidden="true"></div>';
-5008: 
-5009:       if (!window.DOMPurify || typeof DOMPurify.sanitize !== 'function') {
-5010:         return escapeHtml(String(html || ''));
-5011:       }
-5012: 
-5013:       const clean = DOMPurify.sanitize(String(html || ''), {
-5014:         ALLOWED_TAGS: HTML_COMPAT_TAGS,
-5015:         ALLOWED_ATTR: HTML_COMPAT_ATTRS,
-5016:         ALLOW_DATA_ATTR: false,
-5017:         FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form', 'input', 'button', 'textarea', 'select', 'option', 'link', 'meta'],
-5018:         FORBID_ATTR: ['srcset'],
-5019:         RETURN_TRUSTED_TYPE: false
-5020:       });
-5021:       return normaliseSanitisedHtml(clean);
-5022:     }
-
---- lines 5007-5025 (match 5013) ---
-5007:       if (isPageBreakHtml(html)) return '<div class="wysiwygmd-page-break" aria-hidden="true"></div>';
-5008: 
-5009:       if (!window.DOMPurify || typeof DOMPurify.sanitize !== 'function') {
-5010:         return escapeHtml(String(html || ''));
-5011:       }
-5012: 
-5013:       const clean = DOMPurify.sanitize(String(html || ''), {
-5014:         ALLOWED_TAGS: HTML_COMPAT_TAGS,
-5015:         ALLOWED_ATTR: HTML_COMPAT_ATTRS,
-5016:         ALLOW_DATA_ATTR: false,
-5017:         FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form', 'input', 'button', 'textarea', 'select', 'option', 'link', 'meta'],
-5018:         FORBID_ATTR: ['srcset'],
-5019:         RETURN_TRUSTED_TYPE: false
-5020:       });
-5021:       return normaliseSanitisedHtml(clean);
-5022:     }
-5023: 
-5024:     function sanitiseRenderedHtml(html) {
-5025:       if (!window.DOMPurify || typeof DOMPurify.sanitize !== 'function') return String(html || '');
-
---- lines 5008-5026 (match 5014) ---
-5008: 
-5009:       if (!window.DOMPurify || typeof DOMPurify.sanitize !== 'function') {
-5010:         return escapeHtml(String(html || ''));
-5011:       }
-5012: 
-5013:       const clean = DOMPurify.sanitize(String(html || ''), {
-5014:         ALLOWED_TAGS: HTML_COMPAT_TAGS,
-5015:         ALLOWED_ATTR: HTML_COMPAT_ATTRS,
-5016:         ALLOW_DATA_ATTR: false,
-5017:         FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form', 'input', 'button', 'textarea', 'select', 'option', 'link', 'meta'],
-5018:         FORBID_ATTR: ['srcset'],
-5019:         RETURN_TRUSTED_TYPE: false
-5020:       });
-5021:       return normaliseSanitisedHtml(clean);
-5022:     }
-5023: 
-5024:     function sanitiseRenderedHtml(html) {
-5025:       if (!window.DOMPurify || typeof DOMPurify.sanitize !== 'function') return String(html || '');
-5026:       const clean = DOMPurify.sanitize(String(html || ''), {
-
---- lines 5009-5027 (match 5015) ---
-5009:       if (!window.DOMPurify || typeof DOMPurify.sanitize !== 'function') {
-5010:         return escapeHtml(String(html || ''));
-5011:       }
-5012: 
-5013:       const clean = DOMPurify.sanitize(String(html || ''), {
-5014:         ALLOWED_TAGS: HTML_COMPAT_TAGS,
-5015:         ALLOWED_ATTR: HTML_COMPAT_ATTRS,
-5016:         ALLOW_DATA_ATTR: false,
-5017:         FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form', 'input', 'button', 'textarea', 'select', 'option', 'link', 'meta'],
-5018:         FORBID_ATTR: ['srcset'],
-5019:         RETURN_TRUSTED_TYPE: false
-5020:       });
-5021:       return normaliseSanitisedHtml(clean);
-5022:     }
-5023: 
-5024:     function sanitiseRenderedHtml(html) {
-5025:       if (!window.DOMPurify || typeof DOMPurify.sanitize !== 'function') return String(html || '');
-5026:       const clean = DOMPurify.sanitize(String(html || ''), {
-5027:         ALLOWED_TAGS: HTML_COMPAT_TAGS.concat(['mjx-container', 'svg', 'path', 'g', 'defs', 'use', 'rect', 'text']),
-
---- lines 5015-5033 (match 5021) ---
-5015:         ALLOWED_ATTR: HTML_COMPAT_ATTRS,
-5016:         ALLOW_DATA_ATTR: false,
-5017:         FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form', 'input', 'button', 'textarea', 'select', 'option', 'link', 'meta'],
-5018:         FORBID_ATTR: ['srcset'],
-5019:         RETURN_TRUSTED_TYPE: false
-5020:       });
-5021:       return normaliseSanitisedHtml(clean);
-5022:     }
-5023: 
-5024:     function sanitiseRenderedHtml(html) {
-5025:       if (!window.DOMPurify || typeof DOMPurify.sanitize !== 'function') return String(html || '');
-5026:       const clean = DOMPurify.sanitize(String(html || ''), {
-5027:         ALLOWED_TAGS: HTML_COMPAT_TAGS.concat(['mjx-container', 'svg', 'path', 'g', 'defs', 'use', 'rect', 'text']),
-5028:         ALLOWED_ATTR: HTML_COMPAT_ATTRS.concat(['data-math-index', 'jax', 'display', 'viewBox', 'd', 'x', 'y', 'role', 'focusable', 'xmlns', 'aria-label']),
-5029:         ALLOW_DATA_ATTR: true,
-5030:         FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form', 'input', 'button', 'textarea', 'select', 'option', 'link', 'meta'],
-5031:         FORBID_ATTR: ['srcset'],
-5032:         RETURN_TRUSTED_TYPE: false
-5033:       });
-
---- lines 5018-5036 (match 5024) ---
-5018:         FORBID_ATTR: ['srcset'],
-5019:         RETURN_TRUSTED_TYPE: false
-5020:       });
-5021:       return normaliseSanitisedHtml(clean);
-5022:     }
-5023: 
-5024:     function sanitiseRenderedHtml(html) {
-5025:       if (!window.DOMPurify || typeof DOMPurify.sanitize !== 'function') return String(html || '');
-5026:       const clean = DOMPurify.sanitize(String(html || ''), {
-5027:         ALLOWED_TAGS: HTML_COMPAT_TAGS.concat(['mjx-container', 'svg', 'path', 'g', 'defs', 'use', 'rect', 'text']),
-5028:         ALLOWED_ATTR: HTML_COMPAT_ATTRS.concat(['data-math-index', 'jax', 'display', 'viewBox', 'd', 'x', 'y', 'role', 'focusable', 'xmlns', 'aria-label']),
-5029:         ALLOW_DATA_ATTR: true,
-5030:         FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form', 'input', 'button', 'textarea', 'select', 'option', 'link', 'meta'],
-5031:         FORBID_ATTR: ['srcset'],
-5032:         RETURN_TRUSTED_TYPE: false
-5033:       });
-5034:       return normaliseSanitisedHtml(clean);
-5035:     }
-5036: 
-
---- lines 5019-5037 (match 5025) ---
-5019:         RETURN_TRUSTED_TYPE: false
-5020:       });
-5021:       return normaliseSanitisedHtml(clean);
-5022:     }
-5023: 
-5024:     function sanitiseRenderedHtml(html) {
-5025:       if (!window.DOMPurify || typeof DOMPurify.sanitize !== 'function') return String(html || '');
-5026:       const clean = DOMPurify.sanitize(String(html || ''), {
-5027:         ALLOWED_TAGS: HTML_COMPAT_TAGS.concat(['mjx-container', 'svg', 'path', 'g', 'defs', 'use', 'rect', 'text']),
-5028:         ALLOWED_ATTR: HTML_COMPAT_ATTRS.concat(['data-math-index', 'jax', 'display', 'viewBox', 'd', 'x', 'y', 'role', 'focusable', 'xmlns', 'aria-label']),
-5029:         ALLOW_DATA_ATTR: true,
-5030:         FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form', 'input', 'button', 'textarea', 'select', 'option', 'link', 'meta'],
-5031:         FORBID_ATTR: ['srcset'],
-5032:         RETURN_TRUSTED_TYPE: false
-5033:       });
-5034:       return normaliseSanitisedHtml(clean);
-5035:     }
-5036: 
-5037:     function protectInlineHtml(value) {
-
---- lines 5020-5038 (match 5026) ---
-5020:       });
-5021:       return normaliseSanitisedHtml(clean);
-5022:     }
-5023: 
-5024:     function sanitiseRenderedHtml(html) {
-5025:       if (!window.DOMPurify || typeof DOMPurify.sanitize !== 'function') return String(html || '');
-5026:       const clean = DOMPurify.sanitize(String(html || ''), {
-5027:         ALLOWED_TAGS: HTML_COMPAT_TAGS.concat(['mjx-container', 'svg', 'path', 'g', 'defs', 'use', 'rect', 'text']),
-5028:         ALLOWED_ATTR: HTML_COMPAT_ATTRS.concat(['data-math-index', 'jax', 'display', 'viewBox', 'd', 'x', 'y', 'role', 'focusable', 'xmlns', 'aria-label']),
-5029:         ALLOW_DATA_ATTR: true,
-5030:         FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form', 'input', 'button', 'textarea', 'select', 'option', 'link', 'meta'],
-5031:         FORBID_ATTR: ['srcset'],
-5032:         RETURN_TRUSTED_TYPE: false
-5033:       });
-5034:       return normaliseSanitisedHtml(clean);
-5035:     }
-5036: 
-5037:     function protectInlineHtml(value) {
-5038:       const htmlParts = [];
-
---- lines 5021-5039 (match 5027) ---
-5021:       return normaliseSanitisedHtml(clean);
-5022:     }
-5023: 
-5024:     function sanitiseRenderedHtml(html) {
-5025:       if (!window.DOMPurify || typeof DOMPurify.sanitize !== 'function') return String(html || '');
-5026:       const clean = DOMPurify.sanitize(String(html || ''), {
-5027:         ALLOWED_TAGS: HTML_COMPAT_TAGS.concat(['mjx-container', 'svg', 'path', 'g', 'defs', 'use', 'rect', 'text']),
-5028:         ALLOWED_ATTR: HTML_COMPAT_ATTRS.concat(['data-math-index', 'jax', 'display', 'viewBox', 'd', 'x', 'y', 'role', 'focusable', 'xmlns', 'aria-label']),
-5029:         ALLOW_DATA_ATTR: true,
-5030:         FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form', 'input', 'button', 'textarea', 'select', 'option', 'link', 'meta'],
-5031:         FORBID_ATTR: ['srcset'],
-5032:         RETURN_TRUSTED_TYPE: false
-5033:       });
-5034:       return normaliseSanitisedHtml(clean);
-5035:     }
-5036: 
-5037:     function protectInlineHtml(value) {
-5038:       const htmlParts = [];
-5039:       const stashHtml = fragment => {
-
---- lines 5022-5040 (match 5028) ---
-5022:     }
-5023: 
-5024:     function sanitiseRenderedHtml(html) {
-5025:       if (!window.DOMPurify || typeof DOMPurify.sanitize !== 'function') return String(html || '');
-5026:       const clean = DOMPurify.sanitize(String(html || ''), {
-5027:         ALLOWED_TAGS: HTML_COMPAT_TAGS.concat(['mjx-container', 'svg', 'path', 'g', 'defs', 'use', 'rect', 'text']),
-5028:         ALLOWED_ATTR: HTML_COMPAT_ATTRS.concat(['data-math-index', 'jax', 'display', 'viewBox', 'd', 'x', 'y', 'role', 'focusable', 'xmlns', 'aria-label']),
-5029:         ALLOW_DATA_ATTR: true,
-5030:         FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form', 'input', 'button', 'textarea', 'select', 'option', 'link', 'meta'],
-5031:         FORBID_ATTR: ['srcset'],
-5032:         RETURN_TRUSTED_TYPE: false
-5033:       });
-5034:       return normaliseSanitisedHtml(clean);
-5035:     }
-5036: 
-5037:     function protectInlineHtml(value) {
-5038:       const htmlParts = [];
-5039:       const stashHtml = fragment => {
-5040:         const clean = sanitiseHtmlFragment(fragment);
-
---- lines 5028-5046 (match 5034) ---
-5028:         ALLOWED_ATTR: HTML_COMPAT_ATTRS.concat(['data-math-index', 'jax', 'display', 'viewBox', 'd', 'x', 'y', 'role', 'focusable', 'xmlns', 'aria-label']),
-5029:         ALLOW_DATA_ATTR: true,
-5030:         FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'form', 'input', 'button', 'textarea', 'select', 'option', 'link', 'meta'],
-5031:         FORBID_ATTR: ['srcset'],
-5032:         RETURN_TRUSTED_TYPE: false
-5033:       });
-5034:       return normaliseSanitisedHtml(clean);
-5035:     }
-5036: 
-5037:     function protectInlineHtml(value) {
-5038:       const htmlParts = [];
-5039:       const stashHtml = fragment => {
-5040:         const clean = sanitiseHtmlFragment(fragment);
-5041:         if (!clean) return escapeHtml(fragment);
-5042:         const index = htmlParts.length;
-5043:         htmlParts.push(clean);
-5044:         return `\uE002HTMLPART${index}\uE002`;
-5045:       };
-5046:       let text = String(value || '');
-
---- lines 5031-5049 (match 5037) ---
-5031:         FORBID_ATTR: ['srcset'],
-5032:         RETURN_TRUSTED_TYPE: false
-5033:       });
-5034:       return normaliseSanitisedHtml(clean);
-5035:     }
-5036: 
-5037:     function protectInlineHtml(value) {
-5038:       const htmlParts = [];
-5039:       const stashHtml = fragment => {
-5040:         const clean = sanitiseHtmlFragment(fragment);
-5041:         if (!clean) return escapeHtml(fragment);
-5042:         const index = htmlParts.length;
-5043:         htmlParts.push(clean);
-5044:         return `\uE002HTMLPART${index}\uE002`;
-5045:       };
-5046:       let text = String(value || '');
-5047:       text = text.replace(/<!--\s*(?:page\s*break|pagebreak|pb)\s*-->/gi, match => stashHtml(match));
-5048:       text = text.replace(/<\/?(?:a|abbr|b|br|cite|code|del|dfn|em|i|img|kbd|mark|s|samp|small|span|strong|sub|sup|u|var)(?:\s+[^<>]*?)?\s*\/?>/gi, match => stashHtml(match));
-5049:       return { text, htmlParts };
-
-===== PATTERN: download =====
-matches: [25, 3361, 3605, 3936, 3964, 4030, 6482, 6488, 6560, 6567, 6731, 6734, 6750, 6754, 6996]
-
---- lines 19-37 (match 25) ---
-19:     - Visual editing with Markdown kept underneath
-20:     - WYSIWYG editing with headings, lists, tables, code blocks, images, and maths
-21:     - Supports inline and display LaTeX-style maths
-22:     - Full-width single-document workspace on desktop
-23:     - Hidden print/export renderer with selectable document styles
-24:     - Autosaves drafts to browser storage
-25:     - Download/export edited Markdown, rendered HTML, or print/save as PDF
-26: 
-27:     Notes:
-28:     - Fully self-contained: no CDN, no server, no build step, and no internet required.
-29:     - The editor runs locally in the browser.
-30:     - Saving exports a new file rather than overwriting the original.
-31:   -->
-32:   <!-- MathJax 3.2.1 | Apache License 2.0 | Includes Speech Rule Engine 4.0.6 and Wicked Good XPath 1.3.0. -->
-33:   <script>
-34:     window.MathJax = {
-35:       tex: {
-36:         inlineMath: [['$', '$'], ['\\(', '\\)']],
-37:         displayMath: [['$$', '$$'], ['\\[', '\\]']],
-
---- lines 3355-3373 (match 3361) ---
-3355:       </div>
-3356:       <div class="buttons top-toolbar" aria-label="Main actions">
-3357:         <div class="tool-group" data-ribbon-label="File" aria-label="File actions">
-3358:           <button id="clearBtn" type="button" title="New document" aria-label="New document"><svg class="bi bi-file-earmark-plus" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path d="M8 6.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V11a.5.5 0 0 1-1 0V9.5H6a.5.5 0 0 1 0-1h1.5V7a.5.5 0 0 1 .5-.5"/><path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5z"/></svg></button>
-3359:           <label class="file-button" for="fileInput" title="Open Markdown file" aria-label="Open Markdown file"><svg class="bi bi-folder2-open" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h2.764a1.5 1.5 0 0 1 1.06.44l.768.768A1.5 1.5 0 0 0 8.152 3.5H13.5A1.5 1.5 0 0 1 15 5v1H1z"/><path d="M.5 6.5a1 1 0 0 1 1-1h13a1 1 0 0 1 .976 1.217l-1.5 6.75A2 2 0 0 1 12.024 15H3.976a2 2 0 0 1-1.952-1.533L.524 6.717A1 1 0 0 1 .5 6.5M2.024 6.5l1.5 6.75a1 1 0 0 0 . …[truncated]
-3360:           <input id="fileInput" type="file" accept=".md,.markdown,text/markdown,text/plain" />
-3361:           <button id="downloadBtn" class="primary" type="button" title="Save Markdown" aria-label="Save Markdown"><svg class="bi bi-floppy" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path d="M11 2H9v3h2z"/><path d="M1.5 0h11.586a1.5 1.5 0 0 1 1.06.44l1.414 1.414A1.5 1.5 0 0 1 16 2.914V14.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 14.5v-13A1.5 1.5 0 0 1 1.5 0M1 1.5v13a.5.5 0 0 0 .5.5H2v-4.5A1.5 1.5 0 0 1 3.5 9h9a1.5 1.5 0 0 1 1.5 1.5V15h.5a.5.5 0 0 0 .5-.5V2.914a.5.5 0 0 0-.146-.3 …[truncated]
-3362:           <button id="saveAsBtn" type="button" title="Save As" aria-label="Save As"><svg class="bi bi-file-earmark-arrow-down" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path d="M8.5 6.5a.5.5 0 0 0-1 0v3.793L6.354 9.146a.5.5 0 1 0-.708.708l2 2 .007.007a.498.498 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L8.5 10.293z"/><path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5z"/></svg></button>
-3363:         </div>
-3364: 
-3365:         <div class="tool-group" data-ribbon-label="Document" aria-label="Document tools">
-3366:           <button id="undoBtn" type="button" title="Undo (Ctrl+Z)" aria-label="Undo" disabled><svg class="bi bi-arrow-counterclockwise" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2z"/><path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466"/></svg></button>
-3367:           <button id="redoBtn" type="button" title="Redo (Ctrl+Y)" aria-label="Redo" disabled><svg class="bi bi-arrow-clockwise" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/><path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966a.25.25 0 0 1 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/></svg></button>
-3368:           <button id="navBtn" type="button" title="Section navigation" aria-label="Section navigation"><svg class="bi bi-list-nested" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.5 11.5A.5.5 0 0 1 5 11h10a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5m-2-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m-2-4A.5.5 0 0 1 1 3h10a.5.5 0 0 1 0 1H1a.5.5 0 0 1-.5-.5"/></svg></button>
-3369:           <button id="mathBtn" type="button" title="Math palette" aria-label="Math palette"><svg class="bi bi-braces" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path d="M2.114 8.063V7.9c1.005-.102 1.497-.615 1.497-1.6V4.503c0-1.094.39-1.538 1.354-1.538h.273V2h-.376C3.25 2 2.49 2.759 2.49 4.352v1.524c0 1.094-.376 1.456-1.49 1.456v1.299c1.114 0 1.49.362 1.49 1.456v1.524c0 1.593.759 2.352 2.372 2.352h.376v-.965h-.273c-.964 0-1.354-.444-1.354-1.538V9.663c0-.984-.492-1.497-1.497-1.6M13 …[truncated]
-3370:           <button id="findBtn" type="button" title="Find and replace" aria-label="Find and replace"><svg class="bi bi-search" aria-hidden="true" focusable="false" viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/></svg></button>
-3371:         </div>
-3372: 
-3373:         <div class="tool-group output-group" data-ribbon-label="Output" aria-label="Document output">
-
---- lines 3599-3617 (match 3605) ---
-3599:         <h3>Basic workflow</h3>
-3600:         <ol>
-3601:           <li>Use <strong>New</strong> to start from the built-in ScienceMD starter document.</li>
-3602:           <li>Use <strong>Open</strong> to load a <code>.md</code> file.</li>
-3603:           <li>Write in the visual editor, or switch to <strong>MD</strong> for exact Markdown source editing.</li>
-3604:           <li>Choose a document style from the <strong>Output</strong> group.</li>
-3605:           <li>Use <strong>Save</strong> or <strong>Save As</strong> to download your Markdown.</li>
-3606:           <li>Use <strong>Print</strong> in the Output group to print or save as PDF.</li>
-3607:         </ol>
-3608:       </section>
-3609: 
-3610:       <section>
-3611:         <h3>Top toolbar</h3>
-3612:         <table>
-3613:           <tr><th>Button</th><th>Meaning</th></tr>
-3614:           <tr><td>New</td><td>Start a fresh ScienceMD starter document</td></tr>
-3615:           <tr><td>Open</td><td>Open a Markdown file</td></tr>
-3616:           <tr><td>Save</td><td>Save the current Markdown file</td></tr>
-3617:           <tr><td>Save As</td><td>Save with a new filename or export rendered HTML</td></tr>
-
---- lines 3930-3948 (match 3936) ---
-3930:   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-3931: 
-3932:   
-3933: <script>
-3934: /* DOMPurify 3.4.8 | official upstream browser build embedded for offline ScienceMD HTML compatibility. */
-3935: /*! @license DOMPurify 3.4.8 | (c) Cure53 and other contributors | Released under the Apache License 2.0 OR Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.4.8/LICENSE */
-3936: !function(e,t){"object"==typeof exports&&"undefined"!=typeof module?module.exports=t():"function"==typeof define&&define.amd?define(t):(e="undefined"!=typeof globalThis?globalThis:e||self).DOMPurify=t()}(this,function(){"use strict";function e(e,t){(null==t||t>e.length)&&(t=e.length);for(var n=0,o=Array(t);n<t;n++)o[n]=e[n];return o}function t(t,n){return function(e){if(Array.isArray(e))return e}(t)||function(e,t){var n=null==e?null:"undefined"!=typeof Symbol&&e[Symbol.iterator]||e["@@iterator"] …[truncated]
-3937: //# sourceMappingURL=purify.min.js.map
-3938: 
-3939: </script>
-3940: <script>
-3941: 
-3942:     const STORAGE_KEY = 'sciencemd:v1:draft';
-3943:     const THEME_KEY = 'sciencemd:theme';
-3944:     const FILENAME_KEY = 'sciencemd:v1:fileName';
-3945:     const PREVIEW_STYLE_KEY = 'sciencemd:previewStyle';
-3946:     const IMAGE_MAP_KEY = 'sciencemd:imageMap';
-3947: 
-3948:     const editor = document.getElementById('editor');
-
---- lines 3958-3976 (match 3964) ---
-3958:     const tableRows = document.getElementById('tableRows');
-3959:     const tableDialogClose = document.getElementById('tableDialogClose');
-3960:     const tableDialogCancel = document.getElementById('tableDialogCancel');
-3961:     const fileInput = document.getElementById('fileInput');
-3962:     const imageInput = document.getElementById('imageInput');
-3963:     const fileNameLabel = document.getElementById('fileName');
-3964:     const downloadBtn = document.getElementById('downloadBtn');
-3965:     const saveAsBtn = document.getElementById('saveAsBtn');
-3966:     const printBtn = document.getElementById('printBtn');
-3967:     const clearBtn = document.getElementById('clearBtn');
-3968:     const undoBtn = document.getElementById('undoBtn');
-3969:     const redoBtn = document.getElementById('redoBtn');
-3970:     const darkBtn = document.getElementById('darkBtn');
-3971:     const fullscreenBtn = document.getElementById('fullscreenBtn');
-3972:     const helpBtn = document.getElementById('helpBtn');
-3973:     const helpDrawer = document.getElementById('helpDrawer');
-3974:     const closeHelpBtn = document.getElementById('closeHelpBtn');
-3975:     const navBtn = document.getElementById('navBtn');
-3976:     const findBtn = document.getElementById('findBtn');
-
---- lines 4024-4042 (match 4030) ---
-4024:     let nextImageNumber = 1;
-4025:     let savedWysiwygRange = null;
-4026:     let activeMathEditInput = null;
-4027:     let activeTableCell = null;
-4028:     let savedTableSourceSelection = null;
-4029: 
-4030:     const starterText = "# Welcome to ScienceMD\n\n**ScienceMD** is an offline-first Markdown and LaTeX editor for scientific notes, technical documents, revision material, and print-ready papers.\n\nUse **Write** for visual editing or **MD** when you want direct control of the Markdown source. Your document remains a normal `.md` file.\n\n> Delete this starter guide when you are ready and begin writing.\n\n---\n\n## Quick start\n\n- **New** creates a fresh starter document.\n- **Open** loads an …[truncated]
-4031: 
-4032:     function showToast(message) {
-4033:       clearTimeout(toastTimer);
-4034:       toast.textContent = message;
-4035:       toast.classList.add('show');
-4036:       toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
-4037:     }
-4038: 
-4039: 
-4040:     function isFullscreenActive() {
-4041:       return !!(document.fullscreenElement || document.webkitFullscreenElement);
-4042:     }
-
---- lines 6476-6494 (match 6482) ---
-6476:     function getDocumentTitleFromMarkdown() {
-6477:       const match = /^#\s+(.+?)\s*#*\s*$/m.exec(editor.value || '');
-6478:       const title = match ? match[1].replace(/[`*_~\[\]()`]/g, '').trim() : '';
-6479:       return title || (currentFileName || 'ScienceMD document').replace(/\.(markdown|md|txt|html?)$/i, '');
-6480:     }
-6481: 
-6482:     function downloadTextFile(text, fileName, type) {
-6483:       const blob = new Blob([text], { type });
-6484:       const url = URL.createObjectURL(blob);
-6485:       const a = document.createElement('a');
-6486: 
-6487:       a.href = url;
-6488:       a.download = fileName;
-6489:       document.body.appendChild(a);
-6490:       a.click();
-6491:       a.remove();
-6492:       URL.revokeObjectURL(url);
-6493:     }
-6494: 
-
---- lines 6482-6500 (match 6488) ---
-6482:     function downloadTextFile(text, fileName, type) {
-6483:       const blob = new Blob([text], { type });
-6484:       const url = URL.createObjectURL(blob);
-6485:       const a = document.createElement('a');
-6486: 
-6487:       a.href = url;
-6488:       a.download = fileName;
-6489:       document.body.appendChild(a);
-6490:       a.click();
-6491:       a.remove();
-6492:       URL.revokeObjectURL(url);
-6493:     }
-6494: 
-6495: 
-6496: 
-6497:     function applyPrintClasses() {
-6498:       document.body.classList.remove(
-6499:         'print-style-paper',
-6500:         'print-style-compact',
-
---- lines 6554-6572 (match 6560) ---
+===== ORIGINAL LINES 6545-6765 =====
+6545:       applyPrintClasses();
+6546: 
+6547:       // Allow browsers to apply the print stylesheet and finish SVG maths layout.
+6548:       await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+6549:       await new Promise(resolve => setTimeout(resolve, 180));
+6550: 
+6551:       window.print();
+6552: 
+6553:       setTimeout(() => {
 6554:         clearPrintClasses();
 6555:         document.title = previousTitle;
 6556:         applyScrollProgress('edit', previousProgress);
@@ -1851,20 +27,6 @@ matches: [25, 3361, 3605, 3936, 3964, 4030, 6482, 6488, 6560, 6567, 6731, 6734, 
 6570:     }
 6571: 
 6572:     function getSaveAsOptions() {
-
---- lines 6561-6579 (match 6567) ---
-6561:       if (isVisualModeActive()) {
-6562:         const committedMath = commitActiveWysiwygMathEdit({ quiet: true });
-6563:         if (!committedMath) syncMarkdownFromWysiwyg();
-6564:       }
-6565:       const text = expandEmbeddedImages(editor.value);
-6566:       const safeName = normaliseMarkdownFileName(fileNameOverride || currentFileName || 'science-draft.md');
-6567:       downloadTextFile(text, safeName, 'text/markdown;charset=utf-8');
-6568:       setFileName(safeName);
-6569:       showToast(`Saved ${safeName}`);
-6570:     }
-6571: 
-6572:     function getSaveAsOptions() {
 6573:       const suggestedName = normaliseMarkdownFileName(currentFileName || 'science-draft.md');
 6574: 
 6575:       if (typeof HTMLDialogElement === 'undefined') {
@@ -1872,8 +34,151 @@ matches: [25, 3361, 3605, 3936, 3964, 4030, 6482, 6488, 6560, 6567, 6731, 6734, 
 6577:         if (requestedName === null) return Promise.resolve(null);
 6578:         const asHtml = confirm('Save as rendered HTML instead of Markdown?');
 6579:         return Promise.resolve({ fileName: requestedName, asHtml });
-
---- lines 6725-6743 (match 6731) ---
+6580:       }
+6581: 
+6582:       return new Promise(resolve => {
+6583:         const dialog = document.createElement('dialog');
+6584:         dialog.className = 'save-as-dialog';
+6585:         dialog.innerHTML = `
+6586:           <form method="dialog" class="save-as-form">
+6587:             <h3>Save As</h3>
+6588:             <label class="save-as-field">
+6589:               <span>Filename</span>
+6590:               <input name="fileName" type="text" value="${escapeHtml(suggestedName)}" autocomplete="off">
+6591:             </label>
+6592:             <label class="save-as-check">
+6593:               <input name="asHtml" type="checkbox">
+6594:               <span>Save rendered preview as HTML</span>
+6595:             </label>
+6596:             <p class="save-as-note">Leave unticked to save the Markdown source.</p>
+6597:             <div class="save-as-actions">
+6598:               <button value="cancel" formnovalidate>Cancel</button>
+6599:               <button class="primary" value="save">Save</button>
+6600:             </div>
+6601:           </form>
+6602:         `;
+6603: 
+6604:         const style = document.createElement('style');
+6605:         style.textContent = `
+6606:           .save-as-dialog { border: 1px solid var(--border); border-radius: 22px; padding: 0; background: var(--panel); color: var(--text); box-shadow: var(--shadow); width: min(92vw, 430px); }
+6607:           .save-as-dialog::backdrop { background: rgba(15, 23, 42, 0.42); backdrop-filter: blur(3px); }
+6608:           .save-as-form { padding: 18px; display: grid; gap: 14px; }
+6609:           .save-as-form h3 { margin: 0; font-size: 1.1rem; }
+6610:           .save-as-field, .save-as-check { display: grid; gap: 7px; font-weight: 700; }
+6611:           .save-as-field input { min-height: 44px; border-radius: 14px; border: 1px solid var(--border); background: var(--panel-2); color: var(--text); padding: 0 12px; font: inherit; }
+6612:           .save-as-check { grid-template-columns: auto 1fr; align-items: center; font-weight: 650; }
+6613:           .save-as-check input { width: 20px; height: 20px; }
+6614:           .save-as-note { margin: -4px 0 0; color: var(--muted); font-size: 0.9rem; }
+6615:           .save-as-actions { display: flex; justify-content: flex-end; gap: 10px; }
+6616:           .save-as-actions button { min-height: 42px; border-radius: 14px; border: 1px solid var(--border); background: var(--panel-2); color: var(--text); padding: 0 14px; font-weight: 800; }
+6617:           .save-as-actions .primary { background: var(--accent); color: white; border-color: var(--accent); }
+6618:         `;
+6619: 
+6620:         document.head.appendChild(style);
+6621:         document.body.appendChild(dialog);
+6622: 
+6623:         const input = dialog.querySelector('input[name="fileName"]');
+6624:         const check = dialog.querySelector('input[name="asHtml"]');
+6625: 
+6626:         check.addEventListener('change', () => {
+6627:           input.value = check.checked ? normaliseHtmlFileName(input.value) : normaliseMarkdownFileName(input.value);
+6628:         });
+6629: 
+6630:         dialog.addEventListener('close', () => {
+6631:           const result = dialog.returnValue === 'save'
+6632:             ? { fileName: input.value, asHtml: check.checked }
+6633:             : null;
+6634:           dialog.remove();
+6635:           style.remove();
+6636:           resolve(result);
+6637:         }, { once: true });
+6638: 
+6639:         dialog.showModal();
+6640:         input.focus();
+6641:         input.select();
+6642:       });
+6643:     }
+6644: 
+6645:     async function ensurePreviewRenderedForExport() {
+6646:       if (isVisualModeActive()) {
+6647:         const committedMath = commitActiveWysiwygMathEdit({ quiet: true });
+6648:         if (!committedMath) syncMarkdownFromWysiwyg();
+6649:       }
+6650:       renderNow();
+6651:       if (window.MathJax?.typesetPromise) {
+6652:         try {
+6653:           await MathJax.typesetPromise([preview]);
+6654:         } catch (error) {
+6655:           console.error(error);
+6656:           showToast('Maths export had a rendering issue. Check the equation syntax.');
+6657:         }
+6658:       }
+6659:     }
+6660: 
+6661:     function getEmbeddedMathJaxScriptsForExport() {
+6662:       // The first two scripts in the head are the MathJax configuration and the
+6663:       // embedded MathJax library. The main app script is deliberately not exported.
+6664:       return Array.from(document.querySelectorAll('head > script'))
+6665:         .slice(0, 2)
+6666:         .map(script => `<script>${(script.textContent || '').replace(/<\/script/gi, '<\\/script')}<\/script>`)
+6667:         .join('\n');
+6668:     }
+6669: 
+6670:     function buildUntypesetPreviewHtmlForExport() {
+6671:       // Build from the Markdown source rather than from preview.innerHTML.
+6672:       // preview.innerHTML may contain MathJax's live DOM, which is not reliable
+6673:       // when copied into a standalone saved HTML file on Android/Chrome.
+6674:       const raw = expandEmbeddedImages(editor.value);
+6675:       const { protectedText, blocks, inlines } = protectMath(raw);
+6676:       const temp = document.createElement('article');
+6677:       temp.innerHTML = sanitiseRenderedHtml(simpleMarkdownToHtml(protectedText));
+6678:       restoreMath(temp, blocks, inlines);
+6679:       markSubmissionStructure(temp);
+6680:       return temp.innerHTML;
+6681:     }
+6682: 
+6683:     function buildStaticHtmlDocument() {
+6684:       const title = getDocumentTitleFromMarkdown();
+6685:       const styleText = Array.from(document.querySelectorAll('style'))
+6686:         .map(style => style.textContent || '')
+6687:         .join('\n');
+6688:       const mathJaxScripts = getEmbeddedMathJaxScriptsForExport();
+6689:       const themeClass = document.body.classList.contains('dark') ? 'dark' : '';
+6690:       const previewClasses = Array.from(preview.classList).join(' ');
+6691:       const exportPrintClass = preview.classList.contains('preview-style-physics') || preview.classList.contains('preview-style-times')
+6692:         ? 'print-style-paper print-page-numbers'
+6693:         : preview.classList.contains('preview-style-draft')
+6694:           ? 'print-style-large print-page-numbers'
+6695:           : 'print-page-numbers';
+6696:       const bodyClasses = [themeClass, exportPrintClass].filter(Boolean).join(' ');
+6697:       const articleHtml = buildUntypesetPreviewHtmlForExport();
+6698: 
+6699:       return `<!doctype html>
+6700: <html lang="en-GB">
+6701: <head>
+6702: <meta charset="utf-8">
+6703: <meta name="viewport" content="width=device-width, initial-scale=1">
+6704: <title>${escapeHtml(title)}</title>
+6705: ${mathJaxScripts}
+6706: <style>
+6707: ${styleText}
+6708: body { background: var(--bg); padding: 0; }
+6709: .export-wrap { max-width: 920px; margin: 0 auto; padding: 24px 16px; }
+6710: .export-wrap .preview { height: auto !important; min-height: 0 !important; overflow: visible !important; }
+6711: @media print { .export-wrap { padding: 0; max-width: none; } }
+6712: </style>
+6713: </head>
+6714: <body class="${escapeHtml(bodyClasses)}">
+6715: <main class="export-wrap">
+6716: <article class="${escapeHtml(previewClasses)}">
+6717: ${articleHtml}
+6718: </article>
+6719: </main>
+6720: <script>
+6721: window.addEventListener('load', function () {
+6722:   if (window.MathJax && MathJax.typesetPromise) {
+6723:     MathJax.typesetPromise().catch(function (error) { console.error(error); });
+6724:   }
 6725: });
 6726: <\/script>
 6727: </body>
@@ -1893,29 +198,6 @@ matches: [25, 3361, 3605, 3936, 3964, 4030, 6482, 6488, 6560, 6567, 6731, 6734, 
 6741:         if (!committedMath) syncMarkdownFromWysiwyg();
 6742:       }
 6743:       const options = await getSaveAsOptions();
-
---- lines 6728-6746 (match 6734) ---
-6728: </html>`;
-6729:     }
-6730: 
-6731:     async function downloadRenderedHtml(fileNameOverride = null) {
-6732:       await ensurePreviewRenderedForExport();
-6733:       const safeName = normaliseHtmlFileName(fileNameOverride || currentFileName || 'draft.html');
-6734:       downloadTextFile(buildStaticHtmlDocument(), safeName, 'text/html;charset=utf-8');
-6735:       showToast(`Saved ${safeName}`);
-6736:     }
-6737: 
-6738:     async function saveMarkdownAs() {
-6739:       if (isVisualModeActive()) {
-6740:         const committedMath = commitActiveWysiwygMathEdit({ quiet: true });
-6741:         if (!committedMath) syncMarkdownFromWysiwyg();
-6742:       }
-6743:       const options = await getSaveAsOptions();
-6744: 
-6745:       if (!options) {
-6746:         return;
-
---- lines 6744-6762 (match 6750) ---
 6744: 
 6745:       if (!options) {
 6746:         return;
@@ -1935,96 +217,37 @@ matches: [25, 3361, 3605, 3936, 3964, 4030, 6482, 6488, 6560, 6567, 6731, 6734, 
 6760:       if (!confirmed) return;
 6761: 
 6762:       // Treat New exactly like loading another file. On mobile browsers and
-
---- lines 6748-6766 (match 6754) ---
-6748: 
-6749:       if (options.asHtml) {
-6750:         await downloadRenderedHtml(options.fileName);
-6751:         return;
-6752:       }
-6753: 
-6754:       downloadMarkdown(options.fileName);
-6755:     }
-6756: 
-6757: 
-6758:     function clearDraft() {
-6759:       const confirmed = confirm('Start a new document from the built-in ScienceMD starter? This will replace the current editor text, but it will not delete any files from your device.');
-6760:       if (!confirmed) return;
-6761: 
-6762:       // Treat New exactly like loading another file. On mobile browsers and
 6763:       // Android WebView, a delayed contenteditable/keyboard event can otherwise
 6764:       // write the previous visual document back over the starter text.
 6765:       documentLoadInProgress = true;
-6766:       clearTimeout(renderTimer);
 
---- lines 6990-7008 (match 6996) ---
-6990:       if (!sourceMode) syncPreviewScrollToEditor();
-6991:     });
-6992:     preview.addEventListener('scroll', () => {
-6993:       if (currentView !== 'edit') lastScrollProgress = getScrollProgress(preview);
-6994:       syncEditorScrollToPreview();
-6995:     });
-6996:     downloadBtn.addEventListener('click', () => downloadMarkdown());
-6997:     saveAsBtn.addEventListener('click', saveMarkdownAs);
-6998:     printBtn.addEventListener('click', printPreview);
-6999:     clearBtn.addEventListener('click', clearDraft);
-7000:     undoBtn.addEventListener('pointerdown', event => event.preventDefault());
-7001:     redoBtn.addEventListener('pointerdown', event => event.preventDefault());
-7002:     undoBtn.addEventListener('click', undoDocument);
-7003:     redoBtn.addEventListener('click', redoDocument);
-7004:     darkBtn.addEventListener('click', () => {
-7005:       setTheme(document.body.classList.contains('dark') ? 'light' : 'dark');
-7006:     });
-7007: 
-7008:     fullscreenBtn.addEventListener('click', toggleFullscreen);
+===== ORIGINAL LINES 3595-3622 =====
+3595:         </div>
+3596:       </section>
+3597: 
+3598:       <section>
+3599:         <h3>Basic workflow</h3>
+3600:         <ol>
+3601:           <li>Use <strong>New</strong> to start from the built-in ScienceMD starter document.</li>
+3602:           <li>Use <strong>Open</strong> to load a <code>.md</code> file.</li>
+3603:           <li>Write in the visual editor, or switch to <strong>MD</strong> for exact Markdown source editing.</li>
+3604:           <li>Choose a document style from the <strong>Output</strong> group.</li>
+3605:           <li>Use <strong>Save</strong> or <strong>Save As</strong> to download your Markdown.</li>
+3606:           <li>Use <strong>Print</strong> in the Output group to print or save as PDF.</li>
+3607:         </ol>
+3608:       </section>
+3609: 
+3610:       <section>
+3611:         <h3>Top toolbar</h3>
+3612:         <table>
+3613:           <tr><th>Button</th><th>Meaning</th></tr>
+3614:           <tr><td>New</td><td>Start a fresh ScienceMD starter document</td></tr>
+3615:           <tr><td>Open</td><td>Open a Markdown file</td></tr>
+3616:           <tr><td>Save</td><td>Save the current Markdown file</td></tr>
+3617:           <tr><td>Save As</td><td>Save with a new filename or export rendered HTML</td></tr>
+3618:           <tr><td>Undo</td><td>Undo the most recent editing change</td></tr>
+3619:           <tr><td>Redo</td><td>Restore the most recently undone change</td></tr>
+3620:           <tr><td>Navigation</td><td>Open the section navigator built from headings</td></tr>
+3621:           <tr><td>Maths</td><td>Open the maths palette</td></tr>
+3622:           <tr><td>Find</td><td>Find and replace text in the Markdown source</td></tr>
 
-===== PATTERN: showSaveFilePicker =====
-matches: []
-
-===== PATTERN: createObjectURL =====
-matches: [6484]
-
---- lines 6478-6496 (match 6484) ---
-6478:       const title = match ? match[1].replace(/[`*_~\[\]()`]/g, '').trim() : '';
-6479:       return title || (currentFileName || 'ScienceMD document').replace(/\.(markdown|md|txt|html?)$/i, '');
-6480:     }
-6481: 
-6482:     function downloadTextFile(text, fileName, type) {
-6483:       const blob = new Blob([text], { type });
-6484:       const url = URL.createObjectURL(blob);
-6485:       const a = document.createElement('a');
-6486: 
-6487:       a.href = url;
-6488:       a.download = fileName;
-6489:       document.body.appendChild(a);
-6490:       a.click();
-6491:       a.remove();
-6492:       URL.revokeObjectURL(url);
-6493:     }
-6494: 
-6495: 
-6496: 
-
-===== PATTERN: Blob\( =====
-matches: [6483]
-
---- lines 6477-6495 (match 6483) ---
-6477:       const match = /^#\s+(.+?)\s*#*\s*$/m.exec(editor.value || '');
-6478:       const title = match ? match[1].replace(/[`*_~\[\]()`]/g, '').trim() : '';
-6479:       return title || (currentFileName || 'ScienceMD document').replace(/\.(markdown|md|txt|html?)$/i, '');
-6480:     }
-6481: 
-6482:     function downloadTextFile(text, fileName, type) {
-6483:       const blob = new Blob([text], { type });
-6484:       const url = URL.createObjectURL(blob);
-6485:       const a = document.createElement('a');
-6486: 
-6487:       a.href = url;
-6488:       a.download = fileName;
-6489:       document.body.appendChild(a);
-6490:       a.click();
-6491:       a.remove();
-6492:       URL.revokeObjectURL(url);
-6493:     }
-6494: 
-6495: 
