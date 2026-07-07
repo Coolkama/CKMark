@@ -1,0 +1,48 @@
+name: Add Google verification to root once
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/add-google-verification-root-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  add-root-verification:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Add verification tag to root page
+        run: python3 tools/add_google_verification_to_root.py
+
+      - name: Validate verification tag
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          tag = '<meta name="google-site-verification" content="8T_Lhlq8hZqCxSO8JbrTHXz-VCUu44IGhsJOVtdTp9o">'
+          html = Path('index.html').read_text(encoding='utf-8')
+          if html.count(tag) != 1:
+              raise SystemExit('Expected exactly one verification tag in root index.html')
+          print('Root verification tag is valid.')
+          PY
+
+      - name: Remove one-time maintenance files
+        run: |
+          rm tools/add_google_verification_to_root.py
+          rm .github/workflows/add-google-verification-root-once.yml
+
+      - name: Commit root verification tag
+        run: |
+          git diff --check
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Add Google verification to site root"
+          git push origin main
