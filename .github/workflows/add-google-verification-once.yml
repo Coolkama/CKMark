@@ -1,0 +1,48 @@
+name: Add Google verification once
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/add-google-verification-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  add-verification:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Add Google verification tag
+        run: python3 tools/add_google_verification.py
+
+      - name: Validate verification tag
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          html = Path('home/index.html').read_text(encoding='utf-8')
+          tag = '<meta name="google-site-verification" content="8T_Lhlq8hZqCxSO8JbrTHXz-VCUu44IGhsJOVtdTp9o">'
+          if html.count(tag) != 1:
+              raise SystemExit('Expected exactly one Google verification tag')
+          print('Google verification tag is present exactly once.')
+          PY
+
+      - name: Remove one-time maintenance files
+        run: |
+          rm tools/add_google_verification.py
+          rm .github/workflows/add-google-verification-once.yml
+
+      - name: Commit verification tag
+        run: |
+          git diff --check
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Add Google Search Console verification"
+          git push origin main
