@@ -1,0 +1,40 @@
+name: Fix nested LaTeX formatting once
+
+on:
+  push:
+    branches:
+      - feature/latex-output
+    paths:
+      - .github/workflows/fix-latex-nested-tokens-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  fix-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/latex-output
+          fetch-depth: 0
+      - run: python3 tools/fix_latex_nested_tokens.py
+      - run: python3 tools/smoke_test.py
+      - name: Check application JavaScript syntax
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          html = Path('index.html').read_text(encoding='utf-8')
+          scripts = re.findall(r'<script(?:\s[^>]*)?>([\s\S]*?)</script>', html, flags=re.IGNORECASE)
+          Path('/tmp/sciencemd-app.js').write_text(scripts[-1], encoding='utf-8')
+          PY
+          node --check /tmp/sciencemd-app.js
+      - name: Commit fix
+        run: |
+          git diff --check
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html tools/latex_export_inline.js
+          git commit -m "Handle nested formatting in LaTeX export"
+          git push origin feature/latex-output
