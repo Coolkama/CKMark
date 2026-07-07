@@ -1,0 +1,27 @@
+name: Inspect export flow once
+
+on:
+  push:
+    branches:
+      - feature/latex-output
+    paths:
+      - .github/workflows/inspect-export-flow-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/latex-output
+          fetch-depth: 0
+      - run: python3 tools/inspect_export_flow.py
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add tools/export_flow_report.txt
+          git commit -m "Record export flow inspection"
+          git push origin feature/latex-output
