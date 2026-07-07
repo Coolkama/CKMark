@@ -22,7 +22,7 @@
     - Full-width single-document workspace on desktop
     - Hidden print/export renderer with selectable document styles
     - Autosaves drafts to browser storage
-    - Download/export edited Markdown, rendered HTML, or print/save as PDF
+    - Download/export edited Markdown, rendered HTML, LaTeX, or print/save as PDF
 
     Notes:
     - Fully self-contained: no CDN, no server, no build step, and no internet required.
@@ -3602,7 +3602,7 @@
           <li>Use <strong>Open</strong> to load a <code>.md</code> file.</li>
           <li>Write in the visual editor, or switch to <strong>MD</strong> for exact Markdown source editing.</li>
           <li>Choose a document style from the <strong>Output</strong> group.</li>
-          <li>Use <strong>Save</strong> or <strong>Save As</strong> to download your Markdown.</li>
+          <li>Use <strong>Save</strong> or <strong>Save As</strong> to download Markdown, rendered HTML, or LaTeX.</li>
           <li>Use <strong>Print</strong> in the Output group to print or save as PDF.</li>
         </ol>
       </section>
@@ -3614,7 +3614,7 @@
           <tr><td>New</td><td>Start a fresh ScienceMD starter document</td></tr>
           <tr><td>Open</td><td>Open a Markdown file</td></tr>
           <tr><td>Save</td><td>Save the current Markdown file</td></tr>
-          <tr><td>Save As</td><td>Save with a new filename or export rendered HTML</td></tr>
+          <tr><td>Save As</td><td>Save with a new filename or export rendered HTML or LaTeX</td></tr>
           <tr><td>Undo</td><td>Undo the most recent editing change</td></tr>
           <tr><td>Redo</td><td>Restore the most recently undone change</td></tr>
           <tr><td>Navigation</td><td>Open the section navigator built from headings</td></tr>
@@ -6569,14 +6569,35 @@ ${latex}
       showToast(`Saved ${safeName}`);
     }
 
+    function normaliseLatexFileName(fileName) {
+      const raw = String(fileName || '').trim() || 'science-draft.tex';
+      const stem = raw.replace(/\.(?:md|markdown|html?|tex)$/i, '') || 'science-draft';
+      return `${stem}.tex`;
+    }
+
+    function normaliseExportFileName(fileName, format) {
+      if (format === 'html') return normaliseHtmlFileName(fileName);
+      if (format === 'latex') return normaliseLatexFileName(fileName);
+      return normaliseMarkdownFileName(fileName);
+    }
+
     function getSaveAsOptions() {
       const suggestedName = normaliseMarkdownFileName(currentFileName || 'science-draft.md');
 
       if (typeof HTMLDialogElement === 'undefined') {
         const requestedName = prompt('Save as filename:', suggestedName);
         if (requestedName === null) return Promise.resolve(null);
-        const asHtml = confirm('Save as rendered HTML instead of Markdown?');
-        return Promise.resolve({ fileName: requestedName, asHtml });
+        const requestedFormat = prompt('Output format: Markdown, HTML, or LaTeX', 'Markdown');
+        if (requestedFormat === null) return Promise.resolve(null);
+        const format = /^(?:latex|tex)$/i.test(requestedFormat.trim())
+          ? 'latex'
+          : /^html?$/i.test(requestedFormat.trim())
+            ? 'html'
+            : 'markdown';
+        return Promise.resolve({
+          fileName: normaliseExportFileName(requestedName, format),
+          format
+        });
       }
 
       return new Promise(resolve => {
@@ -6589,11 +6610,15 @@ ${latex}
               <span>Filename</span>
               <input name="fileName" type="text" value="${escapeHtml(suggestedName)}" autocomplete="off">
             </label>
-            <label class="save-as-check">
-              <input name="asHtml" type="checkbox">
-              <span>Save rendered preview as HTML</span>
+            <label class="save-as-field">
+              <span>Format</span>
+              <select name="format">
+                <option value="markdown">Markdown source (.md)</option>
+                <option value="html">Rendered HTML (.html)</option>
+                <option value="latex">LaTeX document (.tex)</option>
+              </select>
             </label>
-            <p class="save-as-note">Leave unticked to save the Markdown source.</p>
+            <p class="save-as-note">LaTeX export preserves maths and converts common Markdown structures into a compile-ready document.</p>
             <div class="save-as-actions">
               <button value="cancel" formnovalidate>Cancel</button>
               <button class="primary" value="save">Save</button>
@@ -6607,10 +6632,8 @@ ${latex}
           .save-as-dialog::backdrop { background: rgba(15, 23, 42, 0.42); backdrop-filter: blur(3px); }
           .save-as-form { padding: 18px; display: grid; gap: 14px; }
           .save-as-form h3 { margin: 0; font-size: 1.1rem; }
-          .save-as-field, .save-as-check { display: grid; gap: 7px; font-weight: 700; }
-          .save-as-field input { min-height: 44px; border-radius: 14px; border: 1px solid var(--border); background: var(--panel-2); color: var(--text); padding: 0 12px; font: inherit; }
-          .save-as-check { grid-template-columns: auto 1fr; align-items: center; font-weight: 650; }
-          .save-as-check input { width: 20px; height: 20px; }
+          .save-as-field { display: grid; gap: 7px; font-weight: 700; }
+          .save-as-field input, .save-as-field select { min-height: 44px; border-radius: 14px; border: 1px solid var(--border); background: var(--panel-2); color: var(--text); padding: 0 12px; font: inherit; }
           .save-as-note { margin: -4px 0 0; color: var(--muted); font-size: 0.9rem; }
           .save-as-actions { display: flex; justify-content: flex-end; gap: 10px; }
           .save-as-actions button { min-height: 42px; border-radius: 14px; border: 1px solid var(--border); background: var(--panel-2); color: var(--text); padding: 0 14px; font-weight: 800; }
@@ -6621,15 +6644,16 @@ ${latex}
         document.body.appendChild(dialog);
 
         const input = dialog.querySelector('input[name="fileName"]');
-        const check = dialog.querySelector('input[name="asHtml"]');
+        const formatSelect = dialog.querySelector('select[name="format"]');
 
-        check.addEventListener('change', () => {
-          input.value = check.checked ? normaliseHtmlFileName(input.value) : normaliseMarkdownFileName(input.value);
+        formatSelect.addEventListener('change', () => {
+          input.value = normaliseExportFileName(input.value, formatSelect.value);
         });
 
         dialog.addEventListener('close', () => {
+          const format = formatSelect.value;
           const result = dialog.returnValue === 'save'
-            ? { fileName: input.value, asHtml: check.checked }
+            ? { fileName: normaliseExportFileName(input.value, format), format }
             : null;
           dialog.remove();
           style.remove();
@@ -6735,22 +6759,335 @@ window.addEventListener('load', function () {
       showToast(`Saved ${safeName}`);
     }
 
+    function escapeLatexText(value) {
+      const replacements = {
+        '\\': String.raw`\textbackslash{}`,
+        '{': String.raw`\{`,
+        '}': String.raw`\}`,
+        '$': String.raw`\$`,
+        '&': String.raw`\&`,
+        '#': String.raw`\#`,
+        '_': String.raw`\_`,
+        '%': String.raw`\%`,
+        '^': String.raw`\textasciicircum{}`,
+        '~': String.raw`\textasciitilde{}`
+      };
+      return String(value ?? '').replace(/[\\{}$&#_%^~]/g, character => replacements[character]);
+    }
+
+    function decodeHtmlText(value) {
+      const holder = document.createElement('div');
+      holder.innerHTML = String(value ?? '').replace(/<br\s*\/?\s*>/gi, '\n');
+      return holder.textContent || '';
+    }
+
+    function convertInlineMarkdownToLatex(value) {
+      const tokens = [];
+      const hold = content => `\uE000${tokens.push(content) - 1}\uE001`;
+      let text = String(value ?? '');
+
+      text = text.replace(/\$\$([\s\S]+?)\$\$/g, (_, body) => hold(String.raw`\[${body}\]`));
+      text = text.replace(/\\\(([\s\S]+?)\\\)/g, match => hold(match));
+      text = text.replace(/(^|[^\\$])\$(?!\$)([^$\n]+)\$/g, (_, prefix, body) => `${prefix}${hold(`$${body}$`)}`);
+      text = text.replace(/`([^`\n]+)`/g, (_, code) => hold(String.raw`\texttt{${escapeLatexText(code)}}`));
+      text = text.replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g, (_, alt, source) => {
+        const label = escapeLatexText(alt || 'image');
+        if (/^(?:data:|blob:)/i.test(source)) {
+          return hold(String.raw`\textit{[Embedded image omitted from single-file LaTeX export: ${label}]}`);
+        }
+        return hold(String.raw`\includegraphics[width=0.9\linewidth]{\detokenize{${source}}}`);
+      });
+      text = text.replace(/\[([^\]]+)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g, (_, label, target) =>
+        hold(String.raw`\href{\detokenize{${target}}}{${escapeLatexText(label)}}`)
+      );
+      text = text.replace(/\*\*([^*\n]+)\*\*/g, (_, inner) => hold(String.raw`\textbf{${escapeLatexText(inner)}}`));
+      text = text.replace(/__([^_\n]+)__/g, (_, inner) => hold(String.raw`\textbf{${escapeLatexText(inner)}}`));
+      text = text.replace(/(^|[^*])\*([^*\n]+)\*/g, (_, prefix, inner) => `${prefix}${hold(String.raw`\emph{${escapeLatexText(inner)}}`)}`);
+      text = text.replace(/(^|[^_])_([^_\n]+)_/g, (_, prefix, inner) => `${prefix}${hold(String.raw`\emph{${escapeLatexText(inner)}}`)}`);
+
+      text = escapeLatexText(decodeHtmlText(text));
+      return text.replace(/\uE000(\d+)\uE001/g, (_, index) => tokens[Number(index)] || '');
+    }
+
+    function splitMarkdownTableRow(line) {
+      const source = String(line || '').trim().replace(/^\|/, '').replace(/\|$/, '');
+      const cells = [];
+      let current = '';
+      let escaped = false;
+      for (const character of source) {
+        if (escaped) {
+          current += character;
+          escaped = false;
+        } else if (character === '\\') {
+          escaped = true;
+          current += character;
+        } else if (character === '|') {
+          cells.push(current.trim());
+          current = '';
+        } else {
+          current += character;
+        }
+      }
+      cells.push(current.trim());
+      return cells;
+    }
+
+    function isMarkdownTableSeparator(line) {
+      const cells = splitMarkdownTableRow(line);
+      return cells.length > 0 && cells.every(cell => /^:?-{3,}:?$/.test(cell));
+    }
+
+    function buildLatexTable(headerLine, separatorLine, rowLines) {
+      const headers = splitMarkdownTableRow(headerLine);
+      const separators = splitMarkdownTableRow(separatorLine);
+      const rows = rowLines.map(splitMarkdownTableRow);
+      const columnSpec = separators.map(cell => {
+        if (/^:-+:$/.test(cell)) return String.raw`>{\centering\arraybackslash}X`;
+        if (/^-+:$/.test(cell)) return String.raw`>{\raggedleft\arraybackslash}X`;
+        return String.raw`>{\raggedright\arraybackslash}X`;
+      }).join(' ');
+      const formatRow = cells => headers.map((_, index) => convertInlineMarkdownToLatex(cells[index] || '')).join(' & ') + String.raw` \\`;
+      return [
+        String.raw`\begin{table}[htbp]`,
+        String.raw`\centering`,
+        String.raw`\begin{tabularx}{\linewidth}{${columnSpec}}`,
+        String.raw`\toprule`,
+        formatRow(headers),
+        String.raw`\midrule`,
+        ...rows.map(formatRow),
+        String.raw`\bottomrule`,
+        String.raw`\end{tabularx}`,
+        String.raw`\end{table}`
+      ].join('\n');
+    }
+
+    function markdownToLatexBody(markdown) {
+      const lines = String(markdown || '').replace(/\r\n?/g, '\n').split('\n');
+      const output = [];
+      let paragraph = [];
+      let listType = null;
+      let quoteLines = [];
+      let inCodeBlock = false;
+      let codeLanguage = '';
+      let codeLines = [];
+      let inDisplayMath = false;
+      let displayMathLines = [];
+      let titleHeadingSkipped = false;
+
+      const flushParagraph = () => {
+        if (!paragraph.length) return;
+        output.push(convertInlineMarkdownToLatex(paragraph.join(' ')));
+        paragraph = [];
+      };
+      const closeList = () => {
+        if (!listType) return;
+        output.push(listType === 'ordered' ? String.raw`\end{enumerate}` : String.raw`\end{itemize}`);
+        listType = null;
+      };
+      const flushQuote = () => {
+        if (!quoteLines.length) return;
+        output.push([
+          String.raw`\begin{quote}`,
+          convertInlineMarkdownToLatex(quoteLines.join(' ')),
+          String.raw`\end{quote}`
+        ].join('\n'));
+        quoteLines = [];
+      };
+      const flushOpenBlocks = () => {
+        flushParagraph();
+        closeList();
+        flushQuote();
+      };
+
+      for (let index = 0; index < lines.length; index += 1) {
+        const line = lines[index];
+        const trimmed = line.trim();
+
+        if (inCodeBlock) {
+          if (/^```/.test(trimmed)) {
+            const languageComment = codeLanguage ? `% Source language: ${codeLanguage}\n` : '';
+            output.push(`${languageComment}${String.raw`\begin{lstlisting}`}\n${codeLines.join('\n')}\n${String.raw`\end{lstlisting}`}`);
+            inCodeBlock = false;
+            codeLanguage = '';
+            codeLines = [];
+          } else {
+            codeLines.push(line);
+          }
+          continue;
+        }
+
+        if (inDisplayMath) {
+          if (trimmed === '$$' || trimmed === String.raw`\]`) {
+            output.push(`${String.raw`\[`}\n${displayMathLines.join('\n')}\n${String.raw`\]`}`);
+            inDisplayMath = false;
+            displayMathLines = [];
+          } else {
+            displayMathLines.push(line);
+          }
+          continue;
+        }
+
+        const fence = trimmed.match(/^```\s*([^\s`]*)/);
+        if (fence) {
+          flushOpenBlocks();
+          inCodeBlock = true;
+          codeLanguage = fence[1] || '';
+          continue;
+        }
+
+        if (trimmed === '$$' || trimmed === String.raw`\[`) {
+          flushOpenBlocks();
+          inDisplayMath = true;
+          displayMathLines = [];
+          continue;
+        }
+
+        const singleLineDisplayMath = trimmed.match(/^\$\$([\s\S]+)\$\$$/);
+        if (singleLineDisplayMath) {
+          flushOpenBlocks();
+          output.push(`${String.raw`\[`}${singleLineDisplayMath[1]}${String.raw`\]`}`);
+          continue;
+        }
+
+        if (/page-break-(?:before|after)|break-(?:before|after)\s*:\s*page|class=["'][^"']*page-break/i.test(trimmed)) {
+          flushOpenBlocks();
+          output.push(String.raw`\newpage`);
+          continue;
+        }
+
+        if (!trimmed) {
+          flushOpenBlocks();
+          continue;
+        }
+
+        if (index + 1 < lines.length && trimmed.includes('|') && isMarkdownTableSeparator(lines[index + 1])) {
+          flushOpenBlocks();
+          const separatorLine = lines[index + 1];
+          const rows = [];
+          index += 2;
+          while (index < lines.length && lines[index].trim() && lines[index].includes('|')) {
+            rows.push(lines[index]);
+            index += 1;
+          }
+          index -= 1;
+          output.push(buildLatexTable(line, separatorLine, rows));
+          continue;
+        }
+
+        const heading = trimmed.match(/^(#{1,6})\s+(.+)$/);
+        if (heading) {
+          flushOpenBlocks();
+          if (heading[1].length === 1 && !titleHeadingSkipped) {
+            titleHeadingSkipped = true;
+            continue;
+          }
+          const command = ['section', 'section', 'subsection', 'subsubsection', 'paragraph', 'subparagraph'][heading[1].length - 1];
+          output.push(`\\${command}{${convertInlineMarkdownToLatex(heading[2])}}`);
+          continue;
+        }
+
+        if (/^(?:-{3,}|\*{3,}|_{3,})$/.test(trimmed)) {
+          flushOpenBlocks();
+          output.push(String.raw`\noindent\rule{\linewidth}{0.4pt}`);
+          continue;
+        }
+
+        const unordered = line.match(/^\s*[-+*]\s+(.+)$/);
+        const ordered = line.match(/^\s*\d+[.)]\s+(.+)$/);
+        if (unordered || ordered) {
+          flushParagraph();
+          flushQuote();
+          const nextType = ordered ? 'ordered' : 'unordered';
+          if (listType && listType !== nextType) closeList();
+          if (!listType) {
+            listType = nextType;
+            output.push(nextType === 'ordered' ? String.raw`\begin{enumerate}` : String.raw`\begin{itemize}`);
+          }
+          let itemText = (ordered || unordered)[1];
+          itemText = itemText.replace(/^\[([ xX])\]\s*/, (_, checked) => checked.trim() ? '[x] ' : '[ ] ');
+          output.push(String.raw`\item ${convertInlineMarkdownToLatex(itemText)}`);
+          continue;
+        }
+
+        const quote = line.match(/^\s*>\s?(.*)$/);
+        if (quote) {
+          flushParagraph();
+          closeList();
+          quoteLines.push(quote[1]);
+          continue;
+        }
+
+        closeList();
+        flushQuote();
+        paragraph.push(trimmed);
+      }
+
+      if (inCodeBlock) {
+        output.push(`${String.raw`\begin{lstlisting}`}\n${codeLines.join('\n')}\n${String.raw`\end{lstlisting}`}`);
+      }
+      if (inDisplayMath) {
+        output.push(`${String.raw`\[`}\n${displayMathLines.join('\n')}\n${String.raw`\]`}`);
+      }
+      flushOpenBlocks();
+      return output.join('\n\n').replace(/\n{3,}/g, '\n\n');
+    }
+
+    function buildLatexDocument() {
+      const title = escapeLatexText(getDocumentTitleFromMarkdown());
+      const body = markdownToLatexBody(expandEmbeddedImages(editor.value));
+      return String.raw`% Generated by ScienceMD
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{hyperref}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{float}
+\hypersetup{hidelinks}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.7em}
+\title{${title}}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+${body}
+
+\end{document}
+`;
+    }
+
+    function downloadLatex(fileNameOverride = null) {
+      const safeName = normaliseLatexFileName(fileNameOverride || currentFileName || 'science-draft.tex');
+      downloadTextFile(buildLatexDocument(), safeName, 'application/x-tex;charset=utf-8');
+      showToast(`Saved ${safeName}`);
+    }
+
     async function saveMarkdownAs() {
       if (isVisualModeActive()) {
         const committedMath = commitActiveWysiwygMathEdit({ quiet: true });
         if (!committedMath) syncMarkdownFromWysiwyg();
       }
       const options = await getSaveAsOptions();
-
-      if (!options) {
-        return;
-      }
-
-      if (options.asHtml) {
+      if (!options) return;
+      if (options.format === 'html') {
         await downloadRenderedHtml(options.fileName);
         return;
       }
-
+      if (options.format === 'latex') {
+        downloadLatex(options.fileName);
+        return;
+      }
       downloadMarkdown(options.fileName);
     }
 

@@ -37,6 +37,7 @@ checks = {
     "redo support": "redo" in lower,
     "browser storage": "localstorage" in lower,
     "printing": "print" in lower,
+    "LaTeX export": "buildlatexdocument" in lower and 'value="latex"' in lower,
 }
 
 for name, passed in checks.items():
@@ -95,6 +96,8 @@ require("completeFileSave" in activity, "Android save completion handling is mis
 require("openOutputStream" in activity, "Android document writing is missing")
 require("HTMLAnchorElement.prototype.click" in activity, "web download interception is missing")
 require("documentLoadInProgress = true" in html, "New Document load lock is missing")
+require(r"\documentclass[11pt,a4paper]{article}" in html, "LaTeX document preamble is missing")
+require("application/x-tex;charset=utf-8" in html, "LaTeX download MIME type is missing")
 require("takePersistableUriPermission" in activity, "persistent document permission handling is missing")
 require("FLAG_GRANT_WRITE_URI_PERMISSION" in activity, "document write permission is missing")
 require("currentDocumentWritable" in activity, "direct Save state is missing")
