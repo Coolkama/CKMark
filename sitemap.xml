@@ -4,6 +4,8 @@
   <url>
     <loc>https://coolkama.github.io/ScienceMD/home/</loc>
     <lastmod>2026-07-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
     <image:image>
       <image:loc>https://coolkama.github.io/ScienceMD/home/assets/sciencemd-desktop.png</image:loc>
       <image:caption>ScienceMD scientific Markdown and LaTeX editor</image:caption>
@@ -12,5 +14,7 @@
   <url>
     <loc>https://coolkama.github.io/ScienceMD/</loc>
     <lastmod>2026-07-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
   </url>
 </urlset>
