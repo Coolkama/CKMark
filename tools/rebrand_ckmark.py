@@ -7,6 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SELF = Path(__file__).resolve()
+WORKFLOWS = ROOT / ".github/workflows"
 TEXT_SUFFIXES = {
     ".gradle",
     ".html",
@@ -24,10 +25,21 @@ SKIP_PARTS = {".git", "build", ".gradle"}
 
 changed: list[Path] = []
 
-for path in ROOT.rglob("*"):
-    if not path.is_file() or path.resolve() == SELF:
-        continue
+
+def should_skip(path: Path) -> bool:
+    if path.resolve() == SELF:
+        return True
     if any(part in SKIP_PARTS for part in path.parts):
+        return True
+    try:
+        path.relative_to(WORKFLOWS)
+        return True
+    except ValueError:
+        return False
+
+
+for path in ROOT.rglob("*"):
+    if not path.is_file() or should_skip(path):
         continue
     if path.suffix.lower() not in TEXT_SUFFIXES:
         continue
@@ -52,12 +64,6 @@ for path in ROOT.rglob("*"):
         updated = updated.replace("?: '10'", "?: '11'")
         updated = updated.replace("?: '1.3.4'", "?: '1.4.0'")
 
-    if path == ROOT / ".github/workflows/release-android-apk.yml":
-        updated = updated.replace("for example 1.3.4", "for example 1.4.0")
-        updated = updated.replace("default: '1.3.4'", "default: '1.4.0'")
-        updated = updated.replace("default: '10'", "default: '11'")
-        updated = updated.replace("must look like 1.3.4", "must look like 1.4.0")
-
     if path == ROOT / "android/RELEASING.md":
         updated = updated.replace("1.3.4", "1.4.0")
         updated = updated.replace("versionCode 10", "versionCode 11")
@@ -75,9 +81,7 @@ if old_icon.exists() and not new_icon.exists():
 
 remaining: list[Path] = []
 for path in ROOT.rglob("*"):
-    if not path.is_file() or path.resolve() == SELF:
-        continue
-    if any(part in SKIP_PARTS for part in path.parts):
+    if not path.is_file() or should_skip(path):
         continue
     if path.suffix.lower() not in TEXT_SUFFIXES:
         continue
