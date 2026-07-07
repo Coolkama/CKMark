@@ -44,7 +44,10 @@
       text = text.replace(/(^|[^*])\*([^*\n]+)\*/g, (_, prefix, inner) => `${prefix}${hold(String.raw`\emph{${escapeLatexText(inner)}}`)}`);
       text = text.replace(/(^|[^_])_([^_\n]+)_/g, (_, prefix, inner) => `${prefix}${hold(String.raw`\emph{${escapeLatexText(inner)}}`)}`);
 
-      text = escapeLatexText(decodeHtmlText(text));
-      return text.replace(/\uE000(\d+)\uE001/g, (_, index) => tokens[Number(index)] || '');
+      let resolved = escapeLatexText(decodeHtmlText(text));
+      for (let pass = 0; pass <= tokens.length && /\uE000\d+\uE001/.test(resolved); pass += 1) {
+        resolved = resolved.replace(/\uE000(\d+)\uE001/g, (_, index) => tokens[Number(index)] || '');
+      }
+      return resolved;
     }
 
