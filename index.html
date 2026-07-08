@@ -1797,7 +1797,6 @@
     .preview.preview-style-times,
     .preview.preview-style-draft {
       width: 100%;
-      max-width: 100%;
       margin-left: 0;
       margin-right: 0;
       box-sizing: border-box;
@@ -1807,7 +1806,6 @@
     .preview.preview-style-physics *,
     .preview.preview-style-times *,
     .preview.preview-style-draft * {
-      max-width: 100%;
       box-sizing: border-box;
     }
 
@@ -2154,7 +2152,6 @@
         font-family: "Times New Roman", Times, "Cambria Math", Cambria, serif;
         font-size: 1.03rem;
         line-height: 1.68;
-        max-width: 790px;
         margin-left: auto;
         margin-right: auto;
         overflow-wrap: normal;
@@ -2428,7 +2425,6 @@
       font-family: "Times New Roman", Times, "Cambria Math", Cambria, serif !important;
       font-size: 1.0rem !important;
       line-height: 1.58 !important;
-      max-width: 760px !important;
       margin-left: auto !important;
       margin-right: auto !important;
     }
@@ -6826,6 +6822,16 @@ body { background: var(--bg); padding: 0; }
     .editor-surface > * {
       margin-left: 0 !important;
       margin-right: 0 !important;
+    }
+  }
+
+
+
+  /* CKMARK-PREVIEW-PHYSICS-WIDTH-FAST-FIX */
+  @media screen {
+    .preview.preview-style-physics {
+      max-width: none !important;
+      width: 100% !important;
     }
   }
 
