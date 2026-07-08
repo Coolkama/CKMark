@@ -6766,6 +6766,69 @@ body { background: var(--bg); padding: 0; }
 .export-wrap { max-width: 920px; margin: 0 auto; padding: 24px 16px; }
 .export-wrap .preview { height: auto !important; min-height: 0 !important; overflow: visible !important; }
 @media print { .export-wrap { padding: 0; max-width: none; } }
+
+
+  /* CKMARK-EDITOR-WIDTH-OVERRIDE-V2
+     Keep selected output styles from turning the live visual editor into a
+     narrow print-preview column. Print/export rendering remains governed by
+     the output style CSS and print rules. */
+  @media screen {
+    #visualEditor,
+    #visualEditor *,
+    [contenteditable="true"],
+    [contenteditable="true"] *,
+    .visual-editor,
+    .visual-editor *,
+    .wysiwyg-editor,
+    .wysiwyg-editor *,
+    .wysiwyg-content,
+    .wysiwyg-content *,
+    .editor-content,
+    .editor-content *,
+    .editor-document,
+    .editor-document *,
+    .document-editor,
+    .document-editor *,
+    .editable-document,
+    .editable-document *,
+    .edit-surface,
+    .edit-surface *,
+    .editor-surface,
+    .editor-surface * {
+      max-width: none !important;
+    }
+
+    #visualEditor,
+    [contenteditable="true"],
+    .visual-editor,
+    .wysiwyg-editor,
+    .wysiwyg-content,
+    .editor-content,
+    .editor-document,
+    .document-editor,
+    .editable-document,
+    .edit-surface,
+    .editor-surface {
+      width: 100% !important;
+      min-width: 0 !important;
+    }
+
+    #visualEditor > *,
+    [contenteditable="true"] > *,
+    .visual-editor > *,
+    .wysiwyg-editor > *,
+    .wysiwyg-content > *,
+    .editor-content > *,
+    .editor-document > *,
+    .document-editor > *,
+    .editable-document > *,
+    .edit-surface > *,
+    .editor-surface > * {
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+    }
+  }
+
 </style>
 </head>
 <body class="${escapeHtml(bodyClasses)}">
