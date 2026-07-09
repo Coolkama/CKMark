@@ -22,7 +22,7 @@ text = text.replace(
     "Released under the Apache License 2.0 OR Mozilla Public License 2.0",
 )
 
-project_notice = "<!-- CKMark | Copyright 2026 Trevor Neil Kelleher | Apache License 2.0 | Full notices in Help and About. -->"
+project_notice = "<!-- Sciwrix | Copyright 2026 Trevor Neil Kelleher | Apache License 2.0 | Full notices in Help and About. -->"
 if project_notice not in text:
     text = text.replace("<html", project_notice + "\n<html", 1)
 
@@ -46,7 +46,7 @@ sre_notice = escape(
 licence_section = f"""<!-- SCIENCEMD-LICENCES-START -->
       <section id="licenceAcknowledgements">
         <h3>Licence and acknowledgements</h3>
-        <p><strong>CKMark</strong> is Copyright 2026 Trevor Neil Kelleher and is licensed under the <strong>Apache License 2.0</strong>.</p>
+        <p><strong>Sciwrix</strong> is Copyright 2026 Trevor Neil Kelleher and is licensed under the <strong>Apache License 2.0</strong>.</p>
         <p>This application includes MathJax 3.2.1, DOMPurify 3.4.8, Speech Rule Engine 4.0.6, and Wicked Good XPath 1.3.0. Each component remains governed by its respective licence.</p>
         <details class="licence-details"><summary>Apache License 2.0</summary><pre>{apache_text}</pre></details>
         <details class="licence-details"><summary>Speech Rule Engine notice</summary><pre>{sre_notice}</pre></details>
@@ -96,7 +96,7 @@ if ".licence-details {" not in text:
     text = text.replace(css_marker, licence_css + css_marker, 1)
 
 INDEX.write_text(text, encoding="utf-8")
-print("Embedded CKMark and third-party licence notices.")
+print("Embedded Sciwrix and third-party licence notices.")
 
 smoke = SMOKE.read_text(encoding="utf-8")
 legal_checks = """
@@ -109,7 +109,7 @@ require("Apache License 2.0 OR Mozilla Public License 2.0" in html, "DOMPurify l
 require("MathJax 3.2.1 | Apache License 2.0" in html, "MathJax licence banner is missing")
 """
 if "in-app licence acknowledgements are missing" not in smoke:
-    completion = 'print("CKMark smoke checks passed.")'
+    completion = 'print("Sciwrix smoke checks passed.")'
     if completion not in smoke:
         raise SystemExit("Smoke-test completion marker was not found")
     smoke = smoke.replace(completion, legal_checks + "\n" + completion, 1)

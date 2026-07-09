@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Add CKMark licence metadata and legal links to the product homepage."""
+"""Add Sciwrix licence metadata and legal links to the product homepage."""
 
 from pathlib import Path
 
@@ -13,12 +13,12 @@ if 'rel="license"' not in text:
         1,
     )
 
-release_link = '<a href="https://github.com/Coolkama/CKMark/releases" target="_blank" rel="noopener">Release history</a>'
+release_link = '<a href="https://github.com/Coolkama/Sciwrix/releases" target="_blank" rel="noopener">Release history</a>'
 if "Third-party notices</a>" not in text:
     links = (
         release_link
-        + '<a href="https://github.com/Coolkama/CKMark/blob/main/LICENSE" target="_blank" rel="noopener">Apache 2.0 licence</a>'
-        + '<a href="https://github.com/Coolkama/CKMark/blob/main/THIRD_PARTY_NOTICES.md" target="_blank" rel="noopener">Third-party notices</a>'
+        + '<a href="https://github.com/Coolkama/Sciwrix/blob/main/LICENSE" target="_blank" rel="noopener">Apache 2.0 licence</a>'
+        + '<a href="https://github.com/Coolkama/Sciwrix/blob/main/THIRD_PARTY_NOTICES.md" target="_blank" rel="noopener">Third-party notices</a>'
     )
     if release_link not in text:
         raise SystemExit("Homepage release-history link was not found")

@@ -2,8 +2,8 @@ plugins {
     id 'com.android.application'
 }
 
-def scienceMdVersionCode = (project.findProperty('SCIENCEMD_VERSION_CODE') ?: '11').toInteger()
-def scienceMdVersionName = project.findProperty('SCIENCEMD_VERSION_NAME') ?: '1.4.0'
+def scienceMdVersionCode = (project.findProperty('SCIENCEMD_VERSION_CODE') ?: '13').toInteger()
+def scienceMdVersionName = project.findProperty('SCIENCEMD_VERSION_NAME') ?: '1.5.0'
 def releaseKeystorePath = System.getenv('SCIENCEMD_KEYSTORE_PATH')
 
 android {
@@ -71,7 +71,7 @@ android {
         doLast {
             if (!sourceFile.exists()) {
                 throw new GradleException(
-                    "CKMark launcher icon source is missing: ${sourceFile}"
+                    "Sciwrix launcher icon source is missing: ${sourceFile}"
                 )
             }
 
@@ -81,7 +81,7 @@ android {
 
             if (!outputFile.exists() || outputFile.length() == 0) {
                 throw new GradleException(
-                    "CKMark launcher icon was not generated: ${outputFile}"
+                    "Sciwrix launcher icon was not generated: ${outputFile}"
                 )
             }
         }

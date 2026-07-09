@@ -14,5 +14,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "CKMarkAndroid"
+rootProject.name = "SciwrixAndroid"
 include ':app'

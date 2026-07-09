@@ -1,6 +1,6 @@
 # Third-Party Software Notices
 
-CKMark redistributes the following third-party components inside its self-contained HTML application and Android application.
+Sciwrix redistributes the following third-party components inside its self-contained HTML application and Android application.
 
 ## MathJax 3.2.1
 
@@ -8,16 +8,16 @@ CKMark redistributes the following third-party components inside its self-contai
 - Copyright: MathJax project and contributors
 - Source: `mathjax/MathJax-src`, tag `3.2.1`
 
-MathJax provides the LaTeX-style mathematics rendering used by CKMark.
+MathJax provides the LaTeX-style mathematics rendering used by Sciwrix.
 
 ## DOMPurify 3.4.8
 
 - Upstream licence choice: MPL-2.0 OR Apache-2.0
-- Licence selected for redistribution in CKMark: Apache License 2.0
+- Licence selected for redistribution in Sciwrix: Apache License 2.0
 - Copyright: Cure53 and other contributors
 - Source: `cure53/DOMPurify`, tag `3.4.8`
 
-DOMPurify sanitises rendered HTML. CKMark uses the Apache-2.0 option offered by the upstream project.
+DOMPurify sanitises rendered HTML. Sciwrix uses the Apache-2.0 option offered by the upstream project.
 
 ## Speech Rule Engine 4.0.6
 
@@ -40,8 +40,8 @@ Speech Rule Engine is included in the embedded MathJax accessibility code.
 - Copyright (c) 2012 Google Inc.
 - Source: `google/wicked-good-xpath`
 
-The full MIT licence text is provided in [`WICKED_GOOD_XPATH_LICENSE.txt`](./WICKED_GOOD_XPATH_LICENSE.txt) and inside CKMark's Help and About panel.
+The full MIT licence text is provided in [`WICKED_GOOD_XPATH_LICENSE.txt`](./WICKED_GOOD_XPATH_LICENSE.txt) and inside Sciwrix's Help and About panel.
 
 ## Licence texts
 
-The full Apache License 2.0 text is provided in [`LICENSE`](./LICENSE). CKMark itself is Copyright 2026 Trevor Neil Kelleher and is licensed under Apache License 2.0. Each third-party component remains governed by its own licence and notices.
+The full Apache License 2.0 text is provided in [`LICENSE`](./LICENSE). Sciwrix itself is Copyright 2026 Trevor Neil Kelleher and is licensed under Apache License 2.0. Each third-party component remains governed by its own licence and notices.

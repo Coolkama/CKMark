@@ -12,7 +12,7 @@ html = INDEX.read_text(encoding="utf-8")
 
 marker = "/* CKMARK-EDITOR-WIDTH-OVERRIDE-V2 */"
 if marker in html:
-    print("CKMark editor width override v2 is already present.")
+    print("Sciwrix editor width override v2 is already present.")
     raise SystemExit(0)
 
 override = """
@@ -86,4 +86,4 @@ if last_style_end == -1:
 
 html = html[:last_style_end] + override + "\n" + html[last_style_end:]
 INDEX.write_text(html, encoding="utf-8")
-print("Added targeted CKMark visual editor width override v2.")
+print("Added targeted Sciwrix visual editor width override v2.")

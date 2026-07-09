@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Apply the approved CKMark starter document and About copy update."""
+"""Apply the approved Sciwrix starter document and About copy update."""
 
 from __future__ import annotations
 
@@ -12,9 +12,9 @@ INDEX = ROOT / "index.html"
 BUILD_GRADLE = ROOT / "android/app/build.gradle"
 RELEASE_WORKFLOW = ROOT / ".github/workflows/release-android-apk.yml"
 
-starter_text = r"""# Welcome to CKMark
+starter_text = r"""# Welcome to Sciwrix
 
-**CKMark** is an offline-first Markdown and LaTeX editor for scientific notes, technical documents, revision material, and print-ready papers.
+**Sciwrix** is an offline-first Markdown and LaTeX editor for scientific notes, technical documents, revision material, and print-ready papers.
 
 Use **Write** for visual editing or **MD** when you want direct control of the Markdown source. Your document remains a normal `.md` file.
 
@@ -94,10 +94,10 @@ public static double KineticEnergy(double mass, double velocity)
 
 Choose a style from the **Output** group to change the visual document and its printed or PDF appearance. The selected style does not change the Markdown source.
 
-CKMark works as a standalone HTML file, through GitHub Pages, and as an Android app.
+Sciwrix works as a standalone HTML file, through GitHub Pages, and as an Android app.
 """
 
-about_card = """      <section class=\"about-card\">\n        <div class=\"about-icon\" aria-hidden=\"true\">Σ</div>\n        <div>\n          <h2>CKMark</h2>\n          <p><strong>Version 1.2.1</strong></p>\n          <p>An offline-first Markdown and LaTeX editor for scientific and technical writing.</p>\n          <p>The standalone browser edition and Android app keep document editing on your device. No account or server is required.</p>\n          <p class=\"creator\">Designed and created by Trevor Neil Kelleher.</p>\n          <p><a href=\"https://github.com/Coolkama/CKMark\" target=\"_blank\" rel=\"noopener noreferrer\">Project source and releases on GitHub</a></p>\n        </div>\n      </section>"""
+about_card = """      <section class=\"about-card\">\n        <div class=\"about-icon\" aria-hidden=\"true\">Σ</div>\n        <div>\n          <h2>Sciwrix</h2>\n          <p><strong>Version 1.2.1</strong></p>\n          <p>An offline-first Markdown and LaTeX editor for scientific and technical writing.</p>\n          <p>The standalone browser edition and Android app keep document editing on your device. No account or server is required.</p>\n          <p class=\"creator\">Designed and created by Trevor Neil Kelleher.</p>\n          <p><a href=\"https://github.com/Coolkama/Sciwrix\" target=\"_blank\" rel=\"noopener noreferrer\">Project source and releases on GitHub</a></p>\n        </div>\n      </section>"""
 
 index = INDEX.read_text(encoding="utf-8")
 

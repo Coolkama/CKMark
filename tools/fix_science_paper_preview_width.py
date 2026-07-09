@@ -13,7 +13,7 @@ html = INDEX.read_text(encoding="utf-8")
 
 marker = "/* CKMARK-PREVIEW-PHYSICS-WIDTH-FIX */"
 if marker in html:
-    print("CKMark preview physics width fix is already present.")
+    print("Sciwrix preview physics width fix is already present.")
     raise SystemExit(0)
 
 # Remove max-width declarations specifically from CSS rules whose selector
