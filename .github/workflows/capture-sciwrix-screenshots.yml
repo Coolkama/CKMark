@@ -1,0 +1,96 @@
+name: Capture Sciwrix screenshots
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Start local server
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 8765 --bind 127.0.0.1 > /tmp/sciwrix-http.log 2>&1 &
+          echo $! > /tmp/sciwrix-http.pid
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:8765/index.html >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/sciwrix-http.log || true
+          exit 1
+
+      - name: Capture desktop and mobile screenshots
+        shell: bash
+        run: |
+          set -euo pipefail
+          chrome=""
+          for candidate in google-chrome google-chrome-stable chromium chromium-browser; do
+            if command -v "$candidate" >/dev/null 2>&1; then
+              chrome="$candidate"
+              break
+            fi
+          done
+          if [[ -z "$chrome" ]]; then
+            echo "::error::No Chrome or Chromium executable found on runner"
+            exit 1
+          fi
+
+          mkdir -p home/assets
+          "$chrome" \
+            --headless=new \
+            --disable-gpu \
+            --no-sandbox \
+            --hide-scrollbars \
+            --window-size=1440,950 \
+            --virtual-time-budget=5000 \
+            --screenshot=home/assets/sciencemd-desktop.png \
+            'http://127.0.0.1:8765/index.html?shot=sciwrix-desktop'
+
+          "$chrome" \
+            --headless=new \
+            --disable-gpu \
+            --no-sandbox \
+            --hide-scrollbars \
+            --window-size=390,844 \
+            --virtual-time-budget=5000 \
+            --screenshot=home/assets/sciencemd-mobile.png \
+            'http://127.0.0.1:8765/index.html?shot=sciwrix-mobile'
+
+          test -s home/assets/sciencemd-desktop.png
+          test -s home/assets/sciencemd-mobile.png
+
+      - name: Run smoke checks
+        run: python3 tools/smoke_test.py
+
+      - name: Commit screenshots
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- home/assets/sciencemd-desktop.png home/assets/sciencemd-mobile.png; then
+            echo "No screenshot changes were required."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add home/assets/sciencemd-desktop.png home/assets/sciencemd-mobile.png
+          git commit -m "Update Sciwrix homepage screenshots"
+          git push origin HEAD:main
+
+      - name: Stop local server
+        if: always()
+        run: |
+          if [[ -f /tmp/sciwrix-http.pid ]]; then
+            kill "$(cat /tmp/sciwrix-http.pid)" || true
+          fi
