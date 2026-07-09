@@ -1,11 +1,11 @@
-CKMark
+Sciwrix
 Copyright 2026 Trevor Neil Kelleher
 
-CKMark is licensed under the Apache License, Version 2.0.
+Sciwrix is licensed under the Apache License, Version 2.0.
 
 This product includes MathJax 3.2.1, licensed under the Apache License, Version 2.0.
 
-This product includes DOMPurify 3.4.8, developed by Cure53 and other contributors. CKMark uses DOMPurify under the Apache License, Version 2.0, one of the licensing options offered by the DOMPurify project.
+This product includes DOMPurify 3.4.8, developed by Cure53 and other contributors. Sciwrix uses DOMPurify under the Apache License, Version 2.0, one of the licensing options offered by the DOMPurify project.
 
 This product includes Speech Rule Engine 4.0.6.
 Copyright 2014-2018 Volker Sorge.
@@ -16,4 +16,4 @@ Copyright (c) 2007 Cybozu Labs, Inc.
 Copyright (c) 2012 Google Inc.
 Wicked Good XPath is licensed under the MIT License.
 
-Full third-party licence details are provided in THIRD_PARTY_NOTICES.md and within CKMark's Help and About panel.
+Full third-party licence details are provided in THIRD_PARTY_NOTICES.md and within Sciwrix's Help and About panel.
