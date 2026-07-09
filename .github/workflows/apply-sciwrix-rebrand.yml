@@ -1,0 +1,37 @@
+name: Run Sciwrix rebrand
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  rebrand:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out rebrand branch
+        uses: actions/checkout@v4
+        with:
+          ref: rebrand-sciwrix
+          fetch-depth: 0
+
+      - name: Apply Sciwrix rebrand
+        run: python3 tools/rebrand_sciwrix.py
+
+      - name: Run smoke checks
+        run: python3 tools/smoke_test.py
+
+      - name: Commit rebrand branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet; then
+            echo "No Sciwrix rebrand changes were required."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Apply Sciwrix rebrand"
+          git push origin HEAD:rebrand-sciwrix
