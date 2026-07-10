@@ -1,0 +1,232 @@
+=== function applyVisualBlock at 2418427 ===
+rce.value = text.slice(0, lineStart) + replacement + text.slice(lineEnd);
+    source.focus();
+    source.setSelectionRange(lineStart, lineStart + replacement.length);
+    dispatchEditorInput(source);
+    resizeSourceEditor();
+    return true;
+  }
+
+  function applyVisualBlock(kind) {
+    const visual = byId('wysiwygEditor');
+    if (!visual) return false;
+    visual.focus({ preventScroll: true });
+    const tag = kind === 'code' ? 'pre' : 'p';
+    document.execCommand('formatBlock', false, tag);
+    dispatchEditorInput(visual);
+    return true;
+  }
+
+  function applyBlockStyle(value) {
+    const map = {
+      normal: null,
+      h1: 'h1',
+      h2: 'h2',
+      h3: 'h3',
+      quote: 'quote',
+      code: null
+    };
+
+    if (map[value]) {
+      legacyFormatAction(map[value]);
+      return;
+    }
+
+    if (isSourceMode()) applySourceBlock(value);
+    else applyVisualBlock(value);
+  }
+
+  function insertHorizontalRule() {
+    if (!legacyFormatAction('hr')) notify('Horizontal rule is unavailable in this editor state.');
+  }
+
+  function openExport(format) {
+    const ids = format === 'html'
+      ? ['exportHtmlBtn', 'htmlExportBtn', 'saveHtmlBtn']
+      : ['exportLatexBtn', 'latexExportBtn', 'saveLatexBtn'];
+    for (const id of ids) {
+      if (clickKnown(id)) return;
+    }
+
+    const direct = format === 'html'
+      ? findLegacyControl(['html'])
+      : (findLegacyControl(['latex']) || findLegacyControl(['tex']));
+    if (dispatchLegacyClick(direct)) return;
+
+    if (clickKnown('saveAsBtn', ['save', 'as'])) {
+      notify(`Choose ${format === 'html' ? 'HTML' : 'LaTeX'} in Save As.`);
+      return;
+    }
+    notify(`${format === 'html' ? 'HTML' : 'LaTeX'} export is unavailable.`);
+  }
+
+  function applyDocumentStyle(value) {
+    const legacy = byId('previewStyle');
+    if (!legacy) {
+      notify('Document styles are unavailabl
+
+=== if (state.activeTab === 'view') at 2416962 ===
+urceWanted) {
+    if (isSourceMode() !== sourceWanted) {
+      if (!legacyFormatAction('sourceToggle')) {
+        notify('The editor view could not be changed.');
+        return;
+      }
+    }
+    setTimeout(() => {
+      resizeSourceEditor();
+      if (state.activeTab === 'view') renderToolbar();
+    }, 0);
+  }
+
+  function activeTextEditor() {
+    return isSourceMode() ? byId('editor') : byId('wysiwygEditor');
+  }
+
+  function dispatchEditorInput(element) {
+    if (!element) return;
+    element.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+
+  function applySourceBlock(kind) {
+    const source = byId('editor');
+    if (!source) return false;
+    const start = source.selectionStart ?? 0;
+    const end = source.selectionEnd ?? start;
+    const text = source.value || '';
+    const lineStart = text.lastIndexOf('\n', Math.max(0, start - 1)) + 1;
+    const nextBreak = text.indexOf('\n', end);
+    const lineEnd = nextBreak === -1 ? text.length : nextBreak;
+    const selected = text.slice(lineStart, lineEnd);
+    let replacement = selected;
+
+    if (kind === 'normal') {
+      replacement = selected
+        .replace(/^#{1,6}\s+/gm, '')
+        .replace(/^>\s?/gm, '')
+        .replace(/^```(?:[^\n]*)\n?/m, '')
+        .replace(/\n?```\s*$/m, '');
+    } else if (kind === 'code') {
+      const clean = selected.replace(/^```(?:[^\n]*)\n?/m, '').replace(/\n?```\s*$/m, '');
+      replacement = `\`\`\`\n${clean || 'code'}\n\`\`\``;
+    }
+
+    source.value = text.slice(0, lineStart) + replacement + text.slice(lineEnd);
+    source.focus();
+    source.setSelectionRange(lineStart, lineStart + replacement.length);
+    dispatchEditorInput(source);
+    resizeSourceEditor();
+    return true;
+  }
+
+  function applyVisualBlock(kind) {
+    const visual = byId('wysiwygEditor');
+    if (!visual) return false;
+    visual.focus({ preventSc
+
+=== event.target.id === 'sciwrixBlockStyle' at 2432589 ===
+e);
+        return;
+      }
+
+      const action = event.target.closest('[data-ribbon-action]');
+      if (action && !action.disabled) handleRibbonAction(action.dataset.ribbonAction);
+    });
+
+    shell.addEventListener('change', event => {
+      if (event.target.id === 'sciwrixBlockStyle') {
+        applyBlockStyle(event.target.value);
+        event.target.value = 'normal';
+      } else if (event.target.id === 'sciwrixDocumentStyle') {
+        applyDocumentStyle(event.target.value);
+      }
+    });
+  }
+
+  function initialise() {
+    buildShell();
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      state.toolbarMode = VALID_MODES.has(stored) ? stored : 'adaptive';
+    } catch (_error) {
+      state.toolbarMode = 'adaptive';
+    }
+
+    updateFilename();
+    observeFilename();
+    renderToolbar();
+    setToolbarMode(state.toolbarMode, false);
+    resizeSourceEditor();
+
+
+    const visual = byId('wysiwygEditor');
+    if (visual) {
+      visual.addEventListener('mouseup', () => {
+        if (state.activeTab === 'table') setTimeout(renderToolbar, 0);
+      });
+      visual.addEventListener('keyup', () => {
+        if (state.activeTab === 'table') setTimeout(renderToolbar, 0);
+      });
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initialise, { once: true });
+  } else {
+    initialise();
+  }
+})();
+</script>
+</body>
+</html>
+
+=== function initialise() at 2432850 ===
+t.id === 'sciwrixBlockStyle') {
+        applyBlockStyle(event.target.value);
+        event.target.value = 'normal';
+      } else if (event.target.id === 'sciwrixDocumentStyle') {
+        applyDocumentStyle(event.target.value);
+      }
+    });
+  }
+
+  function initialise() {
+    buildShell();
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      state.toolbarMode = VALID_MODES.has(stored) ? stored : 'adaptive';
+    } catch (_error) {
+      state.toolbarMode = 'adaptive';
+    }
+
+    updateFilename();
+    observeFilename();
+    renderToolbar();
+    setToolbarMode(state.toolbarMode, false);
+    resizeSourceEditor();
+
+
+    const visual = byId('wysiwygEditor');
+    if (visual) {
+      visual.addEventListener('mouseup', () => {
+        if (state.activeTab === 'table') setTimeout(renderToolbar, 0);
+      });
+      visual.addEventListener('keyup', () => {
+        if (state.activeTab === 'table') setTimeout(renderToolbar, 0);
+      });
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initialise, { once: true });
+  } else {
+    initialise();
+  }
+})();
+</script>
+</body>
+</html>
+
+applyVisualBlock regex matches: 1
+initialise marker count: 0
+forced reset count: 1
