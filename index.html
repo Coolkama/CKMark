@@ -3717,10 +3717,15 @@
   }
 
   body.sciwrix-ribbon-enabled #editor {
+    height: calc(100dvh - 175px) !important;
+    min-height: calc(100dvh - 175px) !important;
+    max-height: calc(100dvh - 175px) !important;
+    overflow: auto !important;
     resize: none !important;
     white-space: pre-wrap !important;
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace !important;
     font-size: 14px !important;
+    overscroll-behavior: contain;
   }
 
   body.sciwrix-ribbon-enabled #wysiwygEditor,
@@ -8171,7 +8176,7 @@ ${body}
     const selected = text.slice(lineStart, lineEnd);
     let replacement = selected;
 
-    if (kind === 'paragraph') {
+    if (kind === 'normal') {
       replacement = selected
         .replace(/^#{1,6}\s+/gm, '')
         .replace(/^>\s?/gm, '')
@@ -8202,7 +8207,7 @@ ${body}
 
   function applyBlockStyle(value) {
     const map = {
-      paragraph: null,
+      normal: null,
       h1: 'h1',
       h2: 'h2',
       h3: 'h3',
@@ -8299,7 +8304,7 @@ ${body}
       case 'markdown':
         return group(
           '<select class="sciwrix-tool-select" id="sciwrixBlockStyle" aria-label="Block style">' +
-            '<option value="paragraph">Paragraph</option>' +
+            '<option value="normal">Normal</option>' +
             '<option value="h1">Heading 1</option>' +
             '<option value="h2">Heading 2</option>' +
             '<option value="h3">Heading 3</option>' +
@@ -8483,10 +8488,8 @@ ${body}
 
   function resizeSourceEditor() {
     const source = byId('editor');
-    if (!source || source.classList.contains('hidden')) return;
-    source.style.setProperty('height', 'auto', 'important');
-    const minimum = Math.max(320, window.innerHeight - 175);
-    source.style.setProperty('height', `${Math.max(minimum, source.scrollHeight + 2)}px`, 'important');
+    if (!source) return;
+    source.style.removeProperty('height');
   }
 
   function buildShell() {
@@ -8558,7 +8561,7 @@ ${body}
     shell.addEventListener('change', event => {
       if (event.target.id === 'sciwrixBlockStyle') {
         applyBlockStyle(event.target.value);
-        event.target.value = 'paragraph';
+        event.target.value = 'normal';
       } else if (event.target.id === 'sciwrixDocumentStyle') {
         applyDocumentStyle(event.target.value);
       }
@@ -8580,10 +8583,6 @@ ${body}
     setToolbarMode(state.toolbarMode, false);
     resizeSourceEditor();
 
-    const source = byId('editor');
-    if (source) source.addEventListener('input', resizeSourceEditor);
-    window.addEventListener('resize', resizeSourceEditor);
-    state.sourceResizeTimer = window.setInterval(resizeSourceEditor, 800);
 
     const visual = byId('wysiwygEditor');
     if (visual) {
