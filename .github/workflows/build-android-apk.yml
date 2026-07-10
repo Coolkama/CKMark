@@ -17,11 +17,10 @@ on:
       - 'index.html'
       - 'android/**'
       - 'tools/smoke_test.py'
-      - 'tools/fix_normal_scroll.py'
       - '.github/workflows/build-android-apk.yml'
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   build:
@@ -29,9 +28,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: feature/revised-ribbon-ui
-          fetch-depth: 0
 
       - name: Set up Java 17
         uses: actions/setup-java@v4
@@ -41,9 +37,6 @@ jobs:
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
-
-      - name: Apply Normal style and Markdown scroll fixes
-        run: python3 tools/fix_normal_scroll.py
 
       - name: Run Sciwrix smoke checks
         run: python3 tools/smoke_test.py
@@ -62,15 +55,3 @@ jobs:
           path: android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 14
-
-      - name: Commit focused fixes
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html
-          if git diff --cached --quiet; then
-            echo 'No index.html changes required'
-            exit 0
-          fi
-          git commit -m 'Add Normal style and stabilise Markdown scrolling'
-          git push origin HEAD:feature/revised-ribbon-ui
