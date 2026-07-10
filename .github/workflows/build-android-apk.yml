@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Apply tested mobile editor fixes
 
 on:
   push:
@@ -11,7 +11,7 @@ permissions:
   contents: write
 
 jobs:
-  build:
+  patch:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,133 +19,249 @@ jobs:
           ref: hotfix/mobile-editor-width
           fetch-depth: 0
 
-      - name: Apply mobile width CSS safely
+      - name: Apply the phone-tested patch
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import re
 
           path = Path('index.html')
           text = path.read_text(encoding='utf-8')
-          marker = 'sciwrix-mobile-width-hotfix-v1'
 
-          if marker not in text:
-              close_head = text.lower().rfind('</head>')
-              close_body = text.lower().rfind('</body>')
-              close_html = text.lower().rfind('</html>')
-              if close_head < 0 or close_body < 0 or close_html < 0:
-                  raise SystemExit('Could not locate final document closing tags')
-              if not (close_head < close_body < close_html):
-                  raise SystemExit('Closing tags are not in the expected order')
+          css_marker = 'Sciwrix mobile viewport hotfix v3'
+          css_anchor = '''  body.sciwrix-ribbon-enabled .nav-drawer {
+            z-index: 2147483647 !important;
+          }
+          '''
+          css_block = r'''
 
-              css = r'''
-  <style id="sciwrix-mobile-width-hotfix-v1">
-    @media (max-width: 700px) {
-      html,
-      body {
-        width: 100% !important;
-        max-width: 100% !important;
-        min-width: 0 !important;
-        overflow-x: hidden !important;
-      }
+          /* Sciwrix mobile viewport hotfix v3 */
+          @media screen and (max-width: 850px) {
+            html,
+            body,
+            body.sciwrix-ribbon-enabled {
+              width: 100% !important;
+              max-width: 100% !important;
+              min-width: 0 !important;
+              overflow-x: hidden !important;
+            }
 
-      body.sciwrix-ribbon-enabled,
-      body.sciwrix-ribbon-enabled .app,
-      body.sciwrix-ribbon-enabled .app-shell,
-      body.sciwrix-ribbon-enabled main,
-      body.sciwrix-ribbon-enabled .workspace,
-      body.sciwrix-ribbon-enabled .editor-area,
-      body.sciwrix-ribbon-enabled .editor-wrap,
-      body.sciwrix-ribbon-enabled .editor-shell,
-      body.sciwrix-ribbon-enabled .editor-pane,
-      body.sciwrix-ribbon-enabled .editor-container,
-      body.sciwrix-ribbon-enabled .editor-canvas,
-      body.sciwrix-ribbon-enabled .editor-surface,
-      body.sciwrix-ribbon-enabled .editor-content,
-      body.sciwrix-ribbon-enabled #wysiwygEditor,
-      body.sciwrix-ribbon-enabled #sourceEditor,
-      body.sciwrix-ribbon-enabled [contenteditable="true"] {
-        width: 100% !important;
-        max-width: 100% !important;
-        min-width: 0 !important;
-        box-sizing: border-box !important;
-      }
+            body.sciwrix-ribbon-enabled > main,
+            body.sciwrix-ribbon-enabled .workspace,
+            body.sciwrix-ribbon-enabled #editorPanel {
+              width: 100% !important;
+              max-width: 100% !important;
+              min-width: 0 !important;
+              box-sizing: border-box !important;
+              overflow-x: hidden !important;
+            }
 
-      body.sciwrix-ribbon-enabled .workspace,
-      body.sciwrix-ribbon-enabled .editor-area,
-      body.sciwrix-ribbon-enabled .editor-wrap,
-      body.sciwrix-ribbon-enabled .editor-shell,
-      body.sciwrix-ribbon-enabled .editor-pane,
-      body.sciwrix-ribbon-enabled .editor-container,
-      body.sciwrix-ribbon-enabled .editor-canvas,
-      body.sciwrix-ribbon-enabled .editor-surface {
-        margin-left: 0 !important;
-        margin-right: 0 !important;
-        padding-left: 0 !important;
-        padding-right: 0 !important;
-        overflow-x: hidden !important;
-      }
+            body.sciwrix-ribbon-enabled .workspace {
+              margin: 0 !important;
+              padding: 0 !important;
+            }
 
-      body.sciwrix-ribbon-enabled #wysiwygEditor,
-      body.sciwrix-ribbon-enabled [contenteditable="true"] {
-        margin: 0 !important;
-        padding-left: 16px !important;
-        padding-right: 16px !important;
-        overflow-wrap: anywhere !important;
-        word-break: normal !important;
-      }
+            body.sciwrix-ribbon-enabled #editorPanel {
+              margin: 0 !important;
+              padding: 0 !important;
+            }
 
-      body.sciwrix-ribbon-enabled img,
-      body.sciwrix-ribbon-enabled table,
-      body.sciwrix-ribbon-enabled pre,
-      body.sciwrix-ribbon-enabled svg,
-      body.sciwrix-ribbon-enabled canvas {
-        max-width: 100% !important;
-      }
+            body.sciwrix-ribbon-enabled #wysiwygEditor,
+            body.sciwrix-ribbon-enabled #editor {
+              width: 100% !important;
+              max-width: 100% !important;
+              min-width: 0 !important;
+              margin: 0 !important;
+              padding-left: 16px !important;
+              padding-right: 16px !important;
+              box-sizing: border-box !important;
+            }
 
-      body.sciwrix-ribbon-enabled pre,
-      body.sciwrix-ribbon-enabled table {
-        overflow-x: auto !important;
-      }
-    }
-  </style>
-'''
-              path.write_text(text[:close_head] + css + text[close_head:], encoding='utf-8')
+            body.sciwrix-ribbon-enabled #wysiwygEditor {
+              overflow-x: hidden !important;
+            }
 
-          updated = path.read_text(encoding='utf-8')
-          if updated.count(marker) != 1:
-              raise SystemExit(f'Expected one mobile hotfix marker, found {updated.count(marker)}')
-          if not re.search(r'@media \(max-width: 700px\)', updated):
-              raise SystemExit('Mobile media query was not added')
+            body.sciwrix-ribbon-enabled #editor {
+              overflow-x: hidden !important;
+              white-space: pre-wrap !important;
+              overflow-wrap: anywhere !important;
+              word-break: break-word !important;
+            }
+
+            body.sciwrix-ribbon-enabled #wysiwygEditor,
+            body.sciwrix-ribbon-enabled #wysiwygEditor * {
+              max-width: 100% !important;
+              min-width: 0 !important;
+              box-sizing: border-box !important;
+              overflow-wrap: anywhere !important;
+              word-break: normal !important;
+            }
+
+            body.sciwrix-ribbon-enabled #wysiwygEditor p,
+            body.sciwrix-ribbon-enabled #wysiwygEditor li,
+            body.sciwrix-ribbon-enabled #wysiwygEditor blockquote,
+            body.sciwrix-ribbon-enabled #wysiwygEditor h1,
+            body.sciwrix-ribbon-enabled #wysiwygEditor h2,
+            body.sciwrix-ribbon-enabled #wysiwygEditor h3,
+            body.sciwrix-ribbon-enabled #wysiwygEditor h4,
+            body.sciwrix-ribbon-enabled #wysiwygEditor h5,
+            body.sciwrix-ribbon-enabled #wysiwygEditor h6 {
+              width: auto !important;
+              white-space: normal !important;
+            }
+
+            body.sciwrix-ribbon-enabled #wysiwygEditor img,
+            body.sciwrix-ribbon-enabled #wysiwygEditor svg,
+            body.sciwrix-ribbon-enabled #wysiwygEditor canvas,
+            body.sciwrix-ribbon-enabled #wysiwygEditor mjx-container {
+              max-width: 100% !important;
+              height: auto;
+            }
+
+            body.sciwrix-ribbon-enabled #wysiwygEditor table,
+            body.sciwrix-ribbon-enabled #wysiwygEditor pre {
+              display: block !important;
+              width: 100% !important;
+              max-width: 100% !important;
+              overflow-x: auto !important;
+            }
+          }
+          '''
+
+          old_mode = '''    function setSourceMode(enabled) {
+            sourceMode = !!enabled;
+            if (sourceMode) {
+              hideTableTools();
+              syncMarkdownFromWysiwyg();
+              editor.value = collapseEmbeddedImages(editor.value);
+              saveImageMap();
+              safeSetStorage(STORAGE_KEY, editor.value);
+              wysiwygEditor.classList.add('hidden');
+              editor.classList.remove('hidden');
+              editModeLabel.textContent = 'Markdown source';
+              editor.focus();
+            } else {
+              syncWysiwygFromMarkdown(true);
+              editor.classList.add('hidden');
+              wysiwygEditor.classList.remove('hidden');
+              editModeLabel.textContent = 'Visual editor';
+              wysiwygEditor.focus();
+            }
+            resyncLinkedScrollAfterRender(getScrollProgress(getActiveEditorScroller()));
+          }
+          '''
+
+          new_mode = '''    function setSourceMode(enabled) {
+            const previousProgress = getScrollProgress(getActiveEditorScroller());
+
+            sourceMode = !!enabled;
+            if (sourceMode) {
+              hideTableTools();
+              syncMarkdownFromWysiwyg();
+              editor.value = collapseEmbeddedImages(editor.value);
+              saveImageMap();
+              safeSetStorage(STORAGE_KEY, editor.value);
+              wysiwygEditor.classList.add('hidden');
+              editor.classList.remove('hidden');
+              editModeLabel.textContent = 'Markdown source';
+            } else {
+              syncWysiwygFromMarkdown(true);
+              editor.classList.add('hidden');
+              wysiwygEditor.classList.remove('hidden');
+              editModeLabel.textContent = 'Visual editor';
+            }
+
+            const restorePosition = () => {
+              const destinationScroller = getActiveEditorScroller();
+              setScrollProgress(destinationScroller, previousProgress);
+              lastScrollProgress = previousProgress;
+            };
+
+            restorePosition();
+            requestAnimationFrame(() => {
+              restorePosition();
+              requestAnimationFrame(restorePosition);
+            });
+            setTimeout(restorePosition, 80);
+            setTimeout(restorePosition, 250);
+            setTimeout(restorePosition, 600);
+          }
+          '''
+
+          old_scroller = '''    function getActiveEditorScroller() {
+            return sourceMode ? editor : wysiwygEditor;
+          }
+          '''
+          new_scroller = '''    function getActiveEditorScroller() {
+            if (sourceMode) return editor;
+            return document.querySelector('main') || wysiwygEditor;
+          }
+          '''
+
+          old_listener = '''    wysiwygEditor.addEventListener('scroll', () => {
+            if (currentView !== 'preview') lastScrollProgress = getScrollProgress(wysiwygEditor);
+            if (!sourceMode) syncPreviewScrollToEditor();
+          });
+          '''
+          new_listener = '''    wysiwygEditor.addEventListener('scroll', () => {
+            if (currentView !== 'preview') lastScrollProgress = getScrollProgress(wysiwygEditor);
+            if (!sourceMode) syncPreviewScrollToEditor();
+          });
+          const mainScroller = document.querySelector('main');
+          if (mainScroller) {
+            mainScroller.addEventListener('scroll', () => {
+              if (!sourceMode && currentView !== 'preview') {
+                lastScrollProgress = getScrollProgress(mainScroller);
+                syncPreviewScrollToEditor();
+              }
+            });
+          }
+          '''
+
+          if css_marker not in text:
+              if text.count(css_anchor) != 1:
+                  raise SystemExit(f'Expected one CSS anchor, found {text.count(css_anchor)}')
+              text = text.replace(css_anchor, css_anchor + css_block, 1)
+
+          if old_mode in text:
+              text = text.replace(old_mode, new_mode, 1)
+          elif new_mode not in text:
+              raise SystemExit('Could not locate setSourceMode implementation')
+
+          if old_scroller in text:
+              text = text.replace(old_scroller, new_scroller, 1)
+          elif new_scroller not in text:
+              raise SystemExit('Could not locate getActiveEditorScroller implementation')
+
+          if old_listener in text:
+              text = text.replace(old_listener, new_listener, 1)
+          elif new_listener not in text:
+              raise SystemExit('Could not locate editor scroll listener')
+
+          required = [
+              css_marker,
+              'const previousProgress = getScrollProgress(getActiveEditorScroller());',
+              "return document.querySelector('main') || wysiwygEditor;",
+              "const mainScroller = document.querySelector('main');",
+              'white-space: pre-wrap !important;'
+          ]
+          missing = [item for item in required if item not in text]
+          if missing:
+              raise SystemExit(f'Missing expected patch markers: {missing}')
+
+          path.write_text(text, encoding='utf-8')
           PY
 
-      - name: Set up Java 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
-
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
-
-      - name: Run Sciwrix smoke checks
+      - name: Run smoke checks
         run: python3 tools/smoke_test.py
 
-      - name: Lint and build debug APK
-        working-directory: android
-        shell: bash
-        run: |
-          chmod +x gradlew
-          ./gradlew --no-daemon :app:lintDebug :app:assembleDebug
-
-      - name: Commit hotfix
+      - name: Commit tested patch
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
           if git diff --cached --quiet; then
-            echo 'Mobile width hotfix already present.'
+            echo 'Tested mobile patch is already present.'
           else
-            git commit -m 'Fix mobile editor width overflow'
+            git commit -m 'Fix mobile editor layout and preserve view position'
             git push origin HEAD:hotfix/mobile-editor-width
           fi
