@@ -48,26 +48,35 @@ jobs:
       - name: Run Sciwrix smoke checks
         run: python3 tools/smoke_test.py
 
-      - name: Validate updated help and inline JavaScript
+      - name: Capture post-repair validation
         run: |
-          python3 - <<'PY'
+          set +e
+          python3 - <<'PY' > tools/postrepair_validation.txt 2>&1
           from html.parser import HTMLParser
           from pathlib import Path
           import subprocess
           import tempfile
 
           text = Path('index.html').read_text(encoding='utf-8')
-          assert '# Welcome to Sciwrix' in text
-          assert '## The ribbon' in text
-          assert '<h3>Ribbon tabs</h3>' in text
-          assert '<h3>Editing views and layout</h3>' in text
-          assert '<h3>Document style, printing, and export</h3>' in text
-          assert '<strong>Help &amp; About</strong>' in text
-          assert '<h3>Top toolbar</h3>' not in text
-          assert '<h3>Edit toolbar</h3>' not in text
-          assert text.count('SCIENCEMD-LICENCES-START') == 1
-          assert text.count('SCIENCEMD-LICENCES-END') == 1
-          assert text.rstrip().endswith('</html>')
+          failures = []
+
+          def check(name, condition):
+              print(f'{name}: {"PASS" if condition else "FAIL"}')
+              if not condition:
+                  failures.append(name)
+
+          check('starter title', '# Welcome to Sciwrix' in text)
+          check('ribbon section', '## The ribbon' in text)
+          check('help ribbon tabs', '<h3>Ribbon tabs</h3>' in text)
+          check('help layout section', '<h3>Editing views and layout</h3>' in text)
+          check('help style section', '<h3>Document style, printing, and export</h3>' in text)
+          check('help heading encoded', '<strong>Help &amp; About</strong>' in text)
+          check('help heading literal', '<strong>Help & About</strong>' in text)
+          check('old top toolbar removed', '<h3>Top toolbar</h3>' not in text)
+          check('old edit toolbar removed', '<h3>Edit toolbar</h3>' not in text)
+          check('licence start preserved', text.count('SCIENCEMD-LICENCES-START') == 1)
+          check('licence end preserved', text.count('SCIENCEMD-LICENCES-END') == 1)
+          check('valid document tail', text.rstrip().endswith('</html>'))
 
           class Scripts(HTMLParser):
               def __init__(self):
@@ -93,6 +102,7 @@ jobs:
 
           parser = Scripts()
           parser.feed(text)
+          node_ok = True
           with tempfile.TemporaryDirectory() as tmp:
               for i, (script_type, source) in enumerate(parser.scripts):
                   if not source.strip():
@@ -100,8 +110,20 @@ jobs:
                   suffix = '.mjs' if script_type == 'module' else '.js'
                   path = Path(tmp) / f'script-{i}{suffix}'
                   path.write_text(source, encoding='utf-8')
-                  subprocess.run(['node', '--check', str(path)], check=True)
+                  result = subprocess.run(['node', '--check', str(path)], text=True, capture_output=True)
+                  if result.returncode:
+                      node_ok = False
+                      print(f'Node syntax failure in script {i}:')
+                      print(result.stdout)
+                      print(result.stderr)
+          check('inline JavaScript syntax', node_ok)
+          print(f'Total failures: {len(failures)}')
+          raise SystemExit(1 if failures else 0)
           PY
+          status=$?
+          set -e
+          cat tools/postrepair_validation.txt
+          echo "Validation exit status: $status" >> tools/postrepair_validation.txt
 
       - name: Lint and build debug APK
         working-directory: android
@@ -122,7 +144,7 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html
+          git add index.html tools/postrepair_validation.txt
           if git diff --cached --quiet; then
             echo 'No onboarding changes required'
             exit 0
