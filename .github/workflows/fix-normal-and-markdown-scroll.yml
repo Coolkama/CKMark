@@ -1,11 +1,12 @@
 name: Fix Normal style and Markdown scrolling
 
 on:
-  pull_request:
+  push:
     branches:
-      - main
+      - feature/revised-ribbon-ui
     paths:
       - '.github/workflows/fix-normal-and-markdown-scroll.yml'
+  workflow_dispatch:
 
 permissions:
   contents: write
