@@ -1,21 +1,11 @@
 name: Build Android APK
 
 on:
-  workflow_dispatch:
   push:
     branches:
-      - main
-      - feature/revised-ribbon-ui
+      - hotfix/mobile-editor-width
     paths:
-      - 'index.html'
-      - 'android/**'
-      - 'tools/smoke_test.py'
       - '.github/workflows/build-android-apk.yml'
-  pull_request:
-    branches:
-      - main
-      - automation/autosave-repair-base
-    types: [opened, reopened, synchronize, ready_for_review]
 
 permissions:
   contents: write
@@ -23,62 +13,110 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: feature/revised-ribbon-ui
+          ref: hotfix/mobile-editor-width
           fetch-depth: 0
 
-      - name: Restore autosave startup helpers
+      - name: Apply mobile width CSS safely
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import re
 
-          index_path = Path('index.html')
-          text = index_path.read_text(encoding='utf-8')
+          path = Path('index.html')
+          text = path.read_text(encoding='utf-8')
+          marker = 'sciwrix-mobile-width-hotfix-v1'
 
-          helper_markers = [
-              '    function showToast(message) {',
-              '    function isFullscreenActive() {',
-              '    function updateFullscreenButton() {',
-          ]
-          present = [marker in text for marker in helper_markers]
-          if any(present) and not all(present):
-              raise SystemExit(f'Fullscreen helper set is incomplete: {present}')
+          if marker not in text:
+              close_head = text.lower().rfind('</head>')
+              close_body = text.lower().rfind('</body>')
+              close_html = text.lower().rfind('</html>')
+              if close_head < 0 or close_body < 0 or close_html < 0:
+                  raise SystemExit('Could not locate final document closing tags')
+              if not (close_head < close_body < close_html):
+                  raise SystemExit('Closing tags are not in the expected order')
 
-          if not all(present):
-              needle = '    async function toggleFullscreen() {'
-              if text.count(needle) != 1:
-                  raise SystemExit(f'Expected one toggleFullscreen function, found {text.count(needle)}')
-              helpers = '''    function showToast(message) {
-              clearTimeout(toastTimer);
-              toast.textContent = message;
-              toast.classList.add('show');
-              toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
-            }
+              css = r'''
+  <style id="sciwrix-mobile-width-hotfix-v1">
+    @media (max-width: 700px) {
+      html,
+      body {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        overflow-x: hidden !important;
+      }
 
-            function isFullscreenActive() {
-              return !!(document.fullscreenElement || document.webkitFullscreenElement);
-            }
+      body.sciwrix-ribbon-enabled,
+      body.sciwrix-ribbon-enabled .app,
+      body.sciwrix-ribbon-enabled .app-shell,
+      body.sciwrix-ribbon-enabled main,
+      body.sciwrix-ribbon-enabled .workspace,
+      body.sciwrix-ribbon-enabled .editor-area,
+      body.sciwrix-ribbon-enabled .editor-wrap,
+      body.sciwrix-ribbon-enabled .editor-shell,
+      body.sciwrix-ribbon-enabled .editor-pane,
+      body.sciwrix-ribbon-enabled .editor-container,
+      body.sciwrix-ribbon-enabled .editor-canvas,
+      body.sciwrix-ribbon-enabled .editor-surface,
+      body.sciwrix-ribbon-enabled .editor-content,
+      body.sciwrix-ribbon-enabled #wysiwygEditor,
+      body.sciwrix-ribbon-enabled #sourceEditor,
+      body.sciwrix-ribbon-enabled [contenteditable="true"] {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+      }
 
-            function updateFullscreenButton() {
-              if (!fullscreenBtn) return;
-              fullscreenBtn.textContent = isFullscreenActive() ? '×' : '⛶';
-              fullscreenBtn.setAttribute('aria-label', isFullscreenActive() ? 'Exit fullscreen' : 'Enter fullscreen');
-              fullscreenBtn.setAttribute('title', isFullscreenActive() ? 'Exit fullscreen' : 'Enter fullscreen');
-            }
+      body.sciwrix-ribbon-enabled .workspace,
+      body.sciwrix-ribbon-enabled .editor-area,
+      body.sciwrix-ribbon-enabled .editor-wrap,
+      body.sciwrix-ribbon-enabled .editor-shell,
+      body.sciwrix-ribbon-enabled .editor-pane,
+      body.sciwrix-ribbon-enabled .editor-container,
+      body.sciwrix-ribbon-enabled .editor-canvas,
+      body.sciwrix-ribbon-enabled .editor-surface {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        overflow-x: hidden !important;
+      }
 
+      body.sciwrix-ribbon-enabled #wysiwygEditor,
+      body.sciwrix-ribbon-enabled [contenteditable="true"] {
+        margin: 0 !important;
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+        overflow-wrap: anywhere !important;
+        word-break: normal !important;
+      }
+
+      body.sciwrix-ribbon-enabled img,
+      body.sciwrix-ribbon-enabled table,
+      body.sciwrix-ribbon-enabled pre,
+      body.sciwrix-ribbon-enabled svg,
+      body.sciwrix-ribbon-enabled canvas {
+        max-width: 100% !important;
+      }
+
+      body.sciwrix-ribbon-enabled pre,
+      body.sciwrix-ribbon-enabled table {
+        overflow-x: auto !important;
+      }
+    }
+  </style>
 '''
-              text = text.replace(needle, helpers + needle, 1)
+              path.write_text(text[:close_head] + css + text[close_head:], encoding='utf-8')
 
-          for marker in helper_markers:
-              if marker not in text:
-                  raise SystemExit(f'Missing helper after repair: {marker}')
-          if 'const restoredDraft = safeGetStorage(STORAGE_KEY, starterText) || starterText;' not in text:
-              raise SystemExit('Autosave restore code is missing')
-
-          index_path.write_text(text, encoding='utf-8')
+          updated = path.read_text(encoding='utf-8')
+          if updated.count(marker) != 1:
+              raise SystemExit(f'Expected one mobile hotfix marker, found {updated.count(marker)}')
+          if not re.search(r'@media \(max-width: 700px\)', updated):
+              raise SystemExit('Mobile media query was not added')
           PY
 
       - name: Set up Java 17
@@ -100,22 +138,14 @@ jobs:
           chmod +x gradlew
           ./gradlew --no-daemon :app:lintDebug :app:assembleDebug
 
-      - name: Upload debug APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: Sciwrix-debug-apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
-          if-no-files-found: error
-          retention-days: 14
-
-      - name: Commit runtime repair
+      - name: Commit hotfix
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
           if git diff --cached --quiet; then
-            echo 'Runtime helpers already present.'
+            echo 'Mobile width hotfix already present.'
           else
-            git commit -m 'Restore autosave startup and fullscreen helpers'
-            git push origin HEAD:feature/revised-ribbon-ui
+            git commit -m 'Fix mobile editor width overflow'
+            git push origin HEAD:hotfix/mobile-editor-width
           fi
