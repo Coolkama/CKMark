@@ -23,21 +23,12 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import re
 
           path = Path('index.html')
           text = path.read_text(encoding='utf-8')
 
-          old_visual = '''  function applyVisualBlock(kind) {
-            const visual = byId('wysiwygEditor');
-            if (!visual) return false;
-            visual.focus({ preventScroll: true });
-            const tag = kind === 'code' ? 'pre' : 'p';
-            document.execCommand('formatBlock', false, tag);
-            dispatchEditorInput(visual);
-            return true;
-          }'''
-
-          new_visual = '''  function applyVisualBlock(kind) {
+          replacement = '''  function applyVisualBlock(kind) {
             const visual = byId('wysiwygEditor');
             if (!visual) return false;
             const tag = kind === 'code' ? '<pre>' : '<p>';
@@ -62,9 +53,9 @@ jobs:
               const nextBreak = text.indexOf('\\n', position);
               const lineEnd = nextBreak === -1 ? text.length : nextBreak;
               const line = text.slice(lineStart, lineEnd);
-              if (/^#\\s+/.test(line)) return 'h1';
-              if (/^##\\s+/.test(line)) return 'h2';
               if (/^###\\s+/.test(line)) return 'h3';
+              if (/^##\\s+/.test(line)) return 'h2';
+              if (/^#\\s+/.test(line)) return 'h1';
               if (/^>\\s?/.test(line)) return 'quote';
               const fences = text.slice(0, position).match(/^```/gm);
               if (fences && fences.length % 2 === 1) return 'code';
@@ -95,56 +86,40 @@ jobs:
             if (style && Array.from(select.options).some(option => option.value === style)) {
               select.value = style;
             }
-          }'''
+          }
 
-          if text.count(old_visual) != 1:
-              raise SystemExit(f'Expected one old applyVisualBlock function, found {text.count(old_visual)}')
-          text = text.replace(old_visual, new_visual, 1)
+          function applyBlockStyle'''
 
-          old_render = '''    if (state.activeTab === 'view') {
-              const legacyStyle = byId('previewStyle');'''
-          new_render = '''    if (state.activeTab === 'markdown') {
-              setTimeout(syncBlockStyleSelect, 0);
-            }
+          pattern = re.compile(
+              r"  function applyVisualBlock\(kind\) \{.*?\n  \}\n\n  function applyBlockStyle",
+              re.DOTALL,
+          )
+          text, count = pattern.subn(replacement, text, count=1)
+          if count != 1:
+              raise SystemExit(f'Could not replace applyVisualBlock; matches={count}')
 
-            if (state.activeTab === 'view') {
-              const legacyStyle = byId('previewStyle');'''
-          if text.count(old_render) != 1:
-              raise SystemExit(f'Expected one renderToolbar view block, found {text.count(old_render)}')
-          text = text.replace(old_render, new_render, 1)
+          anchor = "    if (state.activeTab === 'view') {"
+          if text.count(anchor) != 1:
+              raise SystemExit(f'Unexpected renderToolbar view anchor count: {text.count(anchor)}')
+          text = text.replace(
+              anchor,
+              "    if (state.activeTab === 'markdown') {\n      setTimeout(syncBlockStyleSelect, 0);\n    }\n\n" + anchor,
+              1,
+          )
 
-          old_change = '''      if (event.target.id === 'sciwrixBlockStyle') {
-                applyBlockStyle(event.target.value);
-                event.target.value = 'normal';
-              } else if (event.target.id === 'sciwrixDocumentStyle') {'''
-          new_change = '''      if (event.target.id === 'sciwrixBlockStyle') {
-                applyBlockStyle(event.target.value);
-                setTimeout(syncBlockStyleSelect, 0);
-              } else if (event.target.id === 'sciwrixDocumentStyle') {'''
-          if text.count(old_change) != 1:
-              raise SystemExit(f'Expected one block-style change handler, found {text.count(old_change)}')
-          text = text.replace(old_change, new_change, 1)
+          reset_pattern = re.compile(
+              r"(applyBlockStyle\(event\.target\.value\);)\s*event\.target\.value\s*=\s*'normal';"
+          )
+          text, count = reset_pattern.subn(
+              r"\1\n        setTimeout(syncBlockStyleSelect, 0);",
+              text,
+              count=1,
+          )
+          if count != 1:
+              raise SystemExit(f'Could not remove forced Normal reset; matches={count}')
 
-          old_initialise = '''    const visual = byId('wysiwygEditor');
-            if (visual) {
-              visual.addEventListener('mouseup', () => {
-                if (state.activeTab === 'table') setTimeout(renderToolbar, 0);
-              });
-              visual.addEventListener('keyup', () => {
-                if (state.activeTab === 'table') setTimeout(renderToolbar, 0);
-              });
-            }'''
-          new_initialise = '''    const visual = byId('wysiwygEditor');
-            if (visual) {
-              visual.addEventListener('mouseup', () => {
-                if (state.activeTab === 'table') setTimeout(renderToolbar, 0);
-                if (state.activeTab === 'markdown') setTimeout(syncBlockStyleSelect, 0);
-              });
-              visual.addEventListener('keyup', () => {
-                if (state.activeTab === 'table') setTimeout(renderToolbar, 0);
-                if (state.activeTab === 'markdown') setTimeout(syncBlockStyleSelect, 0);
-              });
-            }
+          initialise_marker = "  }\n\n  if (document.readyState === 'loading') {"
+          listener_block = '''
 
             const source = byId('editor');
             if (source) {
@@ -158,15 +133,20 @@ jobs:
 
             document.addEventListener('selectionchange', () => {
               if (state.activeTab === 'markdown' && !isSourceMode()) syncBlockStyleSelect();
-            });'''
-          if text.count(old_initialise) != 1:
-              raise SystemExit(f'Expected one visual listener block, found {text.count(old_initialise)}')
-          text = text.replace(old_initialise, new_initialise, 1)
+            });
+          }
+
+          if (document.readyState === 'loading') {'''
+          if text.count(initialise_marker) != 1:
+              raise SystemExit(f'Unexpected initialise marker count: {text.count(initialise_marker)}')
+          text = text.replace(initialise_marker, listener_block, 1)
 
           if "event.target.value = 'normal';" in text:
-              raise SystemExit('The block-style selector is still being forcibly reset to Normal')
+              raise SystemExit('The block-style selector is still being forcibly reset')
           if "window.execWysiwyg('formatBlock', tag)" not in text:
-              raise SystemExit('Normal style is not using the editor selection-preserving formatter')
+              raise SystemExit('Normal style does not use the selection-preserving formatter')
+          if 'function syncBlockStyleSelect()' not in text:
+              raise SystemExit('Block-style synchronisation was not inserted')
 
           path.write_text(text, encoding='utf-8')
           PY
