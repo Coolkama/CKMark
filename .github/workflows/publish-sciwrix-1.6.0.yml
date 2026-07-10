@@ -34,7 +34,26 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Run Sciwrix smoke checks
-        run: python3 tools/smoke_test.py
+        id: smoke
+        continue-on-error: true
+        shell: bash
+        run: python3 tools/smoke_test.py > smoke-test-output.txt 2>&1
+
+      - name: Upload smoke-test output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Sciwrix-1.6.0-smoke-test-output
+          path: smoke-test-output.txt
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Require smoke checks to pass
+        if: steps.smoke.outcome != 'success'
+        shell: bash
+        run: |
+          cat smoke-test-output.txt
+          exit 1
 
       - name: Verify release notices
         run: |
