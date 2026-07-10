@@ -19,47 +19,32 @@ jobs:
           ref: feature/revised-ribbon-ui
           fetch-depth: 0
 
-      - name: Extract focused runtime contexts
+      - name: Extract frame-related contexts
         run: |
           python3 - <<'PY'
           from pathlib import Path
           import re
 
           text = Path('index.html').read_text(encoding='utf-8')
-          terms = [
-              'updateFullscreenButton',
-              'isFullscreenActive',
-              'showToast(',
-              '<iframe',
-              "createElement('iframe')",
-              'createElement("iframe")',
-              'contentDocument',
-              'contentWindow',
-              'window.frames',
-              '.src =',
-              '.src=',
-              'location.href',
-              'document.location',
-              'window.location',
-              'previewPanel',
-              'printPreview',
-              'safeGetStorage(STORAGE_KEY',
-              'safeSetStorage(STORAGE_KEY',
+          patterns = [
+              r'<iframe\b',
+              r'createElement\(["\']iframe["\']\)',
+              r'contentWindow',
+              r'contentDocument',
+              r'window\.frames',
+              r'\.src\s*=\s*[^;]+',
+              r'location\.(?:href|assign|replace)',
           ]
           out = []
-          for term in terms:
-              out.append(f'\n===== {term} =====\n')
-              positions = [m.start() for m in re.finditer(re.escape(term), text, flags=re.I)]
-              if not positions:
-                  out.append('[none]\n')
-                  continue
-              for count, pos in enumerate(positions[:20], 1):
-                  lo = max(0, pos - 1200)
-                  hi = min(len(text), pos + 1800)
-                  out.append(f'\n--- occurrence {count} at {pos} ---\n{text[lo:hi]}\n')
-              if len(positions) > 20:
-                  out.append(f'\n[truncated: {len(positions)} total occurrences]\n')
-
+          for pattern in patterns:
+              out.append(f'\n===== {pattern} =====\n')
+              matches = list(re.finditer(pattern, text, flags=re.I))
+              out.append(f'count={len(matches)}\n')
+              for index, match in enumerate(matches[:30], 1):
+                  pos = match.start()
+                  lo = max(0, pos - 700)
+                  hi = min(len(text), pos + 1200)
+                  out.append(f'\n--- {index} at {pos} ---\n{text[lo:hi]}\n')
           Path('_runtime_diagnostic.txt').write_text(''.join(out), encoding='utf-8')
           PY
 
@@ -68,5 +53,5 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add _runtime_diagnostic.txt
-          git commit -m 'Refresh temporary autosave runtime diagnostic'
+          git commit -m 'Focus temporary diagnostic on frame access'
           git push origin HEAD:feature/revised-ribbon-ui
