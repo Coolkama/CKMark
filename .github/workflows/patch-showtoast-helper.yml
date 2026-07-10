@@ -1,0 +1,64 @@
+name: Patch showToast helper
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/patch-showtoast-helper.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/showtoast-helper
+          fetch-depth: 0
+
+      - name: Restore showToast safely
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path('index.html')
+          text = path.read_text(encoding='utf-8')
+          marker = '    function showToast(message) {'
+          anchor = '    async function toggleFullscreen() {'
+
+          if marker not in text:
+              if text.count(anchor) != 1:
+                  raise SystemExit(f'Expected one toggleFullscreen anchor, found {text.count(anchor)}')
+              helper = '''    function showToast(message) {
+              clearTimeout(toastTimer);
+              if (!toast) return;
+              toast.textContent = String(message || '');
+              toast.classList.add('show');
+              toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+            }
+
+'''
+              text = text.replace(anchor, helper + anchor, 1)
+              path.write_text(text, encoding='utf-8')
+
+          if marker not in path.read_text(encoding='utf-8'):
+              raise SystemExit('showToast helper was not restored')
+          PY
+
+      - name: Run smoke checks
+        run: python3 tools/smoke_test.py
+
+      - name: Commit patched index
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          if git diff --cached --quiet; then
+            echo 'showToast helper already present.'
+          else
+            git commit -m 'Restore showToast runtime helper'
+            git push origin HEAD:fix/showtoast-helper
+          fi
