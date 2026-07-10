@@ -2,8 +2,8 @@ plugins {
     id 'com.android.application'
 }
 
-def scienceMdVersionCode = (project.findProperty('SCIENCEMD_VERSION_CODE') ?: '15').toInteger()
-def scienceMdVersionName = project.findProperty('SCIENCEMD_VERSION_NAME') ?: '1.6.0'
+def scienceMdVersionCode = (project.findProperty('SCIENCEMD_VERSION_CODE') ?: '16').toInteger()
+def scienceMdVersionName = project.findProperty('SCIENCEMD_VERSION_NAME') ?: '1.6.1'
 def releaseKeystorePath = System.getenv('SCIENCEMD_KEYSTORE_PATH')
 
 android {
