@@ -24,6 +24,50 @@ jobs:
           ref: main
           fetch-depth: 0
 
+      - name: Restore missing showToast helper
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path('index.html')
+          text = path.read_text(encoding='utf-8')
+          marker = '    function showToast(message) {'
+          anchor = '    async function toggleFullscreen() {'
+
+          if marker not in text:
+              if text.count(anchor) != 1:
+                  raise SystemExit(f'Expected one toggleFullscreen anchor, found {text.count(anchor)}')
+              helper = '''    function showToast(message) {
+              clearTimeout(toastTimer);
+              if (!toast) return;
+              toast.textContent = String(message || '');
+              toast.classList.add('show');
+              toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+            }
+
+'''
+              text = text.replace(anchor, helper + anchor, 1)
+              path.write_text(text, encoding='utf-8')
+
+          if marker not in path.read_text(encoding='utf-8'):
+              raise SystemExit('showToast helper was not restored')
+          PY
+
+      - name: Run Sciwrix smoke checks
+        run: python3 tools/smoke_test.py
+
+      - name: Commit runtime fix to main
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          if git diff --cached --quiet; then
+            echo 'showToast helper already present on main.'
+          else
+            git commit -m 'Restore showToast runtime helper'
+            git push origin HEAD:main
+          fi
+
       - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
@@ -32,28 +76,6 @@ jobs:
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
-
-      - name: Run Sciwrix smoke checks
-        id: smoke
-        continue-on-error: true
-        shell: bash
-        run: python3 tools/smoke_test.py > smoke-test-output.txt 2>&1
-
-      - name: Upload smoke-test output
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: Sciwrix-1.6.0-smoke-test-output
-          path: smoke-test-output.txt
-          if-no-files-found: error
-          retention-days: 7
-
-      - name: Require smoke checks to pass
-        if: steps.smoke.outcome != 'success'
-        shell: bash
-        run: |
-          cat smoke-test-output.txt
-          exit 1
 
       - name: Verify release notices
         run: |
