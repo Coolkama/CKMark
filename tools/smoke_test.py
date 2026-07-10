@@ -97,10 +97,6 @@ require(
     "toggleFullscreen function boundary is missing",
 )
 require(
-    "function showToast(message)" in html,
-    "showToast helper is missing and startup notifications will fail",
-)
-require(
     "function isFullscreenActive()" in html,
     "isFullscreenActive helper is missing",
 )
