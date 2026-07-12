@@ -14,6 +14,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 HTML = ROOT / "index.html"
 ANDROID = ROOT / "android"
+WINDOWS = ROOT / "windows" / "Sciwrix.Windows"
 
 
 def fail(message: str) -> None:
@@ -205,6 +206,20 @@ require("takePersistableUriPermission" in activity, "persistent document permiss
 require("FLAG_GRANT_WRITE_URI_PERMISSION" in activity, "document write permission is missing")
 require("currentDocumentWritable" in activity, "direct Save state is missing")
 require("forceSaveAs" in activity, "Save As distinction is missing")
+
+windows_project = (WINDOWS / "Sciwrix.Windows.csproj").read_text(encoding="utf-8")
+windows_form = (WINDOWS / "MainForm.cs").read_text(encoding="utf-8")
+windows_bridge = (WINDOWS / "bridge.js").read_text(encoding="utf-8")
+require("net8.0-windows" in windows_project, "Windows target framework is missing")
+require("Microsoft.Web.WebView2" in windows_project, "Windows WebView2 package is missing")
+require("<PublishSingleFile>true</PublishSingleFile>" in windows_project, "Windows build is not a portable single executable")
+require('LogicalName="Sciwrix.WebApp.index.html"' in windows_project, "Sciwrix HTML is not embedded in the Windows executable")
+require("ShowPrintUI" in windows_form, "native Windows printing is missing")
+require("OpenFileDialog" in windows_form and "SaveFileDialog" in windows_form, "native Windows file dialogs are missing")
+require("currentDocumentPath" in windows_form, "direct Windows Markdown saving is missing")
+require("DragDrop" in windows_form, "Windows drag-and-drop opening is missing")
+require("save-begin" in windows_bridge and "save-chunk" in windows_bridge, "Windows save bridge is missing")
+require("openDocument" in windows_bridge, "Windows document-open bridge is missing")
 
 require("SCIENCEMD_VERSION_CODE" in gradle, "release version override is missing")
 require("SCIENCEMD_KEYSTORE_PATH" in gradle, "release signing configuration is missing")
