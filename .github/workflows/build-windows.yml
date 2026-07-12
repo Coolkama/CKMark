@@ -1,0 +1,38 @@
+name: Build Windows app
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['index.html', 'windows/**', 'tools/smoke_test.py', '.github/workflows/build-windows.yml']
+  pull_request:
+    branches: [main]
+    paths: ['index.html', 'windows/**', 'tools/smoke_test.py', '.github/workflows/build-windows.yml']
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Run Sciwrix smoke checks
+        run: python tools/smoke_test.py
+      - name: Publish portable executable
+        run: dotnet publish windows/Sciwrix.Windows/Sciwrix.Windows.csproj -c Release -r win-x64 --self-contained true -o artifacts
+      - name: Verify portable package
+        shell: pwsh
+        run: |
+          if (!(Test-Path artifacts/Sciwrix.exe)) { throw 'Sciwrix.exe is missing' }
+          $extra = Get-ChildItem artifacts -File | Where-Object Name -ne 'Sciwrix.exe'
+          if ($extra) { throw "Unexpected sidecar files: $($extra.Name -join ', ')" }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Sciwrix-Windows-x64
+          path: artifacts/Sciwrix.exe
+          if-no-files-found: error
+          retention-days: 14
