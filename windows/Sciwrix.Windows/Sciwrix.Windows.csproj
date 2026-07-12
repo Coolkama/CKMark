@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType><TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable>
+    <ApplicationManifest>app.manifest</ApplicationManifest><AssemblyName>Sciwrix</AssemblyName><RootNamespace>Sciwrix.Windows</RootNamespace>
+    <Version>1.6.1</Version><Product>Sciwrix</Product><Authors>Trevor Neil Kelleher</Authors>
+    <Description>Markdown and LaTeX for scientific writing</Description><Copyright>Copyright 2026 Trevor Neil Kelleher</Copyright>
+    <PublishSingleFile>true</PublishSingleFile><SelfContained>true</SelfContained>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <DebugType>none</DebugType><DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3967.48" />
+    <EmbeddedResource Include="..\..\index.html" Link="WebApp\index.html" LogicalName="Sciwrix.WebApp.index.html" />
+    <EmbeddedResource Include="bridge.js" LogicalName="Sciwrix.Windows.bridge.js" />
+  </ItemGroup>
+</Project>
