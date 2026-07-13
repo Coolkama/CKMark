@@ -225,6 +225,7 @@ require("save-begin" in windows_bridge and "save-chunk" in windows_bridge, "Wind
 require("openDocument" in windows_bridge, "Windows document-open bridge is missing")
 require("getOpenState" in windows_bridge, "Windows document-open completion handshake is missing")
 require("Initial Windows document render failed" in windows_bridge, "Windows file acceptance is not protected from visual-render failures")
+require("window.__sciwrixWindows.showToast('Opened '" in windows_bridge, "Windows open notification calls an unavailable page helper")
 require("getOpenState()" in windows_form, "Windows host does not wait for document loading to finish")
 
 require("SCIENCEMD_VERSION_CODE" in gradle, "release version override is missing")
