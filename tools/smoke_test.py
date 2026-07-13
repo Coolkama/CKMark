@@ -230,7 +230,7 @@ require("getOpenState()" in windows_form, "Windows host does not wait for docume
 
 require("SCIENCEMD_VERSION_CODE" in gradle, "release version override is missing")
 require("SCIENCEMD_KEYSTORE_PATH" in gradle, "release signing configuration is missing")
-require("?: '16'" in gradle and "?: '1.6.1'" in gradle, "Android 1.6.1 version defaults are missing")
+require("?: '17'" in gradle and "?: '1.6.2'" in gradle, "Android 1.6.2 version defaults are missing")
 require(icon_source.is_file() and icon_source.stat().st_size > 1_000, "launcher icon source is missing")
 
 require((ROOT / "LICENSE").is_file(), "Apache 2.0 LICENSE file is missing")
