@@ -8,9 +8,9 @@ The complete web application is stored in [`index.html`](./index.html). Download
 
 - [Sciwrix product homepage](https://coolkama.github.io/Sciwrix/home/)
 - [Launch Sciwrix online](https://coolkama.github.io/Sciwrix/)
-- [Latest Android release](https://github.com/Coolkama/Sciwrix/releases/latest)
+- [Latest release downloads](https://github.com/Coolkama/Sciwrix/releases/latest)
 
-The product homepage explains the online, standalone HTML and Android versions and provides current download links.
+The product homepage explains the online, standalone HTML, Windows and Android versions and provides current download links.
 
 ## Highlights
 
@@ -48,6 +48,8 @@ See [`android/RELEASING.md`](./android/RELEASING.md) for the one-time signing se
 
 The project in [`windows`](./windows) packages the same offline editor as one portable `Sciwrix.exe`. It adds native Windows file dialogs, direct Markdown saving, printing, command-line opening and drag-and-drop. It is self-contained, so users do not need to install .NET; the standard Microsoft Edge WebView2 Runtime is the only system prerequisite.
 
+Download `Sciwrix.exe` from the [latest release](https://github.com/Coolkama/Sciwrix/releases/latest). No installation is required. To make Sciwrix available for Markdown files, choose **Windows → Associate with Markdown files…** and confirm the association in Windows Default Apps.
+
 ## Licence
 
 Sciwrix is Copyright 2026 Trevor Neil Kelleher and is licensed under the [Apache License 2.0](./LICENSE).
@@ -63,6 +65,7 @@ home/assets/                            Homepage desktop and mobile screenshots
 android/                                Native Android wrapper
 android/icon/                           Android launcher icon source
 android/RELEASING.md                    Signing and release instructions
+windows/                                Portable C# Windows wrapper
 LICENSE                                 Apache License 2.0 for Sciwrix
 NOTICE                                  Sciwrix and third-party attributions
 THIRD_PARTY_NOTICES.md                  Bundled software and licence details
@@ -70,6 +73,7 @@ WICKED_GOOD_XPATH_LICENSE.txt           Full MIT licence for bundled XPath code
 tools/smoke_test.py                     Lightweight regression checks
 .github/workflows/build-android-apk.yml Debug build and validation workflow
 .github/workflows/release-android-apk.yml Signed GitHub Release workflow
+.github/workflows/build-windows.yml     Portable Windows build workflow
 README.md                               Project information
 ```
 
@@ -85,7 +89,7 @@ python3 tools/smoke_test.py
 
 ## Status
 
-Sciwrix is under active development. The repository contains the latest working single-file web build, product homepage and Android wrapper used to produce installable APKs.
+Sciwrix is under active development. The repository contains the latest web, standalone HTML, Android and portable Windows editions.
 
 ## Author
 
