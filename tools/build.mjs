@@ -31,7 +31,7 @@ if (/<!-- @inline:[A-Z_]+ -->/.test(output)) throw new Error('The generated docu
 if (/<(?:script|link)\b[^>]+(?:src|href)=["']https?:\/\//i.test(output)) throw new Error('The generated document contains an external script or stylesheet dependency.');
 
 const banner = '<!-- GENERATED FILE: edit src/ and run `npm run build`; do not edit index.html directly. -->';
-output = output.replace(/^(<!doctype html>\n)/i, `$1${banner}\n`);
+output = output.replace(/^(<!doctype html>\r?\n)/i, `$1${banner}\n`);
 
 if (checkOnly) {
   let existing;
