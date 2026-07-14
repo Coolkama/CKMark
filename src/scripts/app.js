@@ -3319,45 +3319,61 @@ ${body}
       const previousImages = { ...embeddedImages };
       documentLoadInProgress = true;
       clearTimeout(renderTimer);
+      clearTimeout(historyTimer);
 
+      let text;
       try {
-        const text = await file.text();
-        setEditorMarkdown(text, { collapseImages: true, resetScroll: true });
-        setFileName(file.name);
-
-        // Do not call setSourceMode(false) here. It focuses the contenteditable
-        // editor, which allows Android's old IME composition to write back over
-        // the newly loaded Markdown. Switch the visible controls directly, then
-        // perform a hard WYSIWYG rebuild while synchronisation is locked.
-        sourceMode = false;
-        editor.classList.add('hidden');
-        wysiwygEditor.classList.remove('hidden');
-        editModeLabel.textContent = 'Visual editor';
-        switchView('edit');
-        forceWysiwygFromMarkdown({ resetScroll: true, focusStart: false });
-        saveDraft(false);
-        renderNow();
-
-        // Rebuild once more after the picker and virtual keyboard have fully
-        // settled. This also protects devices that dispatch a late composition
-        // event after the file input change event.
-        await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-        forceWysiwygFromMarkdown({ resetScroll: true, focusStart: false });
-        renderNow();
-        resetHistory(editor.value || '');
-        showToast(`Opened ${file.name}`);
+        text = await file.text();
       } catch (error) {
-        console.error(error);
+        console.error('Could not read Markdown file:', error);
         editor.value = previousMarkdown || starterText;
         embeddedImages = previousImages || {};
         setFileName(previousFileName || 'science-draft.md');
-        forceWysiwygFromMarkdown({ resetScroll: false, focusStart: false });
-        renderNow();
-        showToast('Could not open that file. Your previous document was restored.');
-      } finally {
+        showToast('Could not read that file. Your previous document was kept.');
         fileInput.value = '';
         documentLoadInProgress = false;
+        return;
       }
+
+      // Reading the file is the transaction boundary. Once its contents and
+      // identity reach autosave, later visual-render or toolbar failures must
+      // never roll the accepted document back to the previous one.
+      embeddedImages = {};
+      nextImageNumber = 1;
+      saveImageMap();
+      try {
+        setEditorMarkdown(text, { collapseImages: true, resetScroll: true });
+      } catch (renderError) {
+        console.error('Initial document render failed:', renderError);
+        editor.value = collapseEmbeddedImages(text);
+        safeSetStorage(STORAGE_KEY, editor.value, true);
+      }
+      setFileName(file.name);
+      saveDraft(false);
+
+      // Do not call setSourceMode(false) here. It focuses the contenteditable
+      // editor, which allows Android's old IME composition to write back over
+      // the newly loaded Markdown. Switch the visible controls directly, then
+      // perform a hard WYSIWYG rebuild while synchronisation is locked.
+      sourceMode = false;
+      editor.classList.add('hidden');
+      wysiwygEditor.classList.remove('hidden');
+      editModeLabel.textContent = 'Visual editor';
+      try { switchView('edit'); } catch (error) { console.error(error); }
+      try { forceWysiwygFromMarkdown({ resetScroll: true, focusStart: false }); } catch (error) { console.error(error); }
+      try { renderNow(); } catch (error) { console.error(error); }
+
+      // Rebuild once more after the picker and virtual keyboard have fully
+      // settled. This also protects devices that dispatch a late composition
+      // event after the file input change event.
+      await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      try { forceWysiwygFromMarkdown({ resetScroll: true, focusStart: false }); } catch (error) { console.error(error); }
+      try { renderNow(); } catch (error) { console.error(error); }
+      try { resetHistory(editor.value || ''); } catch (error) { console.error(error); }
+      saveDraft(false);
+      fileInput.value = '';
+      documentLoadInProgress = false;
+      showToast(`Opened ${file.name}`);
     });
 
     formatToolbar.addEventListener('pointerdown', event => {

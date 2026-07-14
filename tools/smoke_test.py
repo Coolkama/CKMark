@@ -110,6 +110,11 @@ require(
     "autosaved document restoration is missing",
 )
 require(
+    "Reading the file is the transaction boundary" in html
+    and "Initial document render failed" in html,
+    "browser file acceptance can still be rolled back by a visual-render failure",
+)
+require(
     ";\n      const target = document.documentElement;" not in html,
     "fullscreen code has escaped from its function body",
 )
