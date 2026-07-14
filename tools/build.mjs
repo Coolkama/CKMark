@@ -6,6 +6,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const templatePath = resolve(root, 'src/app.template.html');
 const outputPath = resolve(root, 'index.html');
 const checkOnly = process.argv.includes('--check');
+const normaliseLineEndings = value => value.replace(/\r\n/g, '\n');
 
 const modules = [
   ['MATHJAX_CONFIG', 'script', 'src/scripts/mathjax-config.js', ''],
@@ -21,7 +22,7 @@ for (const [name, tag, relativePath, attributes] of modules) {
   const marker = `<!-- @inline:${name} -->`;
   const occurrences = output.split(marker).length - 1;
   if (occurrences !== 1) throw new Error(`Expected exactly one ${marker} marker, found ${occurrences}.`);
-  const body = (await readFile(resolve(root, relativePath), 'utf8')).replace(/\r\n/g, '\n').replace(/\n?$/, '\n');
+  const body = normaliseLineEndings(await readFile(resolve(root, relativePath), 'utf8')).replace(/\n?$/, '\n');
   const openingTag = attributes ? `<${tag} ${attributes}>` : `<${tag}>`;
   output = output.replace(marker, () => `${openingTag}\n${body}</${tag}>`);
 }
@@ -36,7 +37,9 @@ if (checkOnly) {
   let existing;
   try { existing = await readFile(outputPath, 'utf8'); }
   catch { throw new Error('index.html is missing. Run `npm run build`.'); }
-  if (existing !== output) throw new Error('index.html is out of date. Run `npm run build` and commit the result.');
+  if (normaliseLineEndings(existing) !== normaliseLineEndings(output)) {
+    throw new Error('index.html is out of date. Run `npm run build` and commit the result.');
+  }
   console.log('Sciwrix standalone HTML is up to date.');
 } else {
   await writeFile(outputPath, output, 'utf8');
